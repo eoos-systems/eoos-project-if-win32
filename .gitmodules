@@ -1,0 +1,9 @@
+[submodule "codebase/interface"]
+	path = codebase/interface
+	url = git@github.com:baigudin/eoos-api.git
+[submodule "codebase/system"]
+	path = codebase/system
+	url = git@github.com:baigudin/eoos-system-if-win32.git
+[submodule "codebase/library"]
+	path = codebase/library
+	url = git@github.com:baigudin/eoos-library.git
