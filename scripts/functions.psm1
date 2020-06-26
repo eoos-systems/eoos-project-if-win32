@@ -1,7 +1,7 @@
 <##
  # This script contains some useful functions.
  #
- # @author Sergey Baigudin, sbaigudin@luxoft.com
+ # @author Sergey Baigudin, sergey@baigudin.software
  #>
  
 <## 

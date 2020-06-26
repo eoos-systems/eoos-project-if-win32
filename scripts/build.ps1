@@ -2,17 +2,18 @@
  # This script builds a program.
  #
  # @param -clean - cleans the project by removing the 'build' directory.
- # @param -make    - prohibits to call 'make'.
+ # @param -build - compile the project
+ # @param -install - install the project
  #
  # SDIR: REPOSITORY/scripts>
  # EDIR: REPOSITORY/scripts>
  #
- # @author Sergey Baigudin, sbaigudin@luxoft.com
+ # @author Sergey Baigudin, sergey@baigudin.software
  #>
 param(
     [switch]$clean,
     [switch]$build,
-    [switch]$install    
+    [switch]$install
 )
 
 Import-Module -Name .\functions.psm1
