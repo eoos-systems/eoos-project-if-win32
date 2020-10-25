@@ -18,7 +18,8 @@ param(
 
 Import-Module -Name .\functions.psm1
 
-Out-Message -String "BUILDING OF PROJECT HAS BEEN INVOKED" -Ok -Block
+[string]$pathScriptToBuildDir = ".\..\build"
+[string]$pathBuildToScriptDir = ".\..\scripts"
 
 <## 
  # Outs a message.
@@ -37,25 +38,23 @@ function Out-Note([string]$string, [switch]$Block, [switch]$say, [switch]$ok, [s
 function Build()
 {
     Out-Message -String "Build is started" -Inf -Block
-    [string]$pathToBuildDir = ".\..\build"
     if($clean)
     {
         Out-Note -String "EOOS build clean is set" -Inf
-        if( Test-Path -Path $pathToBuildDir )
+        if( Test-Path -Path $pathScriptToBuildDir )
         {
             Out-Note "Remove build directory" -Inf
-            Remove-Item -Path $pathToBuildDir -Recurse -Force
+            Remove-Item -Path $pathScriptToBuildDir -Recurse -Force
         }
     }
-    if( (Test-Path -Path $pathToBuildDir) -eq $false )
+    if( (Test-Path -Path $pathScriptToBuildDir) -eq $false )
     {
         Out-Note -String "Create build directory" -Inf
-        New-Item -ItemType "directory" -Path $pathToBuildDir
-        New-Item -ItemType "directory" -Path ($pathToBuildDir + "/CMakeInstallDir")
+        New-Item -ItemType "directory" -Path $pathScriptToBuildDir
+        New-Item -ItemType "directory" -Path ($pathScriptToBuildDir + "/CMakeInstallDir")
     }
     
-    cd -Path $pathToBuildDir
-    # CDIR: REPOSITORY/build>
+    cd -Path $pathScriptToBuildDir # CDIR: REPOSITORY/build>
        
     Out-Note -String "Generate CMake project" "INF" -Inf
     cmake -D CMAKE_INSTALL_PREFIX=CMakeInstallDir ..
@@ -72,11 +71,10 @@ function Build()
         cmake --install . --config Debug
     }
     
-    cd -Path ".\..\scripts"
-    # CDIR: REPOSITORY/scripts>
+    cd -Path $pathBuildToScriptDir # CDIR: REPOSITORY/scripts>
     Out-Message -String "ISSW project is built" -Inf -Block
 }
 
+Out-Message -String "BUILDING OF PROJECT HAS BEEN INVOKED" -Ok -Block
 Build
-
 Get-Module | Remove-Module

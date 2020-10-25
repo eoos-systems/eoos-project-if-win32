@@ -8,6 +8,9 @@ add_library(target-eoos STATIC)
 add_subdirectory(interface)
 add_subdirectory(library)
 add_subdirectory(system)
+if(EOOS_ENABLE_TESTS)
+    add_subdirectory(tests)
+endif()
 
 # Load and run CMake code from a file or module
 include(CMakePackageConfigHelpers)

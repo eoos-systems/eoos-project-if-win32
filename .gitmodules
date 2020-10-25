@@ -7,3 +7,9 @@
 [submodule "codebase/library"]
 	path = codebase/library
 	url = git@github.com:baigudin/eoos-library.git
+[submodule "codebase/tests"]
+	path = codebase/tests
+	url = git@github.com:baigudin/eoos-tests.git
+[submodule "extern/googletest"]
+	path = extern/googletest
+	url = git@github.com:google/googletest.git
