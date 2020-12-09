@@ -1,5 +1,5 @@
 <##
- # This script builds a program.
+ # @brief This script builds a program.
  #
  # @param -clean - cleans the project by removing the 'build' directory.
  # @param -build - compile the project
@@ -12,8 +12,9 @@
  #>
 param(
     [switch]$clean,
-    [switch]$build,
-    [switch]$install
+    [string]$build,
+    [switch]$install,
+    [switch]$runtests
 )
 
 Import-Module -Name .\functions.psm1
@@ -22,7 +23,7 @@ Import-Module -Name .\functions.psm1
 [string]$pathBuildToScriptDir = ".\..\scripts"
 
 <## 
- # Outs a message.
+ # @brief Outs a message.
  #>
 function Out-Note([string]$string, [switch]$Block, [switch]$say, [switch]$ok, [switch]$err, [switch]$inf)
 {
@@ -30,7 +31,7 @@ function Out-Note([string]$string, [switch]$Block, [switch]$say, [switch]$ok, [s
 } 
 
 <## 
- # Builds the project.
+ # @brief Builds the project.
  #
  # CDIR: REPOSITORY/scripts>
  # EDIR: REPOSITORY/scripts> 
@@ -61,8 +62,16 @@ function Build()
     
     if($build)
     {
-        Out-Note -String "Build CMake project" -Inf
-        cmake --build . --config Debug
+        if($build -eq "TEST")
+        {
+            Out-Note -String "Built CMake Unit Tests target only" -Inf
+            MSBuild.exe .\codebase\tests\target-eoos-unit-tests.vcxproj -maxCpuCount:8  -verbosity:m
+        }
+        else
+        {
+            Out-Note -String "Build CMake project" -Inf
+            cmake --build . --config Debug
+        }
     }
     
     if($install)
@@ -71,10 +80,39 @@ function Build()
         cmake --install . --config Debug
     }
     
+    if($runtests)
+    {
+        Out-Note -String "Run unit tests" -Inf
+        if($install)
+        {
+            if( Test-Path -Path ".\CMakeInstallDir\bin\EoosTests.exe" )
+            {
+                .\CMakeInstallDir\bin\EoosTests.exe --gtest_shuffle
+            }                
+            else
+            {
+                Out-Note "The unit tests executable file does not exist" -Err
+            }
+            
+        }
+        else
+        {
+            if( Test-Path -Path ".\codebase\tests\Debug\EoosTests.exe" )
+            {
+                .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle
+            }                
+            else
+            {
+                Out-Note "The unit tests executable file does not exist" -Err
+            }        
+            
+        }
+    }
+    
     cd -Path $pathBuildToScriptDir # CDIR: REPOSITORY/scripts>
-    Out-Message -String "ISSW project is built" -Inf -Block
 }
 
 Out-Message -String "BUILDING OF PROJECT HAS BEEN INVOKED" -Ok -Block
 Build
+Out-Message -String "BUILDING OF PROJECT HAS BEEN COMPLETED" -OK -Block
 Get-Module | Remove-Module
