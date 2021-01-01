@@ -1,9 +1,10 @@
 <##
  # @brief This script builds a program.
  #
- # @param -clean - cleans the project by removing the 'build' directory.
- # @param -build - compile the project
- # @param -install - install the project
+ # @param -clean             - Cleans the project by removing the 'build' directory.
+ # @param -build <ALL|TESTS> - Compiles the project.
+ # @param -install           - Installs the project.
+ # @param -run               - Runs unit tests after the build.
  #
  # SDIR: REPOSITORY/scripts>
  # EDIR: REPOSITORY/scripts>
@@ -14,7 +15,7 @@ param(
     [switch]$clean,
     [string]$build,
     [switch]$install,
-    [switch]$runtests
+    [switch]$run
 )
 
 Import-Module -Name .\functions.psm1
@@ -62,7 +63,7 @@ function Build()
     
     if($build)
     {
-        if($build -eq "TEST")
+        if($build -eq "TESTS")
         {
             Out-Note -String "Built CMake Unit Tests target only" -Inf
             MSBuild.exe .\codebase\tests\target-eoos-unit-tests.vcxproj -maxCpuCount:8  -verbosity:m
@@ -80,7 +81,7 @@ function Build()
         cmake --install . --config Debug
     }
     
-    if($runtests)
+    if($run)
     {
         Out-Note -String "Run unit tests" -Inf
         if($install)
