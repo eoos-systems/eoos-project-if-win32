@@ -15,7 +15,8 @@ param(
     [switch]$clean,
     [string]$build,
     [switch]$install,
-    [switch]$run
+    [switch]$run,
+    [switch]$coverage
 )
 
 Import-Module -Name .\functions.psm1
@@ -63,10 +64,15 @@ function Build()
     
     if($build)
     {
+        if( Test-Path -Path ".\codebase\tests\Debug\EoosTests.exe" )
+        {
+            Out-Note -String "Remove Unit Tests executable file" -Inf
+            Remove-Item -Path ".\codebase\tests\Debug\EoosTests.exe"
+        } 
         if($build -eq "TESTS")
         {
             Out-Note -String "Built CMake Unit Tests target only" -Inf
-            MSBuild.exe .\codebase\tests\target-eoos-unit-tests.vcxproj -maxCpuCount:8  -verbosity:m
+            MSBuild.exe .\codebase\tests\target-eoos-unit-tests.vcxproj -maxCpuCount:8  -verbosity:minimal
         }
         else
         {
@@ -100,7 +106,8 @@ function Build()
         {
             if( Test-Path -Path ".\codebase\tests\Debug\EoosTests.exe" )
             {
-                .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle
+                # @todo Remove --gtest_filter key
+                .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle --gtest_filter=lib_Thread*
             }                
             else
             {
@@ -108,6 +115,22 @@ function Build()
             }        
             
         }
+    }
+    
+    if($coverage)
+    {
+        Out-Note -String "Run test coverage" -Inf
+        cd -Path .. # CDIR: REPOSITORY/>
+        if( Test-Path -Path ".\build\codebase\tests\Debug\EoosTests.exe" )
+        {
+            OpenCppCoverage --sources codebase\interface --sources codebase\library --sources codebase\system -- .\build\codebase\tests\Debug\EoosTests.exe
+        }                
+        else
+        {
+            Out-Note "The unit tests executable file does not exist" -Err
+        }
+        # Remove-Item -Path $pathScriptToBuildDir -Recurse -Force
+        cd -Path build # CDIR: REPOSITORY/build>        
     }
     
     cd -Path $pathBuildToScriptDir # CDIR: REPOSITORY/scripts>
