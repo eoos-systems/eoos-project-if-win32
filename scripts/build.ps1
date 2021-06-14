@@ -68,17 +68,26 @@ function Build()
         {
             Out-Note -String "Remove Unit Tests executable file" -Inf
             Remove-Item -Path ".\codebase\tests\Debug\EoosTests.exe"
-        } 
-        if($build -eq "TESTS")
-        {
-            Out-Note -String "Built CMake Unit Tests target only" -Inf
-            MSBuild.exe .\codebase\tests\target-eoos-unit-tests.vcxproj -maxCpuCount:8  -verbosity:minimal
         }
-        else
+        if($build -eq "ALL")
         {
             Out-Note -String "Build CMake project" -Inf
             cmake --build . --config Debug
-        }
+        }        
+        else
+        {
+            if($build -eq "TESTS")
+            {
+                Out-Note -String "Built CMake Unit Tests target only" -Inf
+                MSBuild.exe .\codebase\tests\target-eoos-unit-tests.vcxproj -maxCpuCount:8  -verbosity:minimal
+            }
+            else
+            {
+                Out-Note -String "Argument -build is wrong. ALL or TESTS is accessible" -Err
+                cd -Path $pathBuildToScriptDir # CDIR: REPOSITORY/scripts>
+                exit;
+            }
+        }            
     }
     
     if($install)
@@ -106,8 +115,13 @@ function Build()
         {
             if( Test-Path -Path ".\codebase\tests\Debug\EoosTests.exe" )
             {
-                # @todo Remove --gtest_filter key
-                .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle --gtest_filter=lib_Thread*
+                # @note Remove --gtest_filter key if it set
+                # --gtest_filter=test_Main*
+                # --gtest_filter=test_lib_String*
+                # --gtest_filter=test_lib_Thread*
+                #
+                # --gtest_shuffle
+                .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle
             }                
             else
             {
@@ -121,6 +135,16 @@ function Build()
     {
         Out-Note -String "Run test coverage" -Inf
         cd -Path .. # CDIR: REPOSITORY/>
+        if( Test-Path -Path ".\CoverageReport*" )
+        {
+            Out-Note -String "Remove old temp test coverage report" -Inf
+            Remove-Item -Path ".\CoverageReport*" -Recurse -Force
+        }
+        if( Test-Path -Path ".\build\CoverageReport" )
+        {
+            Out-Note -String "Remove old test coverage report" -Inf
+            Remove-Item -Path ".\build\CoverageReport" -Recurse -Force
+        }        
         if( Test-Path -Path ".\build\codebase\tests\Debug\EoosTests.exe" )
         {
             OpenCppCoverage --sources codebase\interface --sources codebase\library --sources codebase\system -- .\build\codebase\tests\Debug\EoosTests.exe
@@ -129,7 +153,8 @@ function Build()
         {
             Out-Note "The unit tests executable file does not exist" -Err
         }
-        # Remove-Item -Path $pathScriptToBuildDir -Recurse -Force
+        Out-Note -String "Move new test coverage report" -Inf
+        Move-Item -Path ".\CoverageReport*" -Destination ".\build\CoverageReport"        
         cd -Path build # CDIR: REPOSITORY/build>        
     }
     
