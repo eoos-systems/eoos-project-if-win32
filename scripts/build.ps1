@@ -116,9 +116,10 @@ function Build()
             if( Test-Path -Path ".\codebase\tests\Debug\EoosTests.exe" )
             {
                 # @note Remove --gtest_filter key if it set
-                # --gtest_filter=test_Main*
-                # --gtest_filter=test_lib_String*
-                # --gtest_filter=test_lib_Thread*
+                # --gtest_filter=MainTest*
+                # --gtest_filter=StringTest*
+                # --gtest_filter=ThreadTest*
+                # --gtest_filter=DebugTest*                
                 #
                 # --gtest_shuffle
                 .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle
