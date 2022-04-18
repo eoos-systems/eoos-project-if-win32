@@ -5,6 +5,7 @@
  # @param -build <ALL|TESTS> - Compiles the project.
  # @param -install           - Installs the project.
  # @param -run               - Runs unit tests after the build.
+ # @param -coverage          - Build code coverage report.
  #
  # SDIR: REPOSITORY/scripts>
  # EDIR: REPOSITORY/scripts>
