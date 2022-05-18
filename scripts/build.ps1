@@ -56,12 +56,13 @@ function Build()
         Out-Note -String "Create build directory" -Inf
         New-Item -ItemType "directory" -Path $pathScriptToBuildDir
         New-Item -ItemType "directory" -Path ($pathScriptToBuildDir + "/CMakeInstallDir")
+        New-Item -ItemType "directory" -Path ($pathScriptToBuildDir + "/sca")
     }
     
     cd -Path $pathScriptToBuildDir # CDIR: REPOSITORY/build>
        
     Out-Note -String "Generate CMake project" "INF" -Inf
-    cmake -D CMAKE_INSTALL_PREFIX=CMakeInstallDir ..
+    cmake -DCMAKE_INSTALL_PREFIX=CMakeInstallDir ..
     
     if($build)
     {
