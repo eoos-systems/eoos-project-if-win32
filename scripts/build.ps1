@@ -6,6 +6,7 @@
  # @param -install           - Installs the project.
  # @param -run               - Runs unit tests after the build.
  # @param -coverage          - Build code coverage report.
+ # @param -sca <IP Server>   - Runs the SCA report creation.
  #
  # SDIR: REPOSITORY/scripts>
  # EDIR: REPOSITORY/scripts>
@@ -17,7 +18,8 @@ param(
     [string]$build,
     [switch]$install,
     [switch]$run,
-    [switch]$coverage
+    [switch]$coverage,
+    [string]$sca
 )
 
 Import-Module -Name .\functions.psm1
@@ -157,6 +159,12 @@ function Build()
         Out-Note -String "Move new test coverage report" -Inf
         Move-Item -Path ".\CoverageReport*" -Destination ".\build\CoverageReport"        
         cd -Path build # CDIR: REPOSITORY/build>        
+    }
+    
+    if($sca)
+    {
+        Out-Note -String "Create SCA report in a parallel OS process, wait..." -Inf
+        alauncher 7931616 -b -s "$sca" --import ./../quality/sca/projects/absint/eoos-if-win32.dax --drop
     }
     
     cd -Path $pathBuildToScriptDir # CDIR: REPOSITORY/scripts>
