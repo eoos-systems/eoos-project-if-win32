@@ -64,7 +64,7 @@ function Build()
     cd -Path $pathScriptToBuildDir # CDIR: REPOSITORY/build>
        
     Out-Note -String "Generate CMake project" "INF" -Inf
-    cmake -DCMAKE_INSTALL_PREFIX=CMakeInstallDir ..
+    cmake -DEOOS_ENABLE_TESTS=ON -DCMAKE_INSTALL_PREFIX=CMakeInstallDir ..
     
     if($build)
     {
