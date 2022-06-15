@@ -34,7 +34,7 @@ There is NO WARRANTY, to the extent permitted by law.
 
 ###### 1.1.2 Install [CMake](https://cmake.org/download/)
 
-The installer automatically sets the *Path%* system environment variable if you chose this way during installation. 
+The installer automatically sets the *Path* system environment variable if you chose this way during installation. 
 Having Git installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
 in CMD that CMake can be executed properly.
 
@@ -43,3 +43,39 @@ C:\>cmake --version
 cmake version 3.17.0
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
 ```
+
+###### 1.1.3 Instal [Visual Studio](https://developer.microsoft.com/en-us/windows/downloads/) or [Windows SDK](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/) for purposes that you need
+
+Having a tool installed, you shell check in CMD that MSBuild can be executed properly with the similar output.
+
+```
+MSBuild.exe -version
+Microsoft (R) Build Engine version 16.5.0+d4cbfca49 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+16.5.0.12403
+```
+
+###### 1.1.4 Optionally install [Doxygen](https://www.doxygen.nl/download.html) for future documentation creation
+
+The installer automatically sets the *Path* system environment variable.
+Having Doxygen installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
+in CMD that Doxygen can be executed properly.
+
+```
+C:\>Doxygen -v
+1.9.2 (caa4e3de211fbbef2c3adf58a6bd4c86d0eb7cb8)
+```
+
+###### 1.1.5 Optionally install [Graphviz](http://www.graphviz.org/download/) for future documentation creation
+
+The installer automatically suggest adding Graphviz to the system *Path*, please add it. 
+Having Graphviz installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
+in CMD that Graphviz can be executed properly.
+
+```
+C:\>dot -version
+dot - graphviz version 2.49.3 (20211023.0002)
+```
+
+
