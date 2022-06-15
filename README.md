@@ -8,7 +8,7 @@ with aim to ISO 26262. Source code is complied with AUTOSAR C++14 and MISRA C++ 
 
 ### 1. How-to Build Project
 
-##### 1.1. Prerequisites on Windows
+#### 1.1. Prerequisites on Windows
 
 The process described below is passed on Windows 10 (64-bit) and requires the next tool to be installed on it:
 
@@ -78,7 +78,7 @@ C:\>dot -version
 dot - graphviz version 2.49.3 (20211023.0002)
 ```
 
-##### 1.2. Obtain Git Repository
+#### 1.2. Obtain Git Repository
 
 ###### 1.2.1. Create an empty directory somewhere on your disk. 
 
