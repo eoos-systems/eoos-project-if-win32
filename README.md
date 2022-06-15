@@ -8,6 +8,9 @@ with aim to ISO 26262. Source code is complied with AUTOSAR C++14 and MISRA C++ 
 
 ## 1. How-to Build Project
 
+EOOS is a static library for linkage with other Windows applications. This EOOS project based on CMake that builds 
+the static library and installs it on Windows for being found by CMake projects of the Windows applications.
+
 #### 1.1. Prerequisites on Windows
 
 The process described below is passed on Windows 10 (64-bit) and requires the next tool to be installed on it:
@@ -20,10 +23,10 @@ Having Git installed, you should sign out form and sign in to Windows to refresh
 in CMD that Git and Bash can be executed properly.
 
 ```
-C:\>git --version
+C:\> git --version
 git version 2.26.0.windows.1
  
-C:\>bash --version
+C:\> bash --version
 GNU bash, version 4.4.23(1)-release (x86_64-pc-msys)
 Copyright (C) 2016 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -39,7 +42,7 @@ Having Git installed, you should sign out form and sign in to Windows to refresh
 in CMD that CMake can be executed properly.
 
 ```
-C:\>cmake --version
+C:\> cmake --version
 cmake version 3.17.0
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
 ```
@@ -49,7 +52,7 @@ CMake suite maintained and supported by Kitware (kitware.com/cmake).
 Having a tool installed, you shell check in CMD that MSBuild can be executed properly with the similar output.
 
 ```
-C:\>MSBuild.exe -version
+C:\> MSBuild.exe -version
 Microsoft (R) Build Engine version 16.5.0+d4cbfca49 for .NET Framework
 Copyright (C) Microsoft Corporation. All rights reserved.
 
@@ -63,7 +66,7 @@ Having Doxygen installed, you should sign out form and sign in to Windows to ref
 in CMD that Doxygen can be executed properly.
 
 ```
-C:\>Doxygen -v
+C:\> Doxygen -v
 1.9.2 (caa4e3de211fbbef2c3adf58a6bd4c86d0eb7cb8)
 ```
 
@@ -74,7 +77,7 @@ Having Graphviz installed, you should sign out form and sign in to Windows to re
 in CMD that Graphviz can be executed properly.
 
 ```
-C:\>dot -version
+C:\> dot -version
 dot - graphviz version 2.49.3 (20211023.0002)
 ```
 
@@ -85,8 +88,8 @@ dot - graphviz version 2.49.3 (20211023.0002)
 For instance we will create *C:\REPOSITORY*.
 
 ```
-C:\>mkdir.exe REPOSITORY
-C:\>cd REPOSITORY
+C:\> mkdir.exe REPOSITORY
+C:\> cd REPOSITORY
 C:\REPOSITORY>
 ```
 
@@ -95,17 +98,68 @@ C:\REPOSITORY>
 For instance we will clone it to *EOOS* directory by SSH.
 
 ```
-C:\REPOSITORY\>git clone --branch master git@gitflic.ru:baigudin-software/eoos-project-if-win32.git EOOS
+C:\REPOSITORY\> git clone --branch master git@gitflic.ru:baigudin-software/eoos-project-if-win32.git EOOS
 ```
 
 ###### 1.2.3. Go the EOOS directory
 
 ```
-C:\REPOSITORY\>cd EOOS
+C:\REPOSITORY\> cd EOOS
 ```
 
 ###### 1.2.4. Initialize and update all submodules of the repository
 
 ```
-C:\REPOSITORY\EOOS>git submodule update --init
+C:\REPOSITORY\EOOS> git submodule update --init
 ```
+
+#### 1.3. Source Code Build and Installation
+
+###### 1.3.1. Build and Installation for Developing on EOOS
+
+Run CMD in *Run as administrator* mode to be able to install EOOS on Windows and execute the commade below.
+
+```
+C:\REPOSITORY\EOOS> mkdir build
+C:\REPOSITORY\EOOS> cd build
+C:\REPOSITORY\EOOS\build> cmake ..
+C:\REPOSITORY\EOOS\build> cmake --build . --config RelWithDebInfo
+C:\REPOSITORY\EOOS\build> cmake --install . --config RelWithDebInfo
+```
+
+Having done all the steps, EOOS will be installed to the *C:\Program Files (x86)* directory, and you will be able 
+to find EOOS in by using `find_package()` command in your CMake project.
+
+An example of your root *CMakeLists.txt* may be the next:
+
+```
+cmake_minimum_required(VERSION 3.20)
+project(eoos-application VERSION 1.0.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+find_package(Eoos 0.9.0 REQUIRED)
+
+add_executable(application)
+
+target_sources(application
+PRIVATE
+    "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+)
+
+target_link_libraries(application
+PRIVATE
+    eoos::eoos
+)
+
+set_target_properties(application PROPERTIES
+    OUTPUT_NAME EoosApplication
+)
+```
+
+So that you will build *EoosApplication.exe* executable file.
+
+> For more examples and fast start please see 
+> the [EOOS Automotive Sample Applications](https://gitflic.ru/project/baigudin-software/eoos-project-sample-applications) repository
