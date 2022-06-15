@@ -117,7 +117,7 @@ C:\REPOSITORY\EOOS> git submodule update --init
 
 ###### 1.3.1. Build and Installation for Developing on EOOS
 
-Run CMD in *Run as administrator* mode to be able to install EOOS on Windows and execute the commade below.
+Run CMD in *Run as administrator* mode to be able to install EOOS on Windows and execute the commads below.
 
 ```
 C:\REPOSITORY\EOOS> mkdir build
@@ -126,6 +126,9 @@ C:\REPOSITORY\EOOS\build> cmake ..
 C:\REPOSITORY\EOOS\build> cmake --build . --config RelWithDebInfo
 C:\REPOSITORY\EOOS\build> cmake --install . --config RelWithDebInfo
 ```
+
+None that the *--config* parameters can be one of *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel*, but for developing
+purpose we recommend to pass *RelWithDebInfo*.
 
 Having done all the steps, EOOS will be installed to the *C:\Program Files (x86)* directory, and you will be able 
 to find EOOS in by using `find_package()` command in your CMake project.
@@ -159,7 +162,30 @@ set_target_properties(application PROPERTIES
 )
 ```
 
-So that you will build *EoosApplication.exe* executable file.
+Thus, you will build *EoosApplication.exe* executable file.
 
 > For more examples and fast start please see 
 > the [EOOS Automotive Sample Applications](https://gitflic.ru/project/baigudin-software/eoos-project-sample-applications) repository
+
+###### 1.3.2. Build for Testing EOOS
+
+This chapter must be useful for IOS developers and CI/CD engineers, but not prohibited to be used by any other for sure.
+
+To build the project with Unit Tests you have to execute the commands below.
+
+```
+C:\REPOSITORY\EOOS> mkdir build
+C:\REPOSITORY\EOOS> cd build
+C:\REPOSITORY\EOOS\build> cmake -DEOOS_ENABLE_TESTS=ON ..
+C:\REPOSITORY\EOOS\build> cmake --build . --config RelWithDebInfo
+```
+
+To execute Unit Tests run the commands below.
+
+```
+C:\REPOSITORY\EOOS\build> .\codebase\tests\RelWithDebInfo\EoosTests.exe --gtest_shuffle
+```
+
+> On developing and intergation stages the *--config* parameters must be checked for all the 
+> *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel* configurations.
+
