@@ -14,8 +14,8 @@ The process described below is passed on Windows 10 (64-bit) and requires the ne
 
 **1. Install [Git for Windows](https://git-scm.com/downloads)**
 
-The installer automatically sets the `Path` system environment variable.
-But you have to set manually `C:\Program Files\Git\binpath` to the `Path` user environment variable to execute Bash if it needs. 
+The installer automatically sets the *Path* system environment variable.
+But you have to set manually *C:\Program Files\Git\binpath* to the *Path* user environment variable to execute Bash if it needs. 
 Having Git installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
 in CMD that Git and Bash can be executed properly.
 
