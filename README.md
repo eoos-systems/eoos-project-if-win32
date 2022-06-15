@@ -6,13 +6,14 @@ with aim to ISO 26262. Source code is complied with AUTOSAR C++14 and MISRA C++ 
 
 ---
 
-# 1. How-to Build Project
+### 1. How-to Build Project
 
-## 1.1 Prerequisites on Windows
+#### 1.1 Prerequisites on Windows
 
 The process described below is passed on Windows 10 (64-bit) and requires the next tool to be installed on it:
 
 **1. Install [Git for Windows](https://git-scm.com/downloads)**
+
 The installer automatically sets the `Path` system environment variable.
 But you have to set manually `C:\Program Files\Git\binpath` to the `Path` user environment variable to execute Bash if it needs. 
 Having Git installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
