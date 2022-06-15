@@ -6,7 +6,7 @@ with aim to ISO 26262. Source code is complied with AUTOSAR C++14 and MISRA C++ 
 
 ---
 
-### 1. How-to Build Project
+## 1. How-to Build Project
 
 #### 1.1. Prerequisites on Windows
 
