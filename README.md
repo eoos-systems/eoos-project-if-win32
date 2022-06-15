@@ -8,7 +8,7 @@ with aim to ISO 26262. Source code is complied with AUTOSAR C++14 and MISRA C++ 
 
 ### 1. How-to Build Project
 
-#### 1.1 Prerequisites on Windows
+##### 1.1 Prerequisites on Windows
 
 The process described below is passed on Windows 10 (64-bit) and requires the next tool to be installed on it:
 
