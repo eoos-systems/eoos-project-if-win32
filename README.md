@@ -1,8 +1,16 @@
 # EOOS Automotive WIN32
 ---
 
-EOOS Automotive for Win32 API based OSs is software for automotive sphere been developing 
-with aim to ISO 26262. Source code is complied with AUTOSAR C++14 and MISRA C++ rules.
+EOOS Automotive for WIN32 API based operating systems is a **C++ library** for cross-platform developing 
+applications in automotive sphere. 
+
+EOOS Automotive is developed in **C++98** programming language and supports features of **C++11** programming 
+language depending on compiler options that **allows to consider wide criteria when selecting a suitable programming language** 
+on initiation step of product development.
+
+EOOS Automotive is developed within **ISO C++ standards**, complied with **AUTOSAR C++14 Coding Guidelines** 
+and **MISRA C++:2008**, and based on **ISO 26262** that means the software based on EOOS 
+**can be used in critical and safety-related systems**.
 
 ---
 
