@@ -8,7 +8,7 @@ features of **C++11** programming language depending on compiler options that
 of product development.
 
 EOOS Automotive WIN32 is developed within **ISO C++ standards**, complied with **AUTOSAR C++14 Coding Guidelines** 
-and **MISRA C++:2008**, and based on **ISO 26262** that means the software based on EOOS 
+and **MISRA C++:2008**, and relies on **ISO 26262** that means applications based on EOOS 
 **can be used in critical and safety-related systems**.
 
 ---
