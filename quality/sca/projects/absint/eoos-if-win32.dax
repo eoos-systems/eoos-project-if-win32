@@ -173,6 +173,7 @@
                 <automatic-include>system/include/private/sys.Mutex.hpp</automatic-include>
                 <automatic-include>system/include/private/sys.NonCopyable.hpp</automatic-include>
                 <automatic-include>system/include/private/sys.Object.hpp</automatic-include>
+                <automatic-include>system/include/private/sys.OutStreamChar.hpp</automatic-include>
                 <automatic-include>system/include/private/sys.Scheduler.hpp</automatic-include>
                 <automatic-include>system/include/private/sys.Semaphore.hpp</automatic-include>
                 <automatic-include>system/include/private/sys.System.hpp</automatic-include>

@@ -7,8 +7,8 @@ features of **C++11** programming language depending on compiler options that
 **allows to consider wide criteria when selecting a suitable programming language** on initiation step 
 of product development.
 
-EOOS Automotive WIN32 is developed within **ISO C++ standards**, complied with **AUTOSAR C++14 Coding Guidelines** 
-and **MISRA C++:2008**, and relies on **ISO 26262** that means applications based on EOOS 
+EOOS Automotive WIN32 is developed within **ISO C++ standards**, complied with **MISRA C++:2008** and 
+**AUTOSAR C++14 Coding Guidelines**, and relies on **ISO 26262** that means applications based on EOOS 
 **can be used in critical and safety-related systems**.
 
 ---
@@ -150,18 +150,18 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(Eoos 0.9.0 REQUIRED)
+find_package(EOOS 0.9.0 REQUIRED)
 
 add_executable(application)
 
 target_sources(application
 PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/main.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Program.cpp"
 )
 
 target_link_libraries(application
 PRIVATE
-    eoos::eoos
+    eoos::main
 )
 
 set_target_properties(application PROPERTIES
@@ -176,7 +176,13 @@ Thus, you will build *EoosApplication.exe* executable file.
 
 ###### 1.3.2. Build for Testing EOOS
 
-This chapter must be useful for IOS developers and CI/CD engineers, but not prohibited to be used by any other for sure.
+This chapter must be useful for EOOS developers and CI/CD engineers, but not prohibited to be used by any other for sure.
+
+**Note:** Before building, if *build* directory exists, you can remove it by executing the command below.
+
+```
+C:\REPOSITORY\EOOS> rmdir build /q /s
+```
 
 To build the project with Unit Tests you have to execute the commands below.
 
@@ -187,7 +193,7 @@ C:\REPOSITORY\EOOS\build> cmake -DEOOS_ENABLE_TESTS=ON ..
 C:\REPOSITORY\EOOS\build> cmake --build . --config RelWithDebInfo
 ```
 
-To execute Unit Tests run the commands below.
+To execute the Unit Tests run the commands below.
 
 ```
 C:\REPOSITORY\EOOS\build> .\codebase\tests\RelWithDebInfo\EoosTests.exe --gtest_shuffle
