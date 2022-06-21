@@ -59,7 +59,7 @@ CMake suite maintained and supported by Kitware (kitware.com/cmake).
 Having a tool installed, you shell check in CMD that MSBuild can be executed properly with the similar output.
 
 ```
-C:\> MSBuild.exe -version
+C:\> MSBuild -version
 Microsoft (R) Build Engine version 16.5.0+d4cbfca49 for .NET Framework
 Copyright (C) Microsoft Corporation. All rights reserved.
 
@@ -95,7 +95,7 @@ dot - graphviz version 2.49.3 (20211023.0002)
 For instance we will create *C:\REPOSITORY*.
 
 ```
-C:\> mkdir.exe REPOSITORY
+C:\> mkdir REPOSITORY
 C:\> cd REPOSITORY
 C:\REPOSITORY>
 ```
@@ -196,7 +196,7 @@ C:\REPOSITORY\EOOS\build> cmake --build . --config RelWithDebInfo
 To execute the Unit Tests run the commands below.
 
 ```
-C:\REPOSITORY\EOOS\build> .\codebase\tests\RelWithDebInfo\EoosTests.exe --gtest_shuffle
+C:\REPOSITORY\EOOS\build> .\codebase\tests\RelWithDebInfo\EoosTests --gtest_shuffle
 ```
 
 > On developing and intergation stages the *--config* parameters must be checked for all the 
