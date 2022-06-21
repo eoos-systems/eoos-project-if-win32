@@ -11,7 +11,7 @@ EOOS Automotive WIN32 is developed within **ISO C++ standards**, complied with *
 **AUTOSAR C++14 Coding Guidelines**, and relies on **ISO 26262** that means applications based on EOOS 
 **can be used in critical and safety-related systems**.
 
-**EOOS copyrights reserved in [Rospatent]( https://www1.fips.ru/registers-doc-view/fips_servlet?DB=EVM&DocNumber=2017664105&TypeFile=html)**. 
+**EOOS copyrights reserved in [Rospatent Federal Service for Intellectual Property]( https://www1.fips.ru/registers-doc-view/fips_servlet?DB=EVM&DocNumber=2017664105&TypeFile=html)**. 
 
 ---
 
