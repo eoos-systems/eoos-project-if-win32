@@ -1,6 +1,6 @@
 # EOOS Automotive WIN32
 ---
-**EOOS copyrights reserved in [Rospatent Federal Service for Intellectual Property]( https://www1.fips.ru/registers-doc-view/fips_servlet?DB=EVM&DocNumber=2017664105&TypeFile=html)** 
+**EOOS copyrights reserved in [Rospatent Federal Service for Intellectual Property]( https://www1.fips.ru/registers-doc-view/fips_servlet?DB=EVM&DocNumber=2017664105&TypeFile=html), Russian Federation**
 
 EOOS Automotive for WIN32 API based operating systems is a **C++ library for cross-platform development** of 
 applications in automotive sphere. The library is developed in **C++98** programming language and supports 
