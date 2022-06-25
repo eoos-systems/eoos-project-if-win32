@@ -45,7 +45,9 @@ This is free software; you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 ```
 
-###### 1.1.2. Install [CMake](https://cmake.org/download/)
+###### 1.1.2. Install [CMake 3.20 or higher](https://cmake.org/download/)
+
+CMake minimum required version 3.20 for EOOS project.
 
 The installer automatically sets the *Path* system environment variable if you chose this way during installation. 
 Having Git installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
@@ -53,7 +55,7 @@ in CMD that CMake can be executed properly.
 
 ```
 C:\> cmake --version
-cmake version 3.17.0
+cmake version 3.20.6
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
 ```
 
