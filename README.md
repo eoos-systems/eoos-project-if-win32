@@ -19,6 +19,8 @@ EOOS Automotive WIN32 is developed within **ISO C++ standards**, complied with *
 EOOS is a static library for linkage with other Windows applications. This EOOS project based on CMake that builds 
 the static library and installs it on Windows for being found by CMake projects of the Windows applications.
 
+
+
 #### 1.1. Prerequisites on Windows
 
 The process described below is passed on Windows 10 (64-bit) and requires the next tool to be installed on it:
@@ -89,6 +91,23 @@ C:\> dot -version
 dot - graphviz version 2.49.3 (20211023.0002)
 ```
 
+###### 1.1.6. Optionally install [Python 3.7 or higher](https://www.python.org/downloads/) for future automation
+
+Allow the installer to set *Path*. After the installation install the additional modules.
+
+```
+C:\>pip install tqdm
+Successfully installed colorama-0.4.4 tqdm-4.63.0
+ 
+C:\>pip install openpyxl
+Successfully installed et-xmlfile-1.1.0 openpyxl-3.0.9
+ 
+C:\>python --version
+Python 3.10.2
+```
+
+
+
 #### 1.2. Obtain Git Repository
 
 ###### 1.2.1. Create an empty directory somewhere on your disk. 
@@ -120,6 +139,8 @@ C:\REPOSITORY\> cd EOOS
 ```
 C:\REPOSITORY\EOOS> git submodule update --init
 ```
+
+
 
 #### 1.3. Source Code Build and Installation
 
