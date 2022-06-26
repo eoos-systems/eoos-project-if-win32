@@ -225,4 +225,3 @@ C:\REPOSITORY\EOOS\build> .\codebase\tests\RelWithDebInfo\EoosTests --gtest_shuf
 
 > On developing and intergation stages the *--config* parameter must be checked for all the 
 > *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel* configurations.
-
