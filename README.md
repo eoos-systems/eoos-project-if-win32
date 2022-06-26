@@ -158,7 +158,7 @@ C:\REPOSITORY\EOOS\build> cmake --build . --config RelWithDebInfo
 C:\REPOSITORY\EOOS\build> cmake --install . --config RelWithDebInfo
 ```
 
-None that the *--config* parameters can be one of *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel*, but for developing
+None that the *--config* parameter can be one of *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel*, but for developing
 purpose we recommend to pass *RelWithDebInfo*.
 
 Having done all the steps, EOOS will be installed to the *C:\Program Files (x86)* directory, and you will be able 
@@ -223,6 +223,6 @@ To execute the Unit Tests run the commands below.
 C:\REPOSITORY\EOOS\build> .\codebase\tests\RelWithDebInfo\EoosTests --gtest_shuffle
 ```
 
-> On developing and intergation stages the *--config* parameters must be checked for all the 
+> On developing and intergation stages the *--config* parameter must be checked for all the 
 > *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel* configurations.
 
