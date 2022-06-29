@@ -76,7 +76,7 @@ function Build()
         if($build -eq "ALL")
         {
             Out-Note -String "Build CMake project" -Inf
-            cmake --build . --config Debug
+            cmake --build . --config RelWithDebInfo
         }        
         else
         {
