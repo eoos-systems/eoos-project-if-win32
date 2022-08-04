@@ -122,6 +122,8 @@ function Build()
                 # @note Remove --gtest_filter key if it set
                 # --gtest_filter=lib_SemaphoreTest*
                 # --gtest_filter=lib_SharedPointerTest*
+                # --gtest_filter=lib_BaseStringStaticTest_char_t* 
+                # --gtest_filter=lib_BaseStringDynamicTest_char_t*
                 #
                 # --gtest_shuffle
                 .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle
@@ -129,8 +131,7 @@ function Build()
             else
             {
                 Out-Note "The unit tests executable file does not exist" -Err
-            }        
-            
+            }
         }
     }
     
