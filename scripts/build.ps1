@@ -76,7 +76,8 @@ function Build()
         if($build -eq "ALL")
         {
             Out-Note -String "Build CMake project" -Inf
-            cmake --build . --config RelWithDebInfo
+            cmake --build . --config Debug
+            # --config RelWithDebInfo
         }        
         else
         {
@@ -124,6 +125,7 @@ function Build()
                 # --gtest_filter=lib_SharedPointerTest*
                 # --gtest_filter=lib_BaseStringStaticTest_char_t* 
                 # --gtest_filter=lib_BaseStringDynamicTest_char_t*
+                # --gtest_filter=lib_LinkedListTest*
                 #
                 # --gtest_shuffle
                 .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle
