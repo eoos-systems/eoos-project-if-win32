@@ -14,7 +14,7 @@
  #>
 param(
     [switch]$clean,
-    [string]$build,
+    [switch]$build,
     [switch]$run,
     [switch]$coverage,
     [string]$sca
