@@ -3,7 +3,6 @@
  #
  # @param -clean             - Cleans the project by removing the 'build' directory.
  # @param -build <ALL|TESTS> - Compiles the project.
- # @param -install           - Installs the project.
  # @param -run               - Runs unit tests after the build.
  # @param -coverage          - Build code coverage report.
  # @param -sca <IP Server>   - Runs the SCA report creation.
@@ -16,7 +15,6 @@
 param(
     [switch]$clean,
     [string]$build,
-    [switch]$install,
     [switch]$run,
     [switch]$coverage,
     [string]$sca
@@ -53,6 +51,7 @@ function Build()
             Remove-Item -Path $pathScriptToBuildDir -Recurse -Force
         }
     }
+    
     if( (Test-Path -Path $pathScriptToBuildDir) -eq $false )
     {
         Out-Note -String "Create build directory" -Inf
@@ -64,7 +63,7 @@ function Build()
     cd -Path $pathScriptToBuildDir # CDIR: REPOSITORY/build>
        
     Out-Note -String "Generate CMake project" "INF" -Inf
-    cmake -DEOOS_ENABLE_TESTS=ON -DCMAKE_INSTALL_PREFIX=CMakeInstallDir ..
+    cmake -DEOOS_ENABLE_TESTS=ON ..
     
     if($build)
     {
@@ -73,67 +72,28 @@ function Build()
             Out-Note -String "Remove Unit Tests executable file" -Inf
             Remove-Item -Path ".\codebase\tests\Debug\EoosTests.exe"
         }
-        if($build -eq "ALL")
-        {
-            Out-Note -String "Build CMake project" -Inf
-            cmake --build . --config Debug
-            # --config RelWithDebInfo
-        }        
-        else
-        {
-            if($build -eq "TESTS")
-            {
-                Out-Note -String "Built CMake Unit Tests target only" -Inf
-                MSBuild.exe .\codebase\tests\target-eoos-unit-tests.vcxproj -maxCpuCount:8  -verbosity:minimal
-            }
-            else
-            {
-                Out-Note -String "Argument -build is wrong. ALL or TESTS is accessible" -Err
-                cd -Path $pathBuildToScriptDir # CDIR: REPOSITORY/scripts>
-                exit;
-            }
-        }            
+        Out-Note -String "Build CMake project" -Inf
+        cmake --build . --config Debug
     }
-    
-    if($install)
-    {    
-        Out-Note -String "Install CMake project" -Inf
-        cmake --install . --config Debug
-    }
-    
+        
     if($run)
     {
         Out-Note -String "Run unit tests" -Inf
-        if($install)
+        if( Test-Path -Path ".\codebase\tests\Debug\EoosTests.exe" )
         {
-            if( Test-Path -Path ".\CMakeInstallDir\bin\EoosTests.exe" )
-            {
-                .\CMakeInstallDir\bin\EoosTests.exe --gtest_shuffle
-            }                
-            else
-            {
-                Out-Note "The unit tests executable file does not exist" -Err
-            }
-            
-        }
+            # @note Remove --gtest_filter key if it set
+            # --gtest_filter=lib_SemaphoreTest*
+            # --gtest_filter=lib_SharedPointerTest*
+            # --gtest_filter=lib_BaseStringStaticTest_char_t* 
+            # --gtest_filter=lib_BaseStringDynamicTest_char_t*
+            # --gtest_filter=lib_LinkedListTest*
+            #
+            # --gtest_shuffle
+            .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle
+        }                
         else
         {
-            if( Test-Path -Path ".\codebase\tests\Debug\EoosTests.exe" )
-            {
-                # @note Remove --gtest_filter key if it set
-                # --gtest_filter=lib_SemaphoreTest*
-                # --gtest_filter=lib_SharedPointerTest*
-                # --gtest_filter=lib_BaseStringStaticTest_char_t* 
-                # --gtest_filter=lib_BaseStringDynamicTest_char_t*
-                # --gtest_filter=lib_LinkedListTest*
-                #
-                # --gtest_shuffle
-                .\codebase\tests\Debug\EoosTests.exe --gtest_shuffle
-            }                
-            else
-            {
-                Out-Note "The unit tests executable file does not exist" -Err
-            }
+            Out-Note "The unit tests executable file does not exist" -Err
         }
     }
     
