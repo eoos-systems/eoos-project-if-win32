@@ -1,0 +1,577 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.AbstractBaseString.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.AbstractBaseString.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2017-2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_ABSTRACTBASESTRING_HPP_
+#define LIB_ABSTRACTBASESTRING_HPP_
+
+#include "lib.Object.hpp"
+#include "api.String.hpp"
+#include "lib.CharTrait.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+
+/**
+ * @class AbstractBaseString&lt;T,R,A&gt;
+ * @brief Abstract base string class.
+ *
+ * @tparam T A data type of string characters.
+ * @tparam R A character traits.
+ * @tparam A A heap memory allocator class.
+ */
+template &lt;typename T, class R, class A = Allocator&gt;
+class AbstractBaseString : public Object&lt;A&gt;, public api::String&lt;T&gt;
+{
+    typedef Object&lt;A&gt; Parent;
+
+public:
+
+    using api::String&lt;T&gt;::getLength;
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~AbstractBaseString()
+<span style = "background-color:#dfd">    {
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
+<span style = "background-color:#dfd">    {
+        return Parent::isConstructed();
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Collection::isEmpty()
+     */
+    virtual bool_t isEmpty() const ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
+<span style = "background-color:#dfd">    {</span>
+        bool_t res;
+<span style = "background-color:#dfd">        size_t const length( getLength() );
+        if(length == 0U)</span>
+        {
+<span style = "background-color:#dfd">            res = true;
+        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            res = false;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::String::copy(const api::String&lt;T&gt;&amp;)
+     */
+    virtual bool_t copy(api::String&lt;T&gt; const&amp; string)
+<span style = "background-color:#dfd">    {</span>
+        bool_t res;
+<span style = "background-color:#dfd">        if( isConstructed() &amp;&amp; string.isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            T const* const str( string.getChar() );
+            res = copyRaw(str);
+        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            res = false;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::String::concatenate(const api::String&lt;T&gt;&amp;)
+     */
+    virtual bool_t concatenate(api::String&lt;T&gt; const&amp; string)
+<span style = "background-color:#dfd">    {</span>
+        bool_t res;
+<span style = "background-color:#dfd">        if( isConstructed() &amp;&amp; string.isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            T const* const str( string.getChar() );
+            res = concatenateRaw(str);            
+        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            res = false;            </span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::String::isEqualTo(const api::String&lt;T&gt;&amp;)
+     */
+    virtual bool_t isEqualTo(api::String&lt;T&gt; const&amp; string) const
+<span style = "background-color:#dfd">    {</span>
+        bool_t res;
+<span style = "background-color:#dfd">        if( isConstructed() &amp;&amp; string.isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            T const* const str( string.getChar() );
+            res = isEqualToRaw(str);   
+        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            res = false;            </span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+    
+    /**
+     * @brief Converts an integer number to this string.
+     *
+     * The function converts an integer value into a character string using the base parameter,
+     * which has to be 2, 8, 10, or 16 based numerals for converting to an appropriate numeral system.
+     *
+     * Mark that only if the base is decimal, a passed number is available to be negative values,
+     * and the resulting string of these values is preceded with a minus sign. In addition,
+     * a hexadecimal number includes lower case characters, and any resulting strings do not contain
+     * any suffixes or prefixes for identifying a numeral system.
+     *
+     * @note You need to use `AbstractBaseString.template convert&lt;I&gt;(value, base);` syntax,
+     * if you have to specify the template argument type explicitly.
+     *
+     * @param value A value that would be converted to this string.
+     * @param base  A numerical base used to represent a value as this string.
+     * @return True if the conversion has been completed successfully.
+     */
+    template &lt;typename I&gt;
+    bool_t convert(I const value, Number::Base const base = Number::BASE_10) ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
+<span style = "background-color:#dfd">    {
+        return convertToString(value, base);
+    } </span>
+
+    /**
+     * @brief Assignment by sum operator.
+     *
+     * @param source A source object interface.
+     * @return Reference to this object.
+     */
+    AbstractBaseString&amp; operator+=(api::String&lt;T&gt; const&amp; source)
+<span style = "background-color:#dfd">    {
+        static_cast&lt;void&gt;( concatenate(source) );
+        return *this;
+    }</span>
+
+    /**
+     * @brief Assignment by sum operator.
+     *
+     * @param source A source character string.
+     * @return Reference to this object.
+     */
+    AbstractBaseString&amp; operator+=(T const* const source)
+<span style = "background-color:#dfd">    {
+        static_cast&lt;void&gt;( concatenateRaw(source) );
+        return *this;
+    }    </span>
+
+protected:
+
+    /**
+     * @brief Constructor.
+     */
+    AbstractBaseString()
+<span style = "background-color:#dfd">        : Object&lt;A&gt;()
+        , api::String&lt;T&gt;() {
+    }</span>
+
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    AbstractBaseString(AbstractBaseString const&amp; obj)
+<span style = "background-color:#dfd">        : Object&lt;A&gt;(obj)
+        , api::String&lt;T&gt;() {
+    }</span>
+
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */       
+    AbstractBaseString&amp; operator=(AbstractBaseString const&amp; obj)
+<span style = "background-color:#dfd">    {
+        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+        {
+<span style = "background-color:#dfd">            Parent::operator=(obj);</span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }    </span>
+
+    #if EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */       
+    AbstractBaseString(AbstractBaseString&amp;&amp; obj) noexcept 
+<span style = "background-color:#dfd">        : Object&lt;A&gt;( move(obj) )
+        , api::String&lt;T&gt;(){
+    }   </span>
+
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    AbstractBaseString&amp; operator=(AbstractBaseString&amp;&amp; obj) &amp; noexcept
+<span style = "background-color:#dfd">    {
+        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+        {
+<span style = "background-color:#dfd">            Parent::operator=( move(obj) );            </span>
+        }        
+<span style = "background-color:#dfd">        return *this;
+    }        </span>
+
+    #endif // EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @brief Returns a calculated string length.
+     *
+     * @param str A character string would be measured.
+     * @return A length of the passed string.
+     */
+    static size_t getLengthRaw(T const* str)
+<span style = "background-color:#dfd">    {
+        size_t len( 0U ); 
+        T const null( R::getTerminator() );
+        while( *str != null )</span>
+        {
+<span style = "background-color:#dfd">            ++str; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
+            ++len;
+        }
+        return len;
+    }</span>
+
+    /**
+     * @brief Copies a string to a string.
+     *
+     * @param dst A destination array where the content would be copied.
+     * @param src A character string to be copied.
+     * @param cnt Destination character string size.     
+     */
+    static void copyRaw3(T* dst, T const* src, size_t cnt)
+<span style = "background-color:#dfd">    {
+        if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            T const null( R::getTerminator() );
+            while(true)</span>
+            {
+<span style = "background-color:#dfd">                if( cnt == 0U )</span>
+                {
+<span style = "background-color:#dfd">                    *dst = null;
+                    break;</span>
+                }     
+<span style = "background-color:#dfd">                *dst = *src;
+                --cnt;
+                if( *dst == null )</span>
+                {
+<span style = "background-color:#dfd">                    break;</span>
+                }
+<span style = "background-color:#dfd">                ++dst;
+                ++src;
+            }</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @brief Concatenates two strings.
+     *
+     * @param dst A destination character string where the content would be appended.
+     * @param src An appended character string.
+     * @param cnt Destination character string length that cannot be less than dst string length.     
+     */
+    static void concatenateRaw3(T* dst, T const* src, size_t cnt)
+<span style = "background-color:#dfd">    {
+        if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            T const null( R::getTerminator() );
+            while(true)</span>
+            {
+<span style = "background-color:#dfd">                if(*dst == null)</span>
+                {
+<span style = "background-color:#dfd">                    break;</span>
+                }
+<span style = "background-color:#dfd">                ++dst;
+                --cnt;
+            }
+            copyRaw3(dst, src, cnt);</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+    
+    /**
+     * @brief Compares two strings.
+     *
+     * @param string A string object interface to be compared with.
+     * @return true if strings equal to each other.
+     */
+    static bool_t isEqualRaw2(T const* str1, T const* str2)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( (str1 != NULLPTR) &amp;&amp; (str2 != NULLPTR) )</span>
+        {        
+<span style = "background-color:#dfd">            T const null( R::getTerminator() );
+            while(true)</span>
+            {
+<span style = "background-color:#dfd">                res = *str1 == *str2;
+                if( (*str1 == null) || (res == false) )</span>
+                {
+<span style = "background-color:#dfd">                    break;</span>
+                }
+<span style = "background-color:#dfd">                ++str1; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
+                ++str2; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
+            }</span>
+        }
+<span style = "background-color:#dfd">        return res;    
+    }</span>
+
+private:
+
+    /**
+     * @brief Copies a passed string into this string.
+     *
+     * @param str A character string to be copied.
+     * @return True if a passed string has been copied successfully.
+     */
+    virtual bool_t copyRaw(T const* str) = 0;
+
+    /**
+     * @brief Concatenates a passed string to this string.
+     *
+     * @param str A character string to be appended.
+     * @return True if a passed string has been appended successfully.
+     */
+    virtual bool_t concatenateRaw(T const* str) = 0;
+
+    /**
+     * @brief Compares this string with a passed string lexicographically.
+     *
+     * @param string A string object interface to be compared with.
+     * @return true if this string equals to a given string.
+     */
+    virtual bool_t isEqualToRaw(T const* str) const = 0;
+    
+    /**
+     * @brief Converts an integer number to a string.
+     *
+     * The function converts an integer value into a character string using the base parameter,
+     * which has to be 2, 8, 10, or 16 based numerals for converting to an appropriate numeral system.
+     *
+     * @note See exceptions below:
+     *
+     *       Exception 1: Minimum negative value can be `T_MIN + 1` or greater.
+     *
+     *       Exception 2: Only if the base is decimal, a passed number is available to be negative value,
+     *       and the resulting string of these values is preceded with a minus sign. 
+     *       
+     *       Exception 3: A hexadecimal number includes lower case characters, and any resulting strings 
+     *       do not contain any suffixes or prefixes for identifying a numeral system.
+     *
+     * @todo Rework the implementation to avoid the exceptions.
+     *
+     * @param val  A value that would be converted to a string.
+     * @param base A numerical base used to represent a value as a string.
+     * @return True if the conversion has been completed successfully.
+     */
+    template &lt;typename I&gt;
+    bool_t convertToString(I const val, Number::Base const base)
+<span style = "background-color:#dfd">    {
+        const int32_t LENGTH( ( static_cast&lt;int32_t&gt;( sizeof(I) ) * 8) + 1 );
+        bool_t res( true );
+        bool_t isNegative( false );
+        int32_t index( LENGTH - 1 );</span>
+        T temp[LENGTH];
+<span style = "background-color:#dfd">        temp[index] = R::getTerminator();
+		index -= 1;		</span>
+        do
+        {
+            // Test for available base
+<span style = "background-color:#dfd">            switch(base)</span>
+            {
+                case Number::BASE_2:
+                case Number::BASE_8:
+                case Number::BASE_16:
+                {
+<span style = "background-color:#dfd">                    isNegative = false;
+                    break;</span>
+                }
+                case Number::BASE_10:
+                {
+<span style = "background-color:#dfd">                    isNegative = ( !isPositive(val) ) ? true : false;
+                    break;</span>
+                }
+                default:
+                {
+<span style = "background-color:#dfd">                    res = false;</span>
+                    break;
+                }
+            }
+            // If the base is not available
+<span style = "background-color:#dfd">            if(res == false)</span>
+            {
+<span style = "background-color:#dfd">                break;</span>
+            }
+            // Prepare absolute value
+<span style = "background-color:#dfd">            I module( isNegative ? (0 - val) : val );
+            if( !isPositive(module) )</span>
+            {
+<span style = "background-color:#dfd">                res = false;
+                break;</span>
+            }
+            // Do the conversion
+            // @todo Revise possibility to declare index of size_t underlying type.
+            //       But in the case index will always more than or equal zero.
+            //       Thus, algorithm shall be re-worked.
+<span style = "background-color:#dfd">            while(index &gt;= 0)</span>
+            {
+<span style = "background-color:#dfd">                I digit( module % static_cast&lt;I&gt;(base) );
+                temp[index] = R::convertDigitToChar(digit);
+                index -= 1;
+                module = module / static_cast&lt;I&gt;(base);
+                if(module == 0)</span>
+                {
+<span style = "background-color:#dfd">                    break;</span>
+                }
+<span style = "background-color:#dfd">            }</span>
+            // Add minus
+<span style = "background-color:#dfd">            if( isNegative &amp;&amp; (index &gt;= 0) )</span>
+            {
+<span style = "background-color:#dfd">                temp[index] = R::getMinusSign();
+                index -= 1;</span>
+            }
+<span style = "background-color:#dfd">            res = true;</span>
+        }
+<span style = "background-color:#dfd">        while(false);
+        if(res == true)</span>
+        {
+<span style = "background-color:#dfd">			index += 1;
+            res = copyRaw(&amp;temp[index]);</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+    
+    /**
+     * @brief Tests if a value is signed or unsigned.
+     *
+     * @param value A value that would be tested.
+     * @return True if the value has been negative.
+     *
+     * @note The `volatile` keyword added, as the GCC 7.5.0 compiler doesn't call this function optimizing it for Release build.
+     *       This behavior is cause a bug in `itoa` function with -9223372036854775808 value of int64_t type trying to check module of the value.
+     *       Partial specialization of the template function for int64_t also doesn't help.
+     */
+    template &lt;typename I&gt;
+    static bool_t isPositive(volatile I value)
+<span style = "background-color:#dfd">    {
+        return ( (value &gt; 0) || (value == 0) ) ? true : false;
+    }</span>
+        
+    template &lt;typename T0&gt; friend bool_t operator==(api::String&lt;T0&gt; const&amp;, T0 const* const);
+    template &lt;typename T0&gt; friend bool_t operator==(T0 const* const, api::String&lt;T0&gt; const&amp;);
+    template &lt;typename T0&gt; friend bool_t operator!=(api::String&lt;T0&gt; const&amp;, T0 const* const);
+    template &lt;typename T0&gt; friend bool_t operator!=(T0 const* const, api::String&lt;T0&gt; const&amp;);
+};
+
+/**
+ * @brief Compares for equality of two strings.
+ *
+ * @param source1 A source object interface 1.
+ * @param source2 A source object interface 2.
+ * @return True if strings are equal.
+ */
+template &lt;typename T&gt;
+inline bool_t operator==(api::String&lt;T&gt; const&amp; source1, api::String&lt;T&gt; const&amp; source2)
+<span style = "background-color:#dfd">{
+    return source1.isEqualTo(source2);
+}</span>
+
+/**
+ * @brief Compares for equality of two strings.
+ *
+ * @param source1 A source object interface 1.
+ * @param source2 A source character string 2.
+ * @return True if strings are equal.
+ */
+template &lt;typename T&gt;
+inline bool_t operator==(api::String&lt;T&gt; const&amp; source1, T const* const source2)
+<span style = "background-color:#dfd">{
+    return AbstractBaseString&lt; T,CharTrait&lt;T&gt; &gt;::isEqualRaw2(source1.getChar(), source2);
+}</span>
+
+/**
+ * @brief Compares for equality of two strings.
+ *
+ * @param source1 A source character string 1.
+ * @param source2 A source object interface 2.
+ * @return True if strings are equal.
+ */
+template &lt;typename T&gt;
+inline bool_t operator==(T const* const source1, api::String&lt;T&gt; const&amp; source2)
+<span style = "background-color:#dfd">{
+    return AbstractBaseString&lt; T,CharTrait&lt;T&gt; &gt;::isEqualRaw2(source1, source2.getChar());
+}</span>
+
+/**
+ * @brief Compares for inequality of two strings.
+ *
+ * @param source1 A source object interface 1.
+ * @param source2 A source object interface 2.
+ * @return True if strings are not equal.
+ */
+template &lt;typename T&gt;
+inline bool_t operator!=(api::String&lt;T&gt; const&amp; source1, api::String&lt;T&gt; const&amp; source2)
+<span style = "background-color:#dfd">{
+    return !source1.isEqualTo(source2);
+}</span>
+
+/**
+ * @brief Compares for inequality of two strings.
+ *
+ * @param source1 A source object interface 1.
+ * @param source2 A source character string 2.
+ * @return True if strings are not  equal.
+ */
+template &lt;typename T&gt;
+inline bool_t operator!=(api::String&lt;T&gt; const&amp; source1, T const* const source2)
+<span style = "background-color:#dfd">{
+    return !AbstractBaseString&lt; T,CharTrait&lt;T&gt; &gt;::isEqualRaw2(source1.getChar(), source2);
+}</span>
+
+/**
+ * @brief Compares for inequality of two strings.
+ *
+ * @param source1 A source character string 1.
+ * @param source2 A source object interface 2.
+ * @return True if strings are not equal.
+ */
+template &lt;typename T&gt;
+inline bool_t operator!=(T const* const source1, api::String&lt;T&gt; const&amp; source2)
+<span style = "background-color:#dfd">{
+    return !AbstractBaseString&lt; T,CharTrait&lt;T&gt; &gt;::isEqualRaw2(source1, source2.getChar());
+}</span>
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_ABSTRACTBASESTRING_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

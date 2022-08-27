@@ -1,0 +1,359 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.UniquePointer.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.UniquePointer.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_UNIQUEPOINTER_HPP_
+#define LIB_UNIQUEPOINTER_HPP_
+
+#include "lib.Object.hpp"
+#include "api.SmartPointer.hpp"
+#include "lib.SmartPointerDeleter.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+
+#ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
+    
+/**
+ * @class UniquePointer&lt;T,D,A&gt;
+ * @brief Unique pointer.
+ *
+ * @tparam T Data type of an owning object.
+ * @tparam D Deleter type for an owning object. 
+ * @tparam A Heap memory allocator class.
+ */
+template &lt;typename T, class D = SmartPointerDeleter&lt;T&gt;, class A = Allocator&gt;
+class UniquePointer : public Object&lt;A&gt;, public api::SmartPointer&lt;T&gt;
+{
+    typedef UniquePointer&lt;T,D,A&gt; Self;
+    typedef Object&lt;A&gt; Parent;
+
+public:
+
+    /**
+     * @brief Constructor of an empty unique object.
+     */
+    UniquePointer() 
+<span style = "background-color:#dfd">        : Object&lt;A&gt;()
+        , api::SmartPointer&lt;T&gt;()
+        , pointer_ (NULLPTR) {
+        bool_t const isConstructed( construct() );
+        setConstructed(isConstructed);    
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @note If the unique object is not able to be constructed, an object passed by the pointer will be deleted.
+     *
+     * @param pointer A pointer to get ownership.
+     */
+    explicit UniquePointer(T* const pointer) 
+<span style = "background-color:#dfd">        : Object&lt;A&gt;()
+        , api::SmartPointer&lt;T&gt;()
+        , pointer_ (NULLPTR) {
+        bool_t const isConstructed( construct(pointer) );
+        setConstructed(isConstructed);    
+    }</span>
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~UniquePointer()
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            releasePointer();</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+    #if EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */       
+    UniquePointer(UniquePointer&amp;&amp; obj) noexcept 
+<span style = "background-color:#dfd">        : Object&lt;A&gt;( move(obj) )
+        , api::SmartPointer&lt;T&gt;()
+        , pointer_ (obj.pointer_) {
+    }   </span>
+
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    UniquePointer&amp; operator=(UniquePointer&amp;&amp; obj) &amp; noexcept
+<span style = "background-color:#dfd">    {
+        if( this != &amp;obj &amp;&amp; isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            releasePointer();
+            pointer_ = obj.pointer_;
+            Parent::operator=( move(obj) );            </span>
+        }        
+<span style = "background-color:#dfd">        return *this;
+    }        </span>
+
+    #endif // EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const ///&lt; SCA MISRA-C++:2008 Justified Rule 10-3-1 and Defected Rule 9-3-3
+<span style = "background-color:#dfd">    {
+        return Parent::isConstructed();
+    }</span>
+
+    /**
+     * @brief Casts to boolean data type comparing if the stored pointer does not equal to null.
+     *
+     * @return Comparation the stored pointer does not equal to null.
+     */    
+    operator bool_t() const 
+<span style = "background-color:#dfd">    {
+        return get() != NULLPTR;
+    }</span>
+
+    /**
+     * @brief Returns the result of dereferencing the stored pointer.
+     *
+     * @return The dereferenced stored pointer.
+     */
+    T&amp; operator*() const
+<span style = "background-color:#dfd">    {
+        return *get();
+    }</span>
+
+    /**
+     * @brief Returns the stored pointer.
+     *
+     * @return The stored pointer or NULLPTR if no pointer stored.
+     */
+    T* operator-&gt;() const
+<span style = "background-color:#dfd">    {
+        return get();
+    }</span>
+
+    /**
+     * @brief Returns an element of the stored array.
+     *
+     * @param index An element index.
+     * @return An element.
+     */    
+    T&amp; operator[](uint32_t const index) const
+<span style = "background-color:#dfd">    {
+        T* const pointer( get() );
+        return pointer[index];
+    }</span>
+
+    /**
+     * @copydoc eoos::api::SmartPointer::get()
+     */
+    virtual T* get() const
+<span style = "background-color:#dfd">    {
+        T* pointer( NULLPTR );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            pointer = pointer_;</span>
+        }
+<span style = "background-color:#dfd">        return pointer;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::SmartPointer::reset()
+     */   
+    virtual void reset()
+<span style = "background-color:#dfd">    {
+        reset(NULLPTR);
+    }</span>
+
+    /**
+     * @copydoc eoos::api::SmartPointer::reset(T*)
+     */
+    virtual void reset(T* ptr)
+<span style = "background-color:#dfd">    {
+		if (get() != ptr)</span>
+        {
+<span style = "background-color:#dfd">            Self temp(ptr);
+            swap(temp);
+        }
+    }</span>
+
+    /**
+     * @copydoc eoos::api::SmartPointer::getCount()
+     */
+    virtual int32_t getCount() const
+<span style = "background-color:#dfd">    {
+        int32_t counter( 0 );
+        if( isConstructed() &amp;&amp; (pointer_ != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            counter = 1;</span>
+        }
+<span style = "background-color:#dfd">        return counter;
+    }</span>
+    
+    /**
+     * @copydoc eoos::api::SmartPointer::isNull()
+     */       
+    virtual bool_t isNull() const
+<span style = "background-color:#dfd">    {
+        return get() == NULLPTR;        
+    }</span>
+    
+    /**
+     * @copydoc eoos::api::SmartPointer::isUnique()
+     */   
+    virtual bool_t isUnique() const
+<span style = "background-color:#dfd">    {
+        return getCount() == 1;
+    }</span>
+    
+    /**
+     * @brief Swaps this managed object with an object managed by given smart object.
+     *
+     * @param obj A smart object to swap managed objects.
+     */
+    void swap(UniquePointer&amp; obj)
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            if( obj.isConstructed() )</span>
+            {
+<span style = "background-color:#dfd">                T* const pointer( pointer_ );
+                pointer_ = obj.pointer_;
+                obj.pointer_ = pointer;</span>
+            }
+        }
+<span style = "background-color:#dfd">    }</span>
+    
+    /**
+     * @brief Releases ownership of the managed object.
+     *
+     * @return Released raw pointer.
+     */    
+    T* release()
+<span style = "background-color:#dfd">    {
+        T* pointer( pointer_ );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            pointer_ = NULLPTR;</span>
+        }
+<span style = "background-color:#dfd">        return pointer;
+    }</span>
+    
+protected:
+
+    using Parent::setConstructed;     
+
+private:
+
+    /**
+     * @brief Constructs this object.
+     *
+     * @param pointer A pointer to get ownership.
+     * @return True if this object has been constructed successfully.
+     */     
+    bool_t construct(T* const pointer = NULLPTR)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );</span>
+        do
+        {
+<span style = "background-color:#dfd">            if( !isConstructed() )</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                D::free(pointer);
+                break;</span>
+            }
+<span style = "background-color:#dfd">            pointer_ = pointer;
+            res = true;
+        } while(false);
+        return res;
+    }</span>
+    
+    /**
+     * @brief Releases the managed object by control block.
+     */       
+    void releasePointer()
+<span style = "background-color:#dfd">    {
+        D::free(pointer_);
+        pointer_ = NULLPTR;
+    }       </span>
+    
+    #if EOOS_CPP_STANDARD &lt; 2011
+    
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    UniquePointer(UniquePointer const&amp;);
+
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */       
+    UniquePointer&amp; operator=(UniquePointer const&amp;);    
+
+    #endif // EOOS_CPP_STANDARD &lt; 2011
+
+    /**
+     * @brief Pointer to the managed object.
+     */
+    T* pointer_;
+
+};
+
+/**
+ * @brief Comparison operator to equal.
+ *
+ * @param obj1 Reference to object.
+ * @param obj2 Reference to object.
+ * @return True if objects are equal.
+ */
+template &lt;typename T, class D, class A&gt;
+inline bool_t operator==(UniquePointer&lt;T,D,A&gt; const&amp; obj1, UniquePointer&lt;T,D,A&gt; const&amp; obj2)
+<span style = "background-color:#dfd">{
+    return obj1.get() == obj2.get();
+}</span>
+
+/**
+ * @brief Comparison operator to unequal.
+ *
+ * @param obj1 Reference to object.
+ * @param obj2 Reference to object.
+ * @return True if objects are not equal.
+ */
+template &lt;typename T, class D, class A&gt;
+inline bool_t operator!=(UniquePointer&lt;T,D,A&gt; const&amp; obj1, UniquePointer&lt;T,D,A&gt; const&amp; obj2)
+<span style = "background-color:#dfd">{
+    return obj1.get() != obj2.get();
+}</span>
+
+#endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_UNIQUEPOINTER_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.AbstractBuffer.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.AbstractBuffer.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_ABSTRACTBUFFER_HPP_
+#define LIB_ABSTRACTBUFFER_HPP_
+
+#include "lib.NonCopyable.hpp"
+#include "api.SequenceContainer.hpp"
+#include "api.IllegalValue.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+    
+/**
+ * @class AbstractBuffer&lt;T,A&gt;
+ * @brief Abstract buffer class.
+ *
+ * @tparam T Data type of buffer element.
+ * @tparam A Heap memory allocator class.
+ *
+ * @todo Inherit Object instead of NonCopyable. 
+ */
+template &lt;typename T, class A = Allocator&gt;
+class AbstractBuffer : public NonCopyable&lt;A&gt;, public api::SequenceContainer&lt;T&gt;, public api::IllegalValue&lt;T&gt;
+{
+    typedef NonCopyable&lt;A&gt; Parent;
+
+public:
+
+public:
+
+    using api::SequenceContainer&lt;T&gt;::getData;
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~AbstractBuffer()
+<span style = "background-color:#dfd">    {
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
+<span style = "background-color:#dfd">    {
+        return Parent::isConstructed();
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Collection::getLength()
+     */
+    virtual size_t getLength() const
+<span style = "background-color:#dfd">    {
+        size_t length( 0U );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            length = length_;</span>
+        }
+<span style = "background-color:#dfd">        return length;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Collection::isEmpty()
+     */
+    virtual bool_t isEmpty() const
+<span style = "background-color:#dfd">    {
+        bool_t res( true );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            res = length_ == 0U;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::IllegalValue::getIllegal()
+     */
+    virtual T const&amp; getIllegal() const
+<span style = "background-color:#dfd">    {
+        return illegal_;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::IllegalValue::setIllegal(T const&amp;)
+     */
+    virtual void setIllegal(T const&amp; value)
+<span style = "background-color:#dfd">    {
+        illegal_ = value;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::IllegalValue::isIllegal()
+     */
+    virtual bool_t isIllegal(T const&amp; value) const
+<span style = "background-color:#dfd">    {
+        return illegal_ == value;
+    }</span>
+
+    /**
+     * @brief Fills this buffer by given value.
+     *
+     * @param value A filling value.
+     */
+    void fill(T const&amp; value)
+<span style = "background-color:#dfd">    {
+        fill(value, length_);
+    }</span>
+
+    /**
+     * @brief Fills this buffer by given value.
+     *
+     * @param value  Filling value.
+     * @param length Count of filling elements.
+     */
+    void fill(T const&amp; value, size_t const length)
+<span style = "background-color:#dfd">    {
+        fill(value, 0, length);
+    }</span>
+
+    /**
+     * @brief Fills this buffer by given value.
+     *
+     * @param value Filling value.
+     * @param index Begin index.
+     * @param count Count of filling elements.
+     */
+    void fill(T const&amp; value, size_t const begin, size_t const count)
+<span style = "background-color:#dfd">    {
+        bool_t const hasIndex( begin &lt; length_ );
+        if( isConstructed() &amp;&amp; hasIndex )</span>
+        {
+<span style = "background-color:#dfd">            T* const buf( getData() );
+            size_t const length( begin + count );</span>
+            // MSVC warning C4003 of Most Vexing Parse case avoided with no nameing the variable 'max'
+<span style = "background-color:#dfd">            size_t const maximum( ( length &lt;= length_ ) ? length : length_ );
+            for(size_t i(begin); i&lt;maximum; i++)</span>
+            {
+<span style = "background-color:#dfd">                buf[i] = value;
+            }</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @brief Returns an element of this buffer.
+     *
+     * @param index An element index.
+     * @return An element.
+     */
+    T&amp; operator[](size_t const index)
+<span style = "background-color:#dfd">    {</span>
+        T* value;
+<span style = "background-color:#dfd">        T* const buf( getData() );
+        if( (!isConstructed()) || (index &gt;= length_) || (buf == NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            value = &amp;illegal_;
+        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            value = &amp;buf[index];</span>
+        }
+<span style = "background-color:#dfd">        return *value;
+    }</span>
+
+protected:
+
+    /**
+     * @brief Constructor.
+     *
+     * @param length Count of buffer elements.
+     */
+    explicit AbstractBuffer(size_t length) 
+<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
+        , api::SequenceContainer&lt;T&gt;()
+        , api::IllegalValue&lt;T&gt;()
+        , length_(length)
+        , illegal_(){
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @note A passed illegal element will be copied to an internal data of the class
+     *
+     * @param length  Count of buffer elements.
+     * @param illegal Illegal value.
+     */
+    AbstractBuffer(size_t length, T const&amp; illegal) 
+<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
+        , api::SequenceContainer&lt;T&gt;()
+        , api::IllegalValue&lt;T&gt;()
+        , length_(length)
+        , illegal_(illegal){
+    }</span>
+
+    /**
+     * @brief Copies buffer to buffer.
+     *
+     * If the source buffer greater than this buffer,
+     * then only cropped data of that will be and copied.
+     *
+     * @param buf Reference to source buffer.
+     */
+    void copy(api::SequenceContainer&lt;T&gt; const&amp; buf)
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            size_t const size1( getLength() );
+            size_t const size2( buf.getLength() );
+            size_t const size( ( size1 &lt; size2 ) ? size1 : size2 );
+            T* const buf1( getData() );
+            T* const buf2( buf.getData() );
+            for(size_t i(0U); i&lt;size; i++)</span>
+            {
+<span style = "background-color:#dfd">                buf1[i] = buf2[i];
+            }</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+private:
+
+    /**
+     * @brief Number of elements of this buffer.
+     */
+    size_t length_;
+
+    /**
+     * @brief Illegal element of this buffer.
+     */
+    T illegal_;
+
+};
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_ABSTRACTBUFFER_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

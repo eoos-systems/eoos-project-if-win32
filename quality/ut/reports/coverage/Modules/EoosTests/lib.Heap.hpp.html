@@ -1,0 +1,873 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.Heap.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.Heap.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_HEAP_HPP_
+#define LIB_HEAP_HPP_
+
+#include "api.Heap.hpp"
+#include "lib.MutexGuard.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+    
+/**
+ * @class Heap
+ * @brief Heap memory.
+ *
+ * Hardware address for system heap memory has to be aligned to eight. 
+ */
+class Heap : public api::Heap
+{
+    typedef Heap Self;
+    
+    class NoAllocator;
+
+public:
+
+    /**
+     * @brief Constructor.
+     *
+     * @param size  Total heap size.
+     * @param mutex A mutex to protect memory allocation.
+     */
+    Heap(size_t size, api::Mutex&amp; mutex) 
+<span style = "background-color:#dfd">        : api::Heap()
+        , data_(size, mutex)
+        , temp_() {
+        bool_t const isConstructed( construct() );
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~Heap() ///&lt; UT Justified Branch: Language dependency
+<span style = "background-color:#fdd">    {
+        data_.key = 0;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const
+<span style = "background-color:#dfd">    {
+        if( data_.key != HEAP_KEY )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            return false;</span>
+        }
+<span style = "background-color:#dfd">        if( !getFirstHeapBlock()-&gt;isConstructed() )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            return false;</span>
+        }
+<span style = "background-color:#dfd">        return  true;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Heap::allocate(size_t,void*)
+     */
+    virtual void* allocate(size_t const size, void* ptr)
+<span style = "background-color:#dfd">    {
+        if( !isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            return NULLPTR;</span>
+        }
+<span style = "background-color:#dfd">        if( ptr == NULLPTR )</span>
+        {
+<span style = "background-color:#dfd">            MutexGuard&lt;NoAllocator&gt; guard( *data_.mutex );
+            ptr = getFirstHeapBlock()-&gt;alloc(size);
+        }
+        return ptr;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Heap::free(void*)
+     */
+    virtual void free(void* ptr)
+<span style = "background-color:#dfd">    {
+        if( !isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            return;</span>
+        }        
+<span style = "background-color:#dfd">        if( ptr == NULLPTR )</span>
+        {
+<span style = "background-color:#dfd">            return;</span>
+        }
+<span style = "background-color:#dfd">        MutexGuard&lt;NoAllocator&gt; guard( *data_.mutex );
+        getHeapBlock(ptr)-&gt;free();
+    }</span>
+
+    /**
+     * @brief Operator new.
+     *
+     * Function initiates a building of heap memory
+     * checks and tests self memory structure data
+     * and leads to call the class constructor.
+     *
+     * @param size Unused.
+     * @param ptr  Aligned to eight memory address.
+     * @return Address of memory or NULLPTR.
+     */
+    static void* operator new(size_t, uintptr_t const ptr) EOOS_KEYWORD_NOEXCEPT
+<span style = "background-color:#dfd">    {</span>
+        void* memory;
+<span style = "background-color:#dfd">        void* address( reinterpret_cast&lt; void* &gt;(ptr) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+        if(address == NULLPTR)</span>
+        {
+            // No class constructor call
+<span style = "background-color:#dfd">            memory = address;
+        }</span>
+        else
+        {
+            // Create the heap
+<span style = "background-color:#dfd">            memory = create(address);</span>
+        }
+<span style = "background-color:#dfd">        return memory;
+    }</span>
+    
+    /**
+     * @brief Operator delete.
+     */
+<span style = "background-color:#fdd">    static void operator delete(void*, uintptr_t) {} ///&lt; UT Justified Branch: Language dependency</span>
+
+    /**
+     * @brief Operator delete.
+     */
+<span style = "background-color:#fdd">    static void operator delete(void*) {} ///&lt; UT Justified Branch: Language dependency</span>
+
+private:
+
+    class HeapBlock;
+
+    /**
+     * @copydoc eoos::lib::Object::setConstructed(bool_t)
+     */
+    void setConstructed(bool_t const flag)
+<span style = "background-color:#dfd">    {
+        if(data_.key == HEAP_KEY)</span>
+        {
+<span style = "background-color:#dfd">            data_.key = flag ? HEAP_KEY : 0;</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @return True if object has been constructed successfully.
+     */
+    bool_t construct()
+<span style = "background-color:#dfd">    {</span>
+        // Crop a size to multiple of eight
+<span style = "background-color:#dfd">        if( (sizeof(HeapBlock) + 16UL) &gt; data_.size )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            return false;</span>
+        }
+        // Test Heap and HeapBlock structures sizes witch has to be multipled to eight
+<span style = "background-color:#dfd">        if( (sizeof(Heap) &amp; 0x7UL) != 0UL )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            return false;</span>
+        }
+<span style = "background-color:#dfd">        if( (sizeof(HeapBlock) &amp; 0x7UL) != 0UL )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            return false;</span>
+        }
+        // Test memory
+<span style = "background-color:#dfd">        uintptr_t const addr( reinterpret_cast&lt;uintptr_t&gt;(this) + sizeof(Heap) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-9
+        void*  ptr ( reinterpret_cast&lt;void*&gt;(addr) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+        if( !isMemoryAvailable(ptr, data_.size) )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            return false;</span>
+        }
+        // Alloc first heap block
+<span style = "background-color:#dfd">        data_.block = new ( getFirstHeapBlock() ) HeapBlock(this, data_.size);
+        return (data_.block != NULLPTR) ? true : false;
+    }</span>
+
+    /**
+     * @brief Returns a first heap block address.
+     *
+     * @return Pointer to heap block.
+     */
+    HeapBlock* getFirstHeapBlock() const
+<span style = "background-color:#dfd">    {
+        uintptr_t const addr( reinterpret_cast&lt;uintptr_t&gt;(this) + sizeof(Heap) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-9
+        return reinterpret_cast&lt;HeapBlock*&gt;(addr); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+    }</span>
+
+    /**
+     * @brief Returns a heap block by user data address.
+     *
+     * @return Pointer to heap block.
+     */
+    static HeapBlock* getHeapBlock(void* const data)
+<span style = "background-color:#dfd">    {
+        uintptr_t const addr( reinterpret_cast&lt;uintptr_t&gt;(data) - sizeof(HeapBlock) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-9
+        return reinterpret_cast&lt;HeapBlock*&gt;(addr); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+    }</span>
+
+    /**
+     * @brief Allocates memory for heap.
+     *
+     * Function initiates a building of heap memory
+     * checks and tests self memory structure data
+     * and leads to call the class constructor.
+     *
+     * @param ptr Aligned to eight memory address.
+     * @return Address of memory or NULLPTR.
+     */
+    static void* create(void* ptr)
+<span style = "background-color:#dfd">    {</span>
+        // Size of this class has to be multipled to eight
+<span style = "background-color:#dfd">        if( (sizeof(Heap) &amp; 0x7UL) != 0UL )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            ptr = NULLPTR;</span>
+        }
+        // Testing memory for self structure data
+        //
+        // @todo copy constructor of the Heap class for
+        // temporary copying the tested memory to that
+        // class. This way would help to restore original
+        // memory data if the test were failed.
+<span style = "background-color:#dfd">        if( !isMemoryAvailable(ptr, sizeof(Heap)) )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            ptr = NULLPTR;</span>
+        }
+        // Memory address has to be aligned to eight
+<span style = "background-color:#dfd">        if( (reinterpret_cast&lt;uintptr_t&gt;(ptr) &amp; 0x7UL) != 0UL ) ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-9</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            ptr = NULLPTR;</span>
+        }
+<span style = "background-color:#dfd">        return ptr;
+    }</span>
+    
+    /**
+     * @brief Tests memory.
+     *
+     * @todo normal type casts should be done.
+     *
+     * @param addr Memory address pointer.
+     * @param size Size in byte.
+     * @return True if test complete.
+     */
+    static bool_t isMemoryAvailable(void* const addr, size_t const size)
+<span style = "background-color:#dfd">    {
+        size_t mask( static_cast&lt;ucell_t&gt;(-1) );
+        ucell_t* ptr( reinterpret_cast&lt;ucell_t*&gt;(addr) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8</span>
+        // Value test
+<span style = "background-color:#dfd">        for( size_t i(0UL); i&lt;size; i++)</span>
+        {
+<span style = "background-color:#dfd">            ptr[i] = static_cast&lt;ucell_t&gt;(i &amp; mask);
+        }
+        for( size_t i(0UL); i&lt;size; i++)</span>
+        {
+<span style = "background-color:#dfd">            if(ptr[i] != static_cast&lt;ucell_t&gt;(i &amp; mask))</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                return false;</span>
+            }
+<span style = "background-color:#dfd">        }</span>
+        // 0x55 test
+<span style = "background-color:#dfd">        for( size_t i(0UL); i&lt;size; i++)</span>
+        {
+<span style = "background-color:#dfd">            ptr[i] = static_cast&lt;ucell_t&gt;(0x55555555UL &amp; mask);
+        }
+        for( size_t i(0UL); i&lt;size; i++)</span>
+        {
+<span style = "background-color:#dfd">            if(ptr[i] != static_cast&lt;ucell_t&gt;(0x55555555UL &amp; mask))</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                return false;</span>
+            }
+<span style = "background-color:#dfd">        }</span>
+        // 0xAA test
+<span style = "background-color:#dfd">        for( size_t i(0UL); i&lt;size; i++)</span>
+        {
+<span style = "background-color:#dfd">            ptr[i] = static_cast&lt;ucell_t&gt;(0xAAAAAAAAUL &amp; mask);
+        }
+        for( size_t i(0UL); i&lt;size; i++)</span>
+        {
+<span style = "background-color:#dfd">            if(ptr[i] != static_cast&lt;ucell_t&gt;(0xAAAAAAAAUL &amp; mask))</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                return false;</span>
+            }
+<span style = "background-color:#dfd">        }</span>
+        // Zero test
+<span style = "background-color:#dfd">        for( size_t i(0UL); i&lt;size; i++)</span>
+        {
+<span style = "background-color:#dfd">            ptr[i] = 0x00U;
+        }
+        for( size_t i(0UL); i&lt;size; i++)</span>
+        {
+<span style = "background-color:#dfd">            if(ptr[i] != 0x00U)</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                return false;</span>
+            }
+<span style = "background-color:#dfd">        }
+        return true;
+    }</span>
+    
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    Heap(Heap const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
+
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */
+    Heap&amp; operator=(Heap const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
+    
+    #if EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */       
+    Heap(Heap&amp;&amp;) noexcept = delete; 
+    
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    Heap&amp; operator=(Heap&amp;&amp;) &amp; noexcept = delete;
+    
+    #endif // EOOS_CPP_STANDARD &gt;= 2011   
+
+    /**
+     * @class NoAllocator
+     * @brief No allocator for creating MutexGuard on stack.
+     */ 
+    class NoAllocator
+    {
+    
+    public:
+    
+        /**
+         * @copydoc eoos::lib::Allocator::allocate(size_t)
+         */
+        static void* allocate(size_t)
+        {
+            return NULLPTR;
+        }
+    
+        /**
+         * @copydoc eoos::lib::Allocator::allocate(size_t).
+         */
+        static void free(void*) ///&lt; UT Justified Branch: Language dependency
+<span style = "background-color:#fdd">        {
+        }</span>
+    };
+
+    /**
+     * @struct Aligner&lt;S&gt;
+     * @brief Heap class aligner aligns that to eight.
+     *
+     * @note If given S is already multiple 8, the class size will be 8 bytes.
+     *
+     * @tparam S Size of Heap class.
+     */
+    template &lt;size_t S&gt;
+    struct Aligner
+    {
+
+    public:
+
+        /**
+         * @brief Constructor.
+         */
+<span style = "background-color:#dfd">        Aligner()</span>
+        {
+            #ifdef EOOS_DEBUG
+            for(size_t i(0U); i&lt;SIZE; i++) 
+            {
+                val_[i] = 0x0AUL;
+            }
+            #endif
+<span style = "background-color:#dfd">        }</span>
+
+    private:
+
+        /**
+         * @brief Aligning data size.
+         */
+        static const size_t SIZEOF = S;
+
+        /**
+         * @brief Aligning data size.
+         */
+        static const size_t MASK = ~0x7UL;
+
+        /**
+         * @brief Aligning data size.
+         */
+        static const size_t SIZE = ( ( SIZEOF &amp; MASK ) + 0x8UL ) - SIZEOF;
+
+        /**
+         * @brief Temp array.
+         */
+        ucell_t val_[SIZE];
+
+    };
+
+    /**
+     * @class VirtualTable
+     * @brief Contains a Virtual Function Table only.
+     *
+     * Probably, the solution of using this empty class
+     * is not delicate, but it works for understanding
+     * about size of a virtual function table of this Heap class.
+     *
+     * @note This uint64_t variable of the class is used, because some compilers
+     * might put 64 bit variable to aligned 8 memory address. Therefore, size of classes
+     * with 32 bit pointer to virtual table and one 64 bit variable is 16 bytes.
+     */
+    class VirtualTable : public api::Heap{uint64_t temp;};
+
+    /**
+     * @class HeapBlock
+     * @brief Heap memory block.
+     *
+     * The class data has to be aligned to 8.
+     */
+    class HeapBlock
+    {
+
+    public:
+
+        /**
+         * @brief Constructor.
+         *
+         * @param heap Pointer to heap class.
+         * @param size Size of byte given to this new block.
+         */
+        HeapBlock(api::Heap* heap, size_t size) 
+<span style = "background-color:#dfd">            : heap_(heap)
+            , prev_(NULLPTR)
+            , next_(NULLPTR)
+            , attr_(0)
+            , size_(size - sizeof(HeapBlock))
+            , key_(BLOCK_KEY) {
+        }</span>
+
+        /**
+         * @brief Destructor.
+         */
+       ~HeapBlock()
+        {
+        }
+
+        /**
+         * @brief Tests if this object has been constructed.
+         *
+         * @return True if object has been constructed successfully.
+         */
+        bool_t isConstructed() const
+<span style = "background-color:#dfd">        {
+            return (key_ == BLOCK_KEY) ? true : false;
+        }</span>
+
+        /**
+         * @brief Allocates a memory block.
+         *
+         * @param size Size in byte.
+         * @return Pointer to an allocated memory.
+         */
+        void* alloc(size_t size)
+<span style = "background-color:#dfd">        {
+            if(size == 0UL)</span>
+            {
+<span style = "background-color:#dfd">                return NULLPTR;</span>
+            }
+            // Align a size to 8 byte boudary
+<span style = "background-color:#dfd">            if((size &amp; 0x7UL) != 0UL)</span>
+            {
+<span style = "background-color:#dfd">                size = (size &amp; ~0x7UL) + 0x8UL;</span>
+            }
+<span style = "background-color:#dfd">            HeapBlock* curr( this );
+            while(curr != NULLPTR)</span>
+            {
+<span style = "background-color:#dfd">                if(curr-&gt;isUsed() || (curr-&gt;size_ &lt; size) )</span>
+                {
+<span style = "background-color:#dfd">                    curr = curr-&gt;next_;
+                }</span>
+                else
+                {
+<span style = "background-color:#dfd">                    break;</span>
+                }
+<span style = "background-color:#dfd">            }
+            if(curr == NULLPTR)</span>
+            {
+<span style = "background-color:#dfd">                return NULLPTR;</span>
+            }
+            // Has required memory size for data and a new heap block
+<span style = "background-color:#dfd">            if( curr-&gt;size_ &gt;= (size + sizeof(HeapBlock)) )</span>
+            {
+<span style = "background-color:#dfd">                HeapBlock* next( new ( curr-&gt;next(size) ) HeapBlock(heap_, curr-&gt;size_ - size) );
+                if(next == NULLPTR)</span>
+                {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                    return NULLPTR;</span>
+                }
+<span style = "background-color:#dfd">                next-&gt;next_ = curr-&gt;next_;
+                next-&gt;prev_ = curr;
+                if(next-&gt;next_ != NULLPTR)</span>
+                {
+<span style = "background-color:#dfd">                    next-&gt;next_-&gt;prev_ = next;</span>
+                }
+<span style = "background-color:#dfd">                curr-&gt;next_ = next;
+                curr-&gt;size_ = size;</span>
+            }
+<span style = "background-color:#dfd">            curr-&gt;attr_ |= ATTR_USED;
+            return curr-&gt;data();
+        }</span>
+
+        /**
+         * @brief Frees allocated memory by this block.
+         */
+        void free()
+<span style = "background-color:#dfd">        {
+            if( !canDelete() )</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                return;</span>
+            }
+<span style = "background-color:#dfd">            uint32_t sibling( 0UL );
+            if( prev_ != NULLPTR )</span>
+            {
+<span style = "background-color:#dfd">                if( !prev_-&gt;isUsed() )</span>
+                {
+<span style = "background-color:#dfd">                    sibling |= PREV_FREE;</span>
+                }
+            }
+<span style = "background-color:#dfd">            if( next_ != NULLPTR )</span>
+            {
+<span style = "background-color:#dfd">                if( !next_-&gt;isUsed() )</span>
+                {
+<span style = "background-color:#dfd">                    sibling |= NEXT_FREE;</span>
+                }
+            }
+<span style = "background-color:#dfd">            switch(sibling)</span>
+            {
+                case PREV_FREE | NEXT_FREE:
+                {
+<span style = "background-color:#dfd">                    prev_-&gt;size_ += ( 2UL * sizeof(HeapBlock) ) + size_ + next_-&gt;size_;
+                    prev_-&gt;next_ = next_-&gt;next_;
+                    if(prev_-&gt;next_ != NULLPTR)</span>
+                    {
+<span style = "background-color:#dfd">                        prev_-&gt;next_-&gt;prev_ = prev_;</span>
+                    }
+<span style = "background-color:#dfd">                    break;</span>
+                }
+                case PREV_FREE:
+                {
+<span style = "background-color:#dfd">                    prev_-&gt;size_ += sizeof(HeapBlock) + size_;
+                    prev_-&gt;next_ = next_;
+                    if(next_ != NULLPTR)</span>
+                    {
+<span style = "background-color:#dfd">                        next_-&gt;prev_ = prev_;</span>
+                    }
+<span style = "background-color:#dfd">                    break;</span>
+                }
+                case NEXT_FREE:
+                {
+<span style = "background-color:#dfd">                    size_ += sizeof(HeapBlock) + next_-&gt;size_;
+                    next_ = next_-&gt;next_;
+                    if(next_ != NULLPTR)</span>
+                    {
+<span style = "background-color:#dfd">                        next_-&gt;prev_ = this;</span>
+                    }
+<span style = "background-color:#dfd">                    attr_ &amp;= MASK_UNUSED;
+                    break;</span>
+                }
+                default:
+                {
+<span style = "background-color:#dfd">                    attr_ &amp;= MASK_UNUSED;</span>
+                    break;
+                }
+            }
+<span style = "background-color:#dfd">        }</span>
+
+        /**
+         * @brief Operator new.
+         *
+         * @param size Unused.
+         * @param ptr  Address of memory.
+         * @return Address of memory.
+         */
+        static void* operator new(size_t, void* const ptr)
+<span style = "background-color:#dfd">        {
+            void* memory( NULLPTR );</span>
+            do
+            {
+                // Size of this class must be multipled to eight
+<span style = "background-color:#dfd">                if((sizeof(HeapBlock) &amp; 0x7UL) != 0UL)</span>
+                {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                    break;</span>
+                }
+                // The passed address must be multipled to eight
+<span style = "background-color:#dfd">                if((reinterpret_cast&lt;uintptr_t&gt;(ptr) &amp; 0x7UL) != 0UL) ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-9</span>
+                {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                    break;</span>
+                }
+<span style = "background-color:#dfd">                memory = ptr;</span>
+            }
+<span style = "background-color:#dfd">            while(false);
+            return memory;
+        }</span>
+        
+        /**
+         * @brief Operator delete.
+         */
+<span style = "background-color:#fdd">        static void operator delete(void*, void*) {}  ///&lt; UT Justified Branch: Language dependency</span>
+
+    private:
+
+        /**
+         * @brief Tests if this memory block is available for deleting.
+         *
+         * @return True if it may be deleted.
+         */
+        bool_t canDelete() const
+<span style = "background-color:#dfd">        {
+            if( !isConstructed() )</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                return false;</span>
+            }
+<span style = "background-color:#dfd">            if( !heap_-&gt;isConstructed() )</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                return false;</span>
+            }
+<span style = "background-color:#dfd">            return true;
+        }</span>
+
+        /**
+         * @brief Tests if this memory block is available.
+         *
+         * @return True if memory block is available.
+         */
+        bool_t isUsed() const
+<span style = "background-color:#dfd">        {
+            return ( (attr_ &amp; ATTR_USED) != 0UL ) ? true : false;
+        }</span>
+
+        /**
+         * @brief Returns an address to data of this block.
+         *
+         * @return Pointer to memory.
+         */
+        void* data()
+<span style = "background-color:#dfd">        {
+            uintptr_t const addr( reinterpret_cast&lt;uintptr_t&gt;(this) + sizeof(HeapBlock) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-9
+            return reinterpret_cast&lt;void*&gt;(addr); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+        }</span>
+
+        /**
+         * @brief Returns an address to next block.
+         *
+         * @return PSinter to memory.
+         */
+        void* next(size_t const size)
+<span style = "background-color:#dfd">        {
+            uintptr_t const addr( reinterpret_cast&lt;uintptr_t&gt;(this) + sizeof(HeapBlock) + size ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-9
+            return reinterpret_cast&lt;void*&gt;(addr); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+        }</span>
+
+        /**
+         * @copydoc eoos::Object::Object(Object const&amp;)
+         */
+        HeapBlock(HeapBlock const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
+    
+        /**
+         * @copydoc eoos::Object::operator=(Object const&amp;)
+         */
+        HeapBlock&amp; operator=(HeapBlock const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
+        
+        #if EOOS_CPP_STANDARD &gt;= 2011
+    
+        /**
+         * @copydoc eoos::Object::Object(Object&amp;&amp;)
+         */       
+        HeapBlock(HeapBlock&amp;&amp;) noexcept = delete; 
+        
+        /**
+         * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+         */
+        HeapBlock&amp; operator=(HeapBlock&amp;&amp;) &amp; noexcept = delete;
+        
+        #endif // EOOS_CPP_STANDARD &gt;= 2011    
+
+        /**
+         * @brief Heap block definition key.
+         */
+        static const size_t BLOCK_KEY = 0x20140515UL;
+
+        /**
+         * @brief Block is used.
+         */
+        static const uint32_t ATTR_USED = 0x00000001UL;
+
+        /**
+         * @brief Next block is free.
+         */
+        static const uint32_t NEXT_FREE = 0x00000001UL;
+
+        /**
+         * @brief Previous block is free.
+         */
+        static const uint32_t PREV_FREE = 0x00000002UL;
+
+        /**
+         * @brief Mask block is unused.
+         */
+        static const uint32_t MASK_UNUSED = 0xFFFFFFFEUL;
+
+        /**
+         * @brief Heap page of this block.
+         */
+        api::Heap* heap_;
+
+        /**
+         * @brief Next block.
+         */
+        HeapBlock* prev_;
+
+        /**
+         * @brief Previous block.
+         */
+        HeapBlock* next_;
+
+        /**
+         * @brief Attributes of this block.
+         */
+        uint32_t attr_;
+
+        /**
+         * @brief Size in byte of this block.
+         */
+        size_t size_;
+
+        /**
+         * @brief Heap block definition key.
+         */
+        size_t key_;
+
+    };
+
+    /**
+     * @struct HeapData
+     * @brief Heap data.
+     *
+     * This structure is needed for aligning heap data or otherwise
+     * this Heap class can not de aligned because it is incompleted.
+     */
+    struct HeapData
+    {
+        /**
+         * @brief Constructor.
+         *
+         * @param isize Total heap size.
+         * @param mutex A mutex to protect memory allocation.         
+         */
+        HeapData(size_t isize, api::Mutex&amp; imutex)
+<span style = "background-color:#dfd">            : block(NULLPTR)
+            , mutex(&amp;imutex)
+            , size(0)
+            , key(HEAP_KEY) {
+            size = (isize &amp; ~0x7UL) - sizeof(Heap);
+        }</span>
+
+        /**
+         * @brief First memory block of heap page memory.
+         */
+        HeapBlock* block; ///&lt; SCA MISRA-C++:2008 Justified Rule 11-0-1
+
+        /**
+         * @brief Thread allocation protection.
+         */
+        api::Mutex* mutex; ///&lt; SCA MISRA-C++:2008 Justified Rule 11-0-1
+
+        /**
+         * @brief Actual size of heap.
+         */
+        size_t size; ///&lt; SCA MISRA-C++:2008 Justified Rule 11-0-1
+
+        /**
+         * @brief Heap page memory definition key.
+         */
+        int32_t key; ///&lt; SCA MISRA-C++:2008 Justified Rule 11-0-1
+
+    private:
+
+        /**
+         * @copydoc eoos::Object::Object(Object const&amp;)
+         */
+        HeapData(HeapData const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
+    
+        /**
+         * @copydoc eoos::Object::operator=(Object const&amp;)
+         */
+        HeapData&amp; operator=(HeapData const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
+        
+        #if EOOS_CPP_STANDARD &gt;= 2011
+    
+        /**
+         * @copydoc eoos::Object::Object(Object&amp;&amp;)
+         */       
+        HeapData(HeapData&amp;&amp;) noexcept = delete; 
+        
+        /**
+         * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+         */
+        HeapData&amp; operator=(HeapData&amp;&amp;) &amp; noexcept = delete;
+        
+        #endif // EOOS_CPP_STANDARD &gt;= 2011    
+
+    };
+
+    /**
+     * @brief Size of this Heap class without aligned data.
+     */
+    static const size_t SIZEOF_HEAP = ( sizeof(HeapData) + sizeof(VirtualTable) ) - sizeof(uint64_t);
+
+    /**
+     * @brief Heap page memory definition key.
+     */
+    static const int32_t HEAP_KEY = 0x19820401;
+
+    /**
+     * @brief Data of this heap.
+     */
+    HeapData data_;
+
+    /**
+     * @brief Aligning data.
+     */
+    Aligner&lt;SIZEOF_HEAP&gt; temp_;
+
+};
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_HEAP_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

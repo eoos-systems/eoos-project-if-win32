@@ -1,0 +1,315 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.Buffer.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.Buffer.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_BUFFER_HPP_
+#define LIB_BUFFER_HPP_
+
+#include "lib.AbstractBuffer.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+    
+/**
+ * @class Buffer&lt;T,L,A&gt;
+ * @brief Buffer class static.
+ *
+ * This class is a primary template defines a realization that contains
+ * a whole buffer, which is defined by a template argument.
+ *
+ * @tparam T Data type of buffer element.
+ * @tparam L Maximum number of buffer elements, or 0 for dynamic allocation.
+ * @tparam A Heap memory allocator class.
+ */
+template &lt;typename T, int32_t L, class A = Allocator&gt;
+class Buffer : public AbstractBuffer&lt;T,A&gt;
+{
+    typedef AbstractBuffer&lt;T,A&gt; Parent;
+
+public:
+
+    using Parent::isConstructed;
+
+    /**
+     * @brief Constructor.
+     */
+    Buffer() 
+<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(L)
+        , buf_(arr_){
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @note A passed illegal element will be copied to an internal data of the class
+     *
+     * @param illegal An illegal value.
+     */
+    Buffer(T const&amp; illegal) 
+<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(L, illegal)
+        , buf_ (arr_){
+    }</span>
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~Buffer()
+<span style = "background-color:#dfd">    {
+    }</span>
+    
+    /**
+     * @copydoc eoos::api::SequenceContainer::getData()
+     */
+    virtual T* getData() const
+<span style = "background-color:#dfd">    {
+        T* buf( NULLPTR );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            buf = buf_;</span>
+        }
+<span style = "background-color:#dfd">        return buf;
+    }</span>
+
+    /**
+     * @brief Assignment operator.
+     *
+     * If the source buffer is greater than this buffer,
+     * only cropped data of that will be copied.
+     *
+     * @param buf Reference to source buffer.
+     * @return Reference to this object.
+     */
+    Buffer&amp; operator=(api::SequenceContainer&lt;T&gt; const&amp; buf)
+<span style = "background-color:#dfd">    {
+        if( isConstructed() &amp;&amp; buf.isConstructed() )</span>
+        {        
+<span style = "background-color:#dfd">            copy(buf);</span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }</span>
+    
+protected:
+
+    using Parent::setConstructed;
+    using Parent::copy;
+
+private:
+
+    /**
+     * @brief Current array of T elements.
+     */
+    T arr_[L];
+
+    /**
+     * @brief Pointer to current array.
+     *
+     * @note The variable has been defined only for giving the getBuffer member function to be constant.
+     */
+    T* buf_;
+
+};
+
+#ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
+
+/**
+ * @class Buffer&lt;T,0,A&gt;
+ * @brief Buffer class dynamic.
+ *
+ * This is a partial specialization of the template allocates necessary 
+ * memory size for containing the buffer in a heap memory.
+ *
+ * @tparam T Data type of buffer element.
+ * @tparam A Heap memory allocator class.
+ */
+template &lt;typename T, class A&gt;
+class Buffer&lt;T,0,A&gt; : public AbstractBuffer&lt;T,A&gt;
+{
+    typedef AbstractBuffer&lt;T,A&gt; Parent;
+
+public:
+
+    using Parent::isConstructed;
+
+    /**
+     * @brief Constructor.
+     *
+     * @param length Count of buffer elements.
+     */
+    explicit Buffer(size_t const length) 
+<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(length)
+        , buf_(NULLPTR)
+        , isDeleted_(true) {
+        bool_t const isConstructed( construct(length) );
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @note A passed illegal element will be copied to an internal data of the class
+     *
+     * @param length  Count of buffer elements.
+     * @param illegal Illegal value.
+     */
+    Buffer(size_t const length, T const&amp; illegal) 
+<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(length, illegal)
+        , buf_(NULLPTR)
+        , isDeleted_(true) {
+        bool_t const isConstructed( construct(length) );
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @note Given external buffer has to exist until this object is alive.
+     *
+     * @param length Number of elements.
+     * @param buf    Pointer to external buffer.
+     */
+    Buffer(size_t const length, T* const buf) 
+<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(length)
+        , buf_(buf)
+        , isDeleted_(false) {
+        bool_t const isConstructed( construct(length) );
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @note Given external buffer has to exist until this object is alive.
+     * @note A passed illegal element will be copied to an internal data of the class.
+     *
+     * @param length  Number of elements.
+     * @param buf     Pointer to external buffer.
+     * @param illegal Illegal value.
+     */
+    Buffer(size_t const length, T* const buf, T const&amp; illegal) 
+<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(length, illegal)
+        , buf_(buf)
+        , isDeleted_(false) {
+        bool_t const isConstructed( construct(length) );
+        setConstructed( isConstructed );
+    }</span>
+
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~Buffer()
+<span style = "background-color:#dfd">    {
+        if( isDeleted_ == true )</span>
+        {
+<span style = "background-color:#dfd">            A::free(buf_);</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+    
+    /**
+     * @copydoc eoos::api::SequenceContainer::getData()
+     */
+    virtual T* getData() const
+<span style = "background-color:#dfd">    {
+        T* buf( NULLPTR );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            buf = buf_;</span>
+        }
+<span style = "background-color:#dfd">        return buf;
+    }    </span>
+
+    /**
+     * @brief Assignment operator.
+     *
+     * If the source buffer is greater than this buffer,
+     * only cropped data of that will be copied.
+     *
+     * @param buf Reference to source buffer.
+     * @return Reference to this object.
+     */
+    Buffer&amp; operator=(api::SequenceContainer&lt;T&gt; const&amp; buf)
+<span style = "background-color:#dfd">    {
+        if( isConstructed() &amp;&amp; buf.isConstructed() )</span>
+        {        
+<span style = "background-color:#dfd">            copy(buf);</span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }</span>
+    
+protected:
+
+    using Parent::setConstructed;    
+    using Parent::copy;
+
+private:
+
+    /**
+     * @brief Constructor.
+     *
+     * @param length Count of buffer elements.
+     * @return Boolean result.
+     */
+    bool_t construct(size_t const length)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( isConstructed() &amp;&amp; (length &gt; 0U) )</span>
+        {
+<span style = "background-color:#dfd">            if(buf_ == NULLPTR)</span>
+            {
+<span style = "background-color:#dfd">                void* const addr( A::allocate(length * (sizeof(T))) );
+                buf_ = reinterpret_cast&lt;T*&gt;( addr ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8</span>
+            }
+<span style = "background-color:#dfd">            res = buf_ != NULLPTR;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @brief Pointer to external given or self created array.
+     */
+    T* buf_;
+
+    /**
+     * @brief Deletet flag.
+     *
+     * Is set to true for self created array or
+     * set to false for external given array.
+     */
+    bool_t isDeleted_;
+
+};
+
+#endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_BUFFER_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

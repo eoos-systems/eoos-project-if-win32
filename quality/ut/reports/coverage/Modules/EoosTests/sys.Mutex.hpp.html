@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>sys.Mutex.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      sys.Mutex.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef SYS_MUTEX_HPP_
+#define SYS_MUTEX_HPP_
+
+#include "sys.NonCopyable.hpp"
+#include "api.Mutex.hpp"
+
+namespace eoos
+{
+namespace sys
+{
+
+/**
+ * @class Mutex.
+ * @brief Mutex class.
+ */
+class Mutex : public NonCopyable, public api::Mutex
+{
+    using Parent = NonCopyable;
+
+public:
+
+    /**
+     * @brief Constructor.
+     */
+    Mutex() noexcept 
+<span style = "background-color:#dfd">        : NonCopyable()
+        , api::Mutex() {
+        bool_t const isConstructed{ construct() };
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Destructor.
+     */
+    ~Mutex() noexcept override
+<span style = "background-color:#dfd">    {
+        ::DeleteCriticalSection(pcs_);
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    bool_t isConstructed() const noexcept override ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
+<span style = "background-color:#dfd">    {
+        return Parent::isConstructed();
+    }</span>
+    
+    /**
+     * @copydoc eoos::api::Mutex::tryLock()
+     */
+    bool_t tryLock() noexcept override try
+<span style = "background-color:#dfd">    {
+        bool_t res{ false };
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            res = ::TryEnterCriticalSection(pcs_) != 0;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">        return false;
+    }    </span>
+
+    /**
+     * @copydoc eoos::api::Mutex::lock()
+     */
+    bool_t lock() noexcept override try
+<span style = "background-color:#dfd">    {
+        bool_t res{ false };
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            ::EnterCriticalSection(pcs_);
+            res = true;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">        return false;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Mutex::unlock()
+     */
+    void unlock() noexcept override try
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            ::LeaveCriticalSection(pcs_);</span>
+        }
+<span style = "background-color:#dfd">    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">        return;
+    }</span>
+
+private:
+
+    /**
+     * @brief Constructor.
+     *
+     * @return True if object has been constructed successfully.
+     */
+    bool_t construct() const noexcept try
+<span style = "background-color:#dfd">    {
+        bool_t res{ false };
+        while(true)</span>
+        {   
+<span style = "background-color:#dfd">            if( !isConstructed() )</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                break;</span>
+            }
+<span style = "background-color:#dfd">            ::DWORD const spinCount{ 4000U };
+            ::BOOL const isInitialize{ ::InitializeCriticalSectionAndSpinCount(pcs_, spinCount) };
+            if(isInitialize == 0)</span>
+            {   ///&lt; UT Justified Branch: OS dependency
+<span style = "background-color:#fdd">                break;</span>
+            }
+<span style = "background-color:#dfd">            res = true;
+            break;</span>
+<span style = "background-color:#fdd">        }</span>
+<span style = "background-color:#dfd">        return res;
+    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">        return false;
+    }</span>
+    
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    Mutex(Mutex const&amp;) noexcept = delete;
+    
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */       
+    Mutex&amp; operator=(Mutex const&amp;) noexcept = delete;   
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */       
+    Mutex(Mutex&amp;&amp;) noexcept = delete;
+    
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    Mutex&amp; operator=(Mutex&amp;&amp;) &amp; noexcept = delete;        
+
+    /**
+     * @brief Windows critical section object.
+     */    
+    ::CRITICAL_SECTION cs_{};    
+
+    /**
+     * @brief Pointer to Windows critical section object.
+     */    
+<span style = "background-color:#dfd">    ::LPCRITICAL_SECTION const pcs_{ &amp;cs_ };    </span>
+
+};
+
+} // namespace sys
+} // namespace eoos
+#endif // SYS_MUTEX_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

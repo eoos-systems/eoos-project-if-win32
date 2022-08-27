@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>sys.OutStreamChar.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      sys.OutStreamChar.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef SYS_OUTSTREAMCHAR_HPP_
+#define SYS_OUTSTREAMCHAR_HPP_
+
+#include "sys.NonCopyable.hpp"
+#include "api.OutStream.hpp"
+#include "lib.Memory.hpp"
+
+namespace eoos
+{
+namespace sys
+{
+
+/**
+ * @class OutStreamChar.
+ * @brief OutStreamChar class.
+ */
+class OutStreamChar : public NonCopyable, public api::OutStream&lt;char_t&gt;
+{
+    using Parent = NonCopyable;
+
+public:
+
+    /**
+     * @class Type.
+     * @brief Type output.
+     */
+    enum class Type : int32_t
+    {
+        COUT, ///&lt; @brief COUT
+        CERR  ///&lt; @brief CERR
+    };
+
+    /**
+     * @brief Constructor.
+     *
+     * @param type Type output.
+     */
+    OutStreamChar(Type type) noexcept 
+<span style = "background-color:#dfd">        : NonCopyable()
+        , api::OutStream&lt;char_t&gt;()
+        , type_( type ) 
+        , handle_( NULLPTR )
+        , lpConsoleScreenBufferInfo_(){
+        bool_t const isConstructed{ construct() };
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Destructor.
+     */
+    ~OutStreamChar() noexcept override
+<span style = "background-color:#dfd">    {
+        if(handle_ != NULLPTR)</span>
+        {
+            // It is not required to CloseHandle when done with the handle retrieved from GetStdHandle. 
+            // The returned value is simply a copy of the value stored in the process table.
+            // Moreover, closing the handle will lead to stop outputting if EOOS instance 
+            // will be deleted and created again.
+<span style = "background-color:#dfd">            flushStream();
+            handle_ = NULLPTR;            </span>
+        }        
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    bool_t isConstructed() const noexcept override ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
+<span style = "background-color:#dfd">    {
+        return Parent::isConstructed();
+    }</span>
+    
+    /**
+     * @copydoc eoos::api::OutStream::operator&lt;&lt;()
+     */
+    OutStream&lt;char_t&gt;&amp; operator&lt;&lt;(char_t const* source) noexcept override
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            ::WORD wAttributes( lpConsoleScreenBufferInfo_.wAttributes );
+            if(type_ == Type::CERR)</span>
+            {
+<span style = "background-color:#dfd">                ::WORD wForegroundMask( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
+                wForegroundMask = ~wForegroundMask;
+                wAttributes &amp;= wForegroundMask;
+                wAttributes |= FOREGROUND_RED | FOREGROUND_INTENSITY;</span>
+            }
+<span style = "background-color:#dfd">            static_cast&lt;void&gt;( ::SetConsoleTextAttribute(handle_, wAttributes) );
+            ::DWORD numberOfCharsToWrite( static_cast&lt; ::DWORD &gt;( lib::Memory::strlen(source)) );</span>
+            ::DWORD numberOfCharsWritten; ///&lt; SCA AUTOSAR-C++14 Justified Rule M0-1-4
+<span style = "background-color:#dfd">            static_cast&lt;void&gt;( ::WriteConsoleA(handle_, source, numberOfCharsToWrite, &amp;numberOfCharsWritten, NULL) );
+            static_cast&lt;void&gt;( ::SetConsoleTextAttribute(handle_, lpConsoleScreenBufferInfo_.wAttributes) );</span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::OutStream::flush()
+     */    
+    OutStream&lt;char_t&gt;&amp; flush() noexcept override
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {        
+<span style = "background-color:#dfd">            flushStream();</span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }</span>
+    
+private:
+
+    /**
+     * @brief Constructor.
+     *
+     * @return True if object has been constructed successfully.
+     */
+    bool_t construct() noexcept try
+<span style = "background-color:#dfd">    {
+        bool_t res{ false };
+        while(true)</span>
+        {   
+<span style = "background-color:#dfd">            if( !isConstructed() )</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                break;</span>
+            }
+            DWORD nStdHandle;
+<span style = "background-color:#dfd">            if(type_ == Type::COUT)</span>
+            {
+<span style = "background-color:#dfd">                nStdHandle = STD_OUTPUT_HANDLE;
+            }</span>
+            else
+            {
+<span style = "background-color:#dfd">                nStdHandle = STD_ERROR_HANDLE;</span>
+            }
+<span style = "background-color:#dfd">            handle_ = ::GetStdHandle(nStdHandle);
+            if( handle_ == INVALID_HANDLE_VALUE ) ///&lt; SCA AUTOSAR-C++14 Justified Rule M5-2-8 and Rule A5-2-2</span>
+            {   ///&lt; UT Justified Branch: OS dependency
+<span style = "background-color:#fdd">                break;</span>
+            }
+            // Don't check on NULL here as:
+            // If an application does not have associated standard handles, such as a service running 
+            // on an interactive desktop, and has not redirected them, the return value is NULL.
+            // Thus, if an output handle is not exist, will flush the stream nowhere.
+<span style = "background-color:#dfd">            ::BOOL isGot( ::GetConsoleScreenBufferInfo(handle_, &amp;lpConsoleScreenBufferInfo_) );
+            if( isGot == 0 )</span>
+            {   ///&lt; UT Justified Branch: OS dependency
+<span style = "background-color:#fdd">                break;</span>
+            }
+<span style = "background-color:#dfd">            res = true;
+            break;</span>
+<span style = "background-color:#fdd">        } ///&lt; UT Justified Line: Compiler dependency</span>
+<span style = "background-color:#dfd">        return res;
+    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">        return false;
+    }</span>
+    
+    /**
+     * @brief Flushs stream.
+     */    
+    void flushStream() const noexcept
+<span style = "background-color:#dfd">    {
+        static_cast&lt;void&gt;( ::FlushConsoleInputBuffer(handle_) );
+    }    </span>
+    
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    OutStreamChar(OutStreamChar const&amp;) noexcept = delete;
+    
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */       
+    OutStreamChar&amp; operator=(OutStreamChar const&amp;) noexcept = delete;   
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */       
+    OutStreamChar(OutStreamChar&amp;&amp;) noexcept = delete;
+    
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    OutStreamChar&amp; operator=(OutStreamChar&amp;&amp;) &amp; noexcept = delete;
+    
+    /**
+     * @brief Type of stream.
+     */
+    Type type_;
+
+    /**
+     * @brief A Windows handle of this stream.
+     */
+    ::HANDLE handle_;
+
+    /**
+     * @brief Original console screen buffer information.
+     */    
+    ::CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo_;
+
+};
+
+} // namespace sys
+} // namespace eoos
+#endif // SYS_OUTSTREAMCHAR_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

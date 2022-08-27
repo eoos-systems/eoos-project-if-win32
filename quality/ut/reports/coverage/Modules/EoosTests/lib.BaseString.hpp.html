@@ -1,0 +1,744 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.BaseString.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.BaseString.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2017-2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_BASESTRING_HPP_
+#define LIB_BASESTRING_HPP_
+
+#include "lib.AbstractBaseString.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+    
+/**
+ * @class BaseString&lt;T,L,R,A&gt;
+ * @brief Static base string class.
+ *
+ * Primary template implements the static string class.
+ *
+ * @tparam T A data type of string characters.
+ * @tparam L A maximum number of string characters, or 0 for dynamic allocation.
+ * @tparam R A character traits.
+ * @tparam A A heap memory allocator class.
+ */
+template &lt;typename T, int32_t L, class R = CharTrait&lt;T&gt;, class A = Allocator&gt;
+class BaseString : public AbstractBaseString&lt;T,R,A&gt;
+{
+    typedef AbstractBaseString&lt;T,R,A&gt; Parent;
+    
+public:
+
+    using Parent::isConstructed;
+    using Parent::convert;
+
+    /**
+     * @brief Constructor.
+     */
+    BaseString() 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;() {
+        bool_t const isConstructed( construct() );
+        setConstructed( isConstructed );
+    }</span>
+    
+    /**
+     * @brief Constructor.
+     *
+     * @param source A source object interface.
+     */
+    BaseString(api::String&lt;T&gt; const&amp; source) 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;() {
+        bool_t const isConstructed( construct( source.getChar() ) );
+        setConstructed( isConstructed );            
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @param source A source character string.
+     */
+    BaseString(T const* const source) 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;() {
+        bool_t const isConstructed( construct( source ) );
+        setConstructed( isConstructed );            
+    }</span>
+    
+    /**
+     * @brief Constructor.
+     *
+     * @param value A source numerical value.
+     * @param base  A numerical base used to represent a value as this string.     
+     */
+    explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10) 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;() {    
+        bool_t isConstructed( construct() );
+        if( isConstructed )</span>
+        {
+<span style = "background-color:#dfd">            isConstructed = convert(value, base);</span>
+        }
+<span style = "background-color:#dfd">        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~BaseString()
+<span style = "background-color:#dfd">    {
+    }</span>
+    
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    BaseString(BaseString const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justified Rule 12-8-1
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;(obj) {
+        bool_t const isConstructed( construct( obj.getChar() ) );
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */       
+    BaseString&amp; operator=(BaseString const&amp; obj)
+<span style = "background-color:#dfd">    {
+        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+        {
+<span style = "background-color:#dfd">            copyRaw3(str_, obj.str_, L);
+            Parent::operator=(obj);            </span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }    </span>
+
+    #if EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */       
+    BaseString(BaseString&amp;&amp; obj) noexcept 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;( move(obj) ) {
+        copyRaw3(str_, obj.str_, L);
+    }</span>
+
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    BaseString&amp; operator=(BaseString&amp;&amp; obj) &amp; noexcept
+<span style = "background-color:#dfd">    {
+        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+        {
+<span style = "background-color:#dfd">            copyRaw3(str_, obj.str_, L);
+            Parent::operator=( move(obj) );            </span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }        </span>
+
+    #endif // EOOS_CPP_STANDARD &gt;= 2011    
+
+    /**
+     * @copydoc eoos::api::Collection::getLength()
+     */
+    virtual size_t getLength() const
+<span style = "background-color:#dfd">    {
+        size_t length( 0U );
+        if( isConstructed() )</span>
+        {
+            // @todo Rework here not to calculate length, but take it form a class member.
+<span style = "background-color:#dfd">            length = getLengthRaw(str_);</span>
+        }
+<span style = "background-color:#dfd">        return length;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::String::getChar()
+     */
+    virtual T const* getChar() const
+<span style = "background-color:#dfd">    {
+        T const* str( NULLPTR );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            str = str_;</span>
+        }
+<span style = "background-color:#dfd">        return str;
+    }</span>
+    
+protected:
+
+    using Parent::setConstructed;
+    using Parent::getLengthRaw;
+    using Parent::copyRaw3;
+    using Parent::concatenateRaw3;
+    using Parent::isEqualRaw2;    
+
+private:
+
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::copyRaw(T const*)
+     */
+    virtual bool_t copyRaw(T const* const str)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            copyRaw3(str_, str, L);
+            res = true;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+    
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::concatenate(T const*)
+     */
+    virtual bool_t concatenateRaw(T const* const str)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            concatenateRaw3(str_, str, L);
+            res = true;</span>
+        }
+<span style = "background-color:#dfd">        return res;</span>
+
+<span style = "background-color:#dfd">    }</span>
+    
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::isEqualToRaw(T const*)
+     */
+    virtual bool_t isEqualToRaw(T const* const str) const
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            res = isEqualRaw2(str_, str);</span>
+        }
+<span style = "background-color:#dfd">        return res;</span>
+
+<span style = "background-color:#dfd">    }</span>
+    
+    /**
+     * @brief Constructs this object.
+     *
+     * @param str A string to be copied on construction.
+     * @return True if this object has been constructed successfully.
+     */     
+    bool_t construct(T const* const str = NULLPTR)
+<span style = "background-color:#dfd">    {
+        str_[0] = R::getTerminator();
+        bool_t res( false );</span>
+        do
+        {
+<span style = "background-color:#dfd">            if( !isConstructed() )</span>
+            {
+<span style = "background-color:#dfd">                break;</span>
+            }
+<span style = "background-color:#dfd">            res = ( str == NULLPTR ) ? true : copyRaw(str);            
+        } while(false);
+        return res;
+    }</span>
+    
+
+    /**
+     * @brief The buffer of characters of this string.
+     */
+    T str_[L + 1];    
+
+};
+
+#ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
+
+/**
+ * @class BaseString&lt;T,0,R,A&gt;
+ * @brief Dynamic base string class.
+ *
+ * Partial specialization of the template implements the dynamic string class.
+ *
+ * @tparam T Data type of string characters.
+ * @tparam R A character traits. 
+ * @tparam A Heap memory allocator class.
+ */
+template &lt;typename T, class R, class A&gt;
+class BaseString&lt;T,0,R,A&gt; : public AbstractBaseString&lt;T,R,A&gt;
+{
+    typedef AbstractBaseString&lt;T,R,A&gt; Parent;
+
+public:
+
+    using Parent::isConstructed;
+    using Parent::convert;
+
+    /**
+     * @brief Constructor.
+     */
+    BaseString() 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;()
+        , len_(0)
+        , str_(NULLPTR){
+        bool_t const isConstructed( construct() );
+        setConstructed( isConstructed );
+    }</span>
+    
+    /**
+     * @brief Constructor.
+     *
+     * @param source A source object interface.
+     */
+    BaseString(api::String&lt;T&gt; const&amp; source) 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;()
+        , len_(0)
+        , str_(NULLPTR){
+        bool_t const isConstructed( construct( source.getChar() ) );
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @param source A source character string.
+     */
+    BaseString(T const* const source) 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;()
+        , len_(0)
+        , str_(NULLPTR){
+        bool_t const isConstructed( construct( source ) );
+        setConstructed( isConstructed );
+    }</span>
+    
+    /**
+     * @brief Constructor.
+     *
+     * @param value A source numerical value.     
+     * @param base  A numerical base used to represent a value as this string.
+     */
+    explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10)
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;()
+        , len_(0)
+        , str_(NULLPTR){
+        bool_t isConstructed( construct() );
+        if( isConstructed )</span>
+        {
+<span style = "background-color:#dfd">            isConstructed = convert(value, base);</span>
+        }
+<span style = "background-color:#dfd">        setConstructed( isConstructed );
+    }    </span>
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~BaseString()
+<span style = "background-color:#dfd">    {
+        free();
+    }</span>
+
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    BaseString(BaseString const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justified Rule 12-8-1
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;(obj)
+        , len_(0)
+        , str_(NULLPTR){
+        bool_t const isConstructed( construct( obj.getChar() ) );
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */       
+    BaseString&amp; operator=(BaseString const&amp; obj)
+<span style = "background-color:#dfd">    {
+        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+        {
+<span style = "background-color:#dfd">            static_cast&lt;void&gt;( copyRaw( obj.getChar() ) );
+            Parent::operator=(obj);</span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }    </span>
+
+    #if EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */       
+    BaseString(BaseString&amp;&amp; obj) noexcept 
+<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;( move(obj) )
+        , len_(obj.len_)
+        , str_(obj.str_){
+        obj.clean();
+    }</span>
+
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    BaseString&amp; operator=(BaseString&amp;&amp; obj) &amp; noexcept
+<span style = "background-color:#dfd">    {
+        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+        {
+<span style = "background-color:#dfd">            free();
+            len_ = obj.len_;
+            str_ = obj.str_;
+            obj.clean();
+            Parent::operator=( move(obj) );            </span>
+        }
+<span style = "background-color:#dfd">        return *this;
+    }        </span>
+
+    #endif // EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::api::Collection::getLength()
+     */
+    virtual size_t getLength() const
+<span style = "background-color:#dfd">    {
+        size_t length( 0U );
+        if( isConstructed() )</span>
+        {
+            // @todo Rework here not to calculate length, but take it form a class member.
+<span style = "background-color:#dfd">            length = getLengthRaw(str_);</span>
+        }
+<span style = "background-color:#dfd">        return length;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::String::getChar()
+     */
+    virtual T const* getChar() const
+<span style = "background-color:#dfd">    {
+        T const* str( NULLPTR );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            str = str_;</span>
+        }
+<span style = "background-color:#dfd">        return str;
+    }</span>
+
+protected:
+
+    using Parent::setConstructed;
+    using Parent::getLengthRaw;
+    using Parent::copyRaw3;
+    using Parent::concatenateRaw3;
+    using Parent::isEqualRaw2;
+
+private:
+
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::copyRaw(T const*)
+     */
+    virtual bool_t copyRaw(T const* const str)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            size_t const length( getLengthRaw(str) );            
+            bool_t isPrepared( prepareCopy(length) );
+            if( isPrepared )</span>
+            {
+<span style = "background-color:#dfd">                copyRaw3(str_, str, len_);
+                res = true;</span>
+            }
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+    
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::concatenate(T const*)
+     */
+    virtual bool_t concatenateRaw(T const* const str)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            size_t const length( getLength() + getLengthRaw(str) );
+            bool_t isPrepared( prepareConcatenate(length) );
+            if( isPrepared )</span>
+            {
+<span style = "background-color:#dfd">                concatenateRaw3(str_, str, len_);
+                res = true;</span>
+            }
+        }
+<span style = "background-color:#dfd">        return res;</span>
+
+<span style = "background-color:#dfd">    }</span>
+    
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::isEqualToRaw(T const*)
+     */
+    virtual bool_t isEqualToRaw(T const* const str) const
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            res = isEqualRaw2(str_, str);</span>
+        }
+<span style = "background-color:#dfd">        return res;</span>
+
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @brief Constructs this object.
+     *
+     * @param str A string to be copied on construction.
+     * @return True if this object has been constructed successfully.
+     */     
+    bool_t construct(T const* const str = NULLPTR)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );</span>
+        do
+        {
+<span style = "background-color:#dfd">            if( !isConstructed() )</span>
+            {
+<span style = "background-color:#dfd">                break;</span>
+            }
+<span style = "background-color:#dfd">            size_t length( LENGTH_ON_CONSTRUCTION );
+            if( str != NULLPTR )</span>
+            {
+<span style = "background-color:#dfd">                length = getLengthRaw(str);</span>
+            }
+<span style = "background-color:#dfd">            bool_t isAllocated( allocate(length) );
+            if( !isAllocated )</span>
+            {
+<span style = "background-color:#dfd">                break;</span>
+            }
+<span style = "background-color:#dfd">            res = ( str == NULLPTR ) ? true : copyRaw(str);
+        } while(false);
+        return res;
+    }</span>
+    
+    /**
+     * @brief Prepare this string for a new length to copy.
+     *
+     * @param length A number of string characters.
+     * @return True if the the string is prepared.
+     */
+    bool_t prepareCopy(size_t length)
+<span style = "background-color:#dfd">    {
+        bool_t res(true);
+        if( !isFit(length) )</span>
+        {
+<span style = "background-color:#dfd">            free();
+            res = allocate(length);</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @brief Prepare this string for a new length to copy.
+     *
+     * @param length A number of string characters.
+     * @return True if the the string is prepared.
+     */
+    bool_t prepareConcatenate(size_t length)
+<span style = "background-color:#dfd">    {
+        bool_t res(true);
+        if( !isFit(length) )</span>
+        {
+            // @todo Refactor this implementation to make it be more clear.
+<span style = "background-color:#dfd">            T* const str( str_ );
+            size_t const len( len_ );            
+            clean();
+            res = allocate(length);
+            if( res )</span>
+            {
+<span style = "background-color:#dfd">                copyRaw3(str_, str, len);</span>
+            }
+<span style = "background-color:#dfd">            A::free(str);</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+    
+    /**
+     * @brief Allocates memory for a string.
+     *
+     * @param length A number of string characters.
+     * @return True if the context has been allocated successfully.
+     */
+    bool_t allocate(size_t const length)
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( (str_ == NULLPTR) &amp;&amp; (length != 0U) )</span>
+        {
+<span style = "background-color:#dfd">            size_t const size( calculateSize(length) );
+            T* const string( reinterpret_cast&lt;T*&gt;( A::allocate(size) ) );
+            if(string != NULLPTR)</span>
+            {
+<span style = "background-color:#dfd">                str_ = string;
+                len_ = length;
+                str_[0] = R::getTerminator();                
+                res = true;</span>
+            }
+        }
+<span style = "background-color:#dfd">        return res;
+    } </span>
+    
+    /**
+     * @brief Frees this contex.
+     */
+    void free()
+<span style = "background-color:#dfd">    {
+        if(str_ != NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            A::free(str_);
+            str_ = NULLPTR;
+            len_ = 0U;</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+    
+    /**
+     * @brief Cleans this contex.
+     */
+    void clean()
+<span style = "background-color:#dfd">    {
+        str_ = NULLPTR;
+        len_ = 0U;
+    }</span>
+    
+    /**
+     * @brief Returns size in byte for a string length.
+     *
+     * @param len A number of string characters.
+     * @return Size in byte for a passed string.
+     */
+    static size_t calculateSize(size_t len)
+<span style = "background-color:#dfd">    {
+        return (len * sizeof(T)) + sizeof(T);
+    }</span>
+    
+    /**
+     * @brief Tests if a passed length fits to allocated available length.
+     *
+     * @param len A number of string characters.
+     * @return True if this length will be fit successfully.
+     */
+    bool_t isFit(size_t len) const ///&lt; SCA MISRA-C++:2008 Justified Rule 2-10-2
+<span style = "background-color:#dfd">    {
+        return len &lt;= len_;
+    }</span>
+    
+    /**
+     * @brief Lenght of the buffer of characters on construction.
+     *
+     * @note Cannot be zero.
+     */
+    static const size_t LENGTH_ON_CONSTRUCTION = 7U;
+    
+    /**
+     * @brief Lenght of the buffer of characters of this string.
+     */
+    size_t len_;
+
+    /**
+     * @brief The buffer of characters of this string.
+     *
+     * @todo Refactor this to be array on construction, 
+     * and if new assigned string is more than LENGTH_ON_CONSTRUCTION,
+     * allocate a new array dynamically. To implement this approach and
+     * reduce size of the class object, revise using a `union` type.
+     */
+    T* str_;
+};
+
+#endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
+
+/**
+ * @brief Concatenates two strings.
+ *
+ * @param source1 A source object 1.
+ * @param source2 A source object 2.
+ * @return This string object with the concatenated strings.
+ */
+template &lt;typename T, int32_t L, class R, class A&gt;
+inline BaseString&lt;T,L,R,A&gt; operator+(BaseString&lt;T,L,R,A&gt; const&amp; source1, BaseString&lt;T,L,R,A&gt; const&amp; source2)
+<span style = "background-color:#dfd">{
+    BaseString&lt;T,L,R,A&gt; string(source1);
+    string += source2;
+    return string;
+}</span>
+
+/**
+ * @brief Concatenates two strings.
+ *
+ * @param source1 A source object 1.
+ * @param source2 A source object interface 2.
+ * @return This string object with the concatenated strings.
+ */
+template &lt;typename T, int32_t L, class R, class A&gt;
+inline BaseString&lt;T,L,R,A&gt; operator+(BaseString&lt;T,L,R,A&gt; const&amp; source1, api::String&lt;T&gt; const&amp; source2)
+<span style = "background-color:#dfd">{
+    BaseString&lt;T,L,R,A&gt; string(source1);
+    string += source2;
+    return string;
+}</span>
+
+/**
+ * @brief Concatenates two strings.
+ *
+ * @param source1 A source object interface 1.
+ * @param source2 A source object 2.
+ * @return This string object with the concatenated strings.
+ */
+template &lt;typename T, int32_t L, class R, class A&gt;
+inline BaseString&lt;T,L,R,A&gt; operator+(api::String&lt;T&gt; const&amp; source1, BaseString&lt;T,L,R,A&gt; const&amp; source2)
+<span style = "background-color:#dfd">{
+    BaseString&lt;T,L,R,A&gt; string(source1);
+    string += source2;
+    return string;
+}</span>
+
+/**
+ * @brief Concatenates two strings.
+ *
+ * @param source1 A source object 1.
+ * @param source2 A source character string 2.
+ * @return This string object with the concatenated strings.
+ */
+template &lt;typename T, int32_t L, class R, class A&gt;
+inline BaseString&lt;T,L,R,A&gt; operator+(BaseString&lt;T,L,R,A&gt; const&amp; source1, T const* const source2)
+<span style = "background-color:#dfd">{
+    BaseString&lt;T,L,R,A&gt; string(source1);
+    string += source2;
+    return string;
+}</span>
+
+/**
+ * @brief Concatenates two strings.
+ *
+ * @param source1 A source character string 1.
+ * @param source2 A source object 2.
+ * @return This string object with the concatenated strings.
+ */
+template &lt;typename T, int32_t L, class R, class A&gt;
+inline BaseString&lt;T,L,R,A&gt; operator+(T const* const source1, BaseString&lt;T,L,R,A&gt; const&amp; source2)
+<span style = "background-color:#dfd">{
+    BaseString&lt;T,L,R,A&gt; string(source1);
+    string += source2;
+    return string;
+}</span>
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_BASESTRING_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

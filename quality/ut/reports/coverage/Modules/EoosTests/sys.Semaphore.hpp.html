@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>sys.Semaphore.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      sys.Semaphore.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2017-2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef SYS_SEMAPHORE_HPP_
+#define SYS_SEMAPHORE_HPP_
+
+#include "sys.NonCopyable.hpp"
+#include "api.Semaphore.hpp"
+
+namespace eoos
+{
+namespace sys
+{
+
+/**
+ * @class Semaphore
+ * @brief Semaphore class.
+ */
+class Semaphore : public NonCopyable, public api::Semaphore
+{
+    using Parent = NonCopyable;
+
+public:
+
+    /**
+     * @brief Constructor.
+     *
+     * @param permits The initial number of permits available.
+     */
+    explicit Semaphore(int32_t permits) 
+<span style = "background-color:#dfd">        : NonCopyable()
+        , api::Semaphore() {
+        bool_t const isConstructed{ construct(permits) };
+        setConstructed( isConstructed );
+    }</span>
+    
+    /**
+     * @brief Destructor.
+     */
+    ~Semaphore() override
+<span style = "background-color:#dfd">    {
+        if(handle_ != NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            static_cast&lt;void&gt;( ::CloseHandle(handle_) );
+            handle_ = NULLPTR;            </span>
+        }
+        
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    bool_t isConstructed() const override ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
+<span style = "background-color:#dfd">    {
+        return Parent::isConstructed();
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Semaphore::acquire()
+     */
+    bool_t acquire() override try
+<span style = "background-color:#dfd">    {
+        bool_t res{ false };
+        if( isConstructed() ) </span>
+        {
+<span style = "background-color:#dfd">            ::DWORD error{ ::WaitForSingleObject(handle_, INFINITE) };
+            res = ( error == static_cast&lt; ::DWORD &gt;(WAIT_OBJECT_0) );</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">        return false;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Semaphore::release()
+     */
+    void release() override try
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            release(1);</span>
+        }
+<span style = "background-color:#dfd">    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">        return;
+    }</span>
+
+
+private:
+
+    /**
+     * @brief Constructor.
+     *
+     * @param permits The initial number of permits available.
+     * @return true if object has been constructed successfully.
+     */
+    bool_t construct(int32_t permits) try
+<span style = "background-color:#dfd">    {
+        bool_t res{ false };
+        while(true)</span>
+        {
+<span style = "background-color:#dfd">            if( !isConstructed() )</span>
+            {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">                break;</span>
+            }
+<span style = "background-color:#dfd">            if( permits &lt; 0 )</span>
+            {
+<span style = "background-color:#dfd">                break;</span>
+            }
+            // To comply SCA AUTOSAR-C++14 M0-1-2 and to check permits is not more than MAXIMUM_COUNT 
+            // if the maximum would be changed, the values are explicitly casted to int64_t.
+            // Thus, if MAXIMUM_COUNT would be less than 0x7FFFFFFF, we have to cast to int32_t back.
+<span style = "background-color:#dfd">            if( static_cast&lt;int64_t&gt;(permits) &gt; static_cast&lt;int64_t&gt;(MAXIMUM_COUNT) )</span>
+            {   ///&lt; UT Justified Branch: SCA dependency
+<span style = "background-color:#fdd">                break;</span>
+            }            
+<span style = "background-color:#dfd">            ::LPSECURITY_ATTRIBUTES const lpSemaphoreAttributes{ NULL };
+            ::LONG const lInitialCount{ permits };
+            ::LONG const lMaximumCount{ MAXIMUM_COUNT };
+            ::LPCSTR lpName{ NULL };
+            ::HANDLE const handle{ ::CreateSemaphore(</span>
+                lpSemaphoreAttributes,
+                lInitialCount,
+                lMaximumCount,
+                lpName
+            ) };
+<span style = "background-color:#dfd">            if(handle == NULLPTR)</span>
+            {   ///&lt; UT Justified Branch: OS dependency
+<span style = "background-color:#fdd">                break;</span>
+            }
+<span style = "background-color:#dfd">            handle_ = handle;
+            res = true;
+            break;</span>
+<span style = "background-color:#fdd">        } ///&lt; UT Justified Line: Compiler dependency</span>
+<span style = "background-color:#dfd">        return res;
+    }  catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">        return false;
+    }</span>
+
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    Semaphore(Semaphore const&amp;) noexcept = delete;
+    
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */       
+    Semaphore&amp; operator=(Semaphore const&amp;) noexcept = delete;   
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */       
+    Semaphore(Semaphore&amp;&amp;) noexcept = delete;
+    
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    Semaphore&amp; operator=(Semaphore&amp;&amp;) &amp; noexcept = delete;        
+    
+    /**
+     * @brief Releases the given number of permits.
+     *
+     * The function releases from the permits and returns these to the semaphore.
+     *
+     * @param permits The number of permits to release.
+     */
+    void release(int32_t permits) const ///&lt; SCA AUTOSAR-C++14 Justified Rule M9-3-3
+<span style = "background-color:#dfd">    {
+        ::LONG const lReleaseCount{ static_cast&lt; ::LONG &gt;(permits) };
+        static_cast&lt;void&gt;( ::ReleaseSemaphore(handle_, lReleaseCount, NULL) );
+    }</span>
+
+    /**
+     * @brief Maximum Semaphore count.
+     */
+    static const ::LONG MAXIMUM_COUNT{ 0x7FFFFFFF };
+
+    /**
+     * @brief A Windows handle of this thread.
+     */
+<span style = "background-color:#dfd">    ::HANDLE handle_{ NULLPTR };</span>
+
+};
+        
+} // namespace sys
+} // namespace eoos
+#endif // SYS_SEMAPHORE_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

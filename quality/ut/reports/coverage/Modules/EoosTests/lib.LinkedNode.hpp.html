@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.LinkedNode.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.LinkedNode.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2016-2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_LINKEDNODE_HPP_
+#define LIB_LINKEDNODE_HPP_
+
+#include "lib.NonCopyable.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+
+/**
+ * @class LinkedNode&lt;T,A&gt;
+ * @brief Element for linked lists.
+ *
+ * @tparam T Data type of element.
+ * @tparam A Heap memory allocator class.
+ */
+template &lt;typename T, class A = Allocator&gt;
+class LinkedNode : public NonCopyable&lt;A&gt;
+{
+    typedef NonCopyable&lt;A&gt; Parent;
+
+public:
+
+    /**
+     * @brief Constructor.
+     *
+     * @note A passed element will be copied to the internal data
+     * structure by calling a copy constructor so that the element
+     * might be invalidated after the function called.
+     *
+     * @param element An user element of this node.
+     */
+    LinkedNode(T const&amp; element) 
+<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
+        , prev_(this)
+        , next_(this)
+        , index_(0)
+        , element_(element) {
+    }</span>
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~LinkedNode()
+<span style = "background-color:#dfd">    {
+        LinkedNode* node( this-&gt;next_ );
+        while(node-&gt;index_ != 0)</span>
+        {
+<span style = "background-color:#dfd">            node-&gt;index_--; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
+            node = node-&gt;next_;
+        }
+        next_-&gt;prev_ = prev_;
+        prev_-&gt;next_ = next_;
+        prev_ = this;
+        next_ = this;
+    }</span>
+
+    /**
+     * @brief Inserts a new element after this.
+     *
+     * Function links a node after this and reindexes
+     * chain of nodes starts from given node.
+     *
+     * @param node Pointer to inserted node.
+     */
+    void insertAfter(LinkedNode&lt;T,A&gt;* node)
+<span style = "background-color:#dfd">    {
+        link(node);
+        node-&gt;index_ = index_;</span>
+        do
+        {
+<span style = "background-color:#dfd">            node-&gt;index_++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
+            node = node-&gt;next_;</span>
+        }
+<span style = "background-color:#dfd">        while(node-&gt;index_ != 0);
+    }</span>
+
+    /**
+     * @brief Inserts a new element before this.
+     *
+     * Function links a node before this and reindexes
+     * chain of nodes starts from this node.
+     *
+     * @param node Pointer to inserted node.
+     */
+    void insertBefore(LinkedNode&lt;T,A&gt;* node)
+<span style = "background-color:#dfd">    {
+        prev_-&gt;link(node);
+        node-&gt;index_ = index_;
+        node = this;</span>
+        do
+        {
+<span style = "background-color:#dfd">            node-&gt;index_++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
+            node = node-&gt;next_;</span>
+        }
+<span style = "background-color:#dfd">        while(node-&gt;index_ != 0);
+    }</span>
+
+    /**
+     * @brief Returns previous element.
+     *
+     * @return Previous element.
+     */
+    LinkedNode&lt;T,A&gt;* getPrevious() ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-3
+<span style = "background-color:#dfd">    {
+        return prev_;
+    }</span>
+
+    /**
+     * @brief Returns previous element.
+     *
+     * @return Previous element.
+     */
+    LinkedNode&lt;T,A&gt; const* getPrevious() const
+    {
+        return prev_;
+    }
+
+    /**
+     * @brief Returns next element.
+     *
+     * @return The next element.
+     */
+    LinkedNode&lt;T,A&gt;* getNext() ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-3
+<span style = "background-color:#dfd">    {
+        return next_;
+    }</span>
+
+    /**
+     * @brief Returns next element.
+     *
+     * @return The next element.
+     */
+    LinkedNode&lt;T,A&gt; const* getNext() const
+    {
+        return next_;
+    }
+
+    /**
+     * @brief Returns the element.
+     *
+     * @return The next element.
+     */
+    T&amp; getElement()
+<span style = "background-color:#dfd">    {
+        return element_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2
+    }</span>
+
+    /**
+     * @brief Returns the element.
+     *
+     * @return The next element.
+     */
+    T const&amp; getElement() const
+    {
+        return element_;
+    }
+
+    /**
+     * @brief Returns the element index.
+     *
+     * @return An element index.
+     */
+    int32_t getIndex() const
+<span style = "background-color:#dfd">    {
+        return index_;
+    }</span>
+
+private:
+
+    /**
+     * @brief Links a given node after this.
+     *
+     * @param node Pointer to linking node.
+     */
+    void link(LinkedNode&lt;T,A&gt;* node)
+<span style = "background-color:#dfd">    {
+        next_-&gt;prev_ = node;
+        node-&gt;next_ = next_;
+        next_ = node;
+        node-&gt;prev_ = this;
+    }   </span>
+
+    /**
+     * @brief Previous node.
+     */
+    LinkedNode* prev_;
+
+    /**
+     * @brief Next node.
+     */
+    LinkedNode* next_;
+
+    /**
+     * @brief Index of the node.
+     */
+    int32_t index_;
+
+    /**
+     * @brief Containing element.
+     */
+    T element_;
+
+};
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_LINKEDNODE_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

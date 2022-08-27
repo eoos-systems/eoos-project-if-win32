@@ -1,0 +1,542 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.AbstractList.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.AbstractList.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2016-2022, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_ABSTRACTLIST_HPP_
+#define LIB_ABSTRACTLIST_HPP_
+
+#include "lib.NonCopyable.hpp"
+#include "lib.Buffer.hpp"
+#include "lib.LinkedNode.hpp"
+#include "api.List.hpp"
+#include "api.Queue.hpp"
+#include "api.Iterable.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+    
+/**
+ * @class AbstractList&lt;T,A&gt;
+ * @brief Abstract list class.
+ *
+ * @tparam T Data type of container element.
+ * @tparam A Heap memory allocator class.
+ */
+template &lt;typename T, class A = Allocator&gt;
+class AbstractList :
+    public NonCopyable&lt;A&gt;,
+    public api::List&lt;T&gt;,
+    public api::Queue&lt;T&gt;,
+    public api::Iterable&lt;T&gt;{
+
+    typedef NonCopyable&lt;A&gt; Parent;
+    typedef LinkedNode&lt;T,A&gt; Node;
+
+public:
+        
+    using api::List&lt;T&gt;::getListIterator;
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~AbstractList()
+<span style = "background-color:#dfd">    {
+        AbstractList&lt;T,A&gt;::clear();
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const ///&lt; SCA MISRA-C++:2008 Justified Rule 10-3-1 and Defected Rule 9-3-3
+<span style = "background-color:#dfd">    {
+        return Parent::isConstructed();
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::add(T const&amp;)
+     */
+    virtual bool_t add(T const&amp; element)
+<span style = "background-color:#dfd">    {
+        size_t const lenght( getLength() );
+        return isConstructed() ? addNode(static_cast&lt;int32_t&gt;(lenght), element) : false;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::add(int32_t,T const&amp;)
+     */
+    virtual bool_t add(int32_t const index, T const&amp; element)
+<span style = "background-color:#dfd">    {
+        return isConstructed() ? addNode(index, element) : false;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::clear()
+     */
+    virtual void clear()
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            size_t lenght( getLength() );
+            while(true)</span>
+            {
+<span style = "background-color:#dfd">                if(lenght == 0U)</span>
+                {
+<span style = "background-color:#dfd">                    break;</span>
+                }
+<span style = "background-color:#dfd">                Node* const node( getNodeByIndex(0) );
+                static_cast&lt;void&gt;( removeNode(node) );
+                lenght -= 1U;
+            }</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @copydoc eoos::api::List::removeFirst()
+     */
+    virtual bool_t removeFirst()
+<span style = "background-color:#dfd">    {
+        return remove(0);
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::removeLast()
+     */
+    virtual bool_t removeLast()
+<span style = "background-color:#dfd">    {
+        size_t const length( getLength() );
+        return remove( static_cast&lt;int32_t&gt;(length) - 1 );
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Queue::remove()
+     */
+    virtual bool_t remove()
+<span style = "background-color:#dfd">    {
+        return remove(0);
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::remove(int32_t)
+     */
+    virtual bool_t remove(int32_t const index)
+<span style = "background-color:#dfd">    {
+        return isConstructed() ? removeNode( getNodeByIndex(index) ) : false;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::removeElement(T const&amp;)
+     */
+    virtual bool_t removeElement(T const&amp; element)
+<span style = "background-color:#dfd">    {
+        return isConstructed() ? removeNode( getNodeByElement(element) ) : false;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Queue::peek(T const&amp;)
+     */
+    virtual T&amp; peek()
+<span style = "background-color:#dfd">    {
+        return get(0);
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::getFirst()
+     */
+    virtual T&amp; getFirst()
+<span style = "background-color:#dfd">    {
+        return get(0);
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::getLast()
+     */
+    virtual T&amp; getLast()
+<span style = "background-color:#dfd">    {
+        size_t const length( getLength() );
+        return get( static_cast&lt;int32_t&gt;(length) - 1 );
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::get()
+     */
+    virtual T&amp; get(int32_t index)
+<span style = "background-color:#dfd">    {   
+        if( !isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            return illegal_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2</span>
+        }
+<span style = "background-color:#dfd">        Node* const node( getNodeByIndex(index) );
+        return (node != NULLPTR) ? node-&gt;getElement() : illegal_;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Collection::getLength()
+     *
+     * @todo Re-implement to return value of a member variable;
+     */
+    virtual size_t getLength() const
+<span style = "background-color:#dfd">    {
+        size_t length( 0U );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            length = (last_ == NULLPTR) ? 0U : ( static_cast&lt;size_t&gt;(last_-&gt;getIndex()) + 1U);</span>
+        }
+<span style = "background-color:#dfd">        return length;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::Collection::isEmpty()
+     */
+    virtual bool_t isEmpty() const
+<span style = "background-color:#dfd">    {
+        bool_t res( true );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            res =(last_ == NULLPTR) ? true : false;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::IllegalValue::getIllegal()
+     */
+    virtual T const&amp; getIllegal() const
+<span style = "background-color:#dfd">    {
+        return illegal_;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::IllegalValue::setIllegal(T const&amp;)
+     */
+    virtual void setIllegal(T const&amp; value)
+<span style = "background-color:#dfd">    {
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            illegal_ = value;</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @copydoc eoos::api::IllegalValue::isIllegal(T const&amp;)
+     */
+    virtual bool_t isIllegal(T const&amp; value) const
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            res = illegal_ == value;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::getIndexOf(T const&amp;)
+     */
+    virtual int32_t getIndexOf(T const&amp; element) const
+<span style = "background-color:#dfd">    {
+        Node* const node( getNodeByElement(element) );
+        return (node != NULLPTR) ? node-&gt;getIndex() : api::List&lt;T&gt;::ERROR_INDEX;
+    }</span>
+
+    /**
+     * @copydoc eoos::api::List::isIndex(T const&amp;)
+     */
+    virtual bool_t isIndex(int32_t const index) const
+<span style = "background-color:#dfd">    {
+        bool_t res( false );
+        if( 0 &lt;= index )</span>
+        {
+<span style = "background-color:#dfd">            if( static_cast&lt;size_t&gt;(index) &lt; getLength() )</span>
+            {
+<span style = "background-color:#dfd">                res = true;</span>
+            }
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+    
+    /**
+     * @copydoc eoos::api::Iterable::getIterator()
+     */
+    virtual api::Iterator&lt;T&gt;* getIterator() ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
+<span style = "background-color:#dfd">    {
+        return getListIterator(0);
+    }</span>
+
+protected:
+
+    /**
+     * @brief Constructor.
+     */
+    AbstractList() 
+<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
+        , api::List&lt;T&gt;()
+        , api::Queue&lt;T&gt;()
+        , api::Iterable&lt;T&gt;()
+        , illegal_()
+        , last_(NULLPTR)
+        , count_(0) {
+    }</span>
+
+    /**
+     * @brief Constructor.
+     *
+     * @note A passed element must be copied to an internal data structure of
+     * this class by calling a copy constructor so that the element
+     * might be invalidated after the function called.
+     *
+     * @param illegal An illegal element.
+     */
+    AbstractList(T const&amp; illegal) 
+<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
+        , api::List&lt;T&gt;()
+        , api::Queue&lt;T&gt;()
+        , api::Iterable&lt;T&gt;()
+        , illegal_(illegal)
+        , last_(NULLPTR)
+        , count_(0) {
+    }</span>
+
+    /**
+     * @brief Inserts new element to the specified position in this list.
+     *
+     * Given element will be copied to self nodes structure by a copy constructor calling.
+     *
+     * @param index   Position in this list.
+     * @param element Inserting element.
+     * @return True if element is inserted.
+     *
+     * @todo Shall re-implemented according MISRA-C++:2008 Rule 6â6â5 as the delete operator is used. 
+     */
+    bool_t addNode(int32_t const index, T const&amp; element)
+<span style = "background-color:#dfd">    {
+        if(isIndexOutOfBounds(index))</span>
+        {
+<span style = "background-color:#dfd">            return false;</span>
+        }
+<span style = "background-color:#dfd">        Node* const node( new Node(element) );
+        if( node == NULLPTR )</span>
+        {
+<span style = "background-color:#dfd">            return false;</span>
+        }
+<span style = "background-color:#dfd">        if( !node-&gt;isConstructed() )</span>
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            delete node;
+            return false;</span>
+        }        
+<span style = "background-color:#dfd">        if(last_ == NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            last_ = node;
+            count_++;
+            return true;</span>
+        }
+<span style = "background-color:#dfd">        if(index &gt; 0)</span>
+        {
+<span style = "background-color:#dfd">            Node* const after( getNodeByIndex(index - 1) );
+            if(after == NULLPTR)</span>
+            {   ///&lt; UT Justified Branch: SW dependency
+<span style = "background-color:#fdd">                delete node;
+                return false;</span>
+            }
+<span style = "background-color:#dfd">            after-&gt;insertAfter(node);
+            if(after == last_)</span>
+            {
+<span style = "background-color:#dfd">                last_ = node;</span>
+            }
+<span style = "background-color:#dfd">        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            Node* const before( getNodeByIndex(0) );
+            if(before == NULLPTR)</span>
+            {   ///&lt; UT Justified Branch: SW dependency
+<span style = "background-color:#fdd">                delete node;
+                return false;</span>
+            }
+<span style = "background-color:#dfd">            before-&gt;insertBefore(node);</span>
+        }
+<span style = "background-color:#dfd">        count_++;
+        return true;
+    }</span>
+
+    /**
+     * @brief Returns a node of this list by index.
+     *
+     * @param index Position in this list.
+     * @return Pointer to the node of this list.
+     */
+    Node* getNodeByIndex(int32_t const index)
+<span style = "background-color:#dfd">    {
+        if( !isIndex(index) )</span>
+        {
+<span style = "background-color:#dfd">            return NULLPTR;</span>
+        }
+<span style = "background-color:#dfd">        size_t lenght( getLength() );
+        if( static_cast&lt;size_t&gt;(index) == (lenght - 1U) )</span>
+        {
+<span style = "background-color:#dfd">            return last_;</span>
+        }
+<span style = "background-color:#dfd">        Node* node( last_-&gt;getNext() );
+        for(int32_t i(0); i&lt;index; i++)</span>
+        {
+<span style = "background-color:#dfd">            node = node-&gt;getNext();
+        }
+        return node;
+    }</span>
+
+    /**
+     * @brief Returns a node of this list by element.
+     *
+     * @param element Reference to element.
+     * @return Pointer to the node of this list.
+     */
+    Node* getNodeByElement(T const&amp; element) const
+<span style = "background-color:#dfd">    {
+        Node* res( NULLPTR );
+        size_t const len( getLength() );
+        if(len != 0U)</span>
+        {
+<span style = "background-color:#dfd">            Node* node( last_-&gt;getNext() );
+            for(size_t i(0U); i&lt;len; i++)</span>
+            {
+<span style = "background-color:#dfd">                if(element != node-&gt;getElement())</span>
+                {
+<span style = "background-color:#dfd">                    node = node-&gt;getNext();
+                    continue;</span>
+                }
+<span style = "background-color:#dfd">                res = node;
+                break;</span>
+<span style = "background-color:#fdd">            } ///&lt; UT Justified Line: Compiler dependency</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @brief Removes a node of this list.
+     *
+     * @param node Pointer to node.
+     * @return True if a node is removed successfully.
+     */
+    bool_t removeNode(Node* const node)
+<span style = "background-color:#dfd">    {
+        if(node == NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            return false;</span>
+        }
+<span style = "background-color:#dfd">        if(node == last_)</span>
+        {
+<span style = "background-color:#dfd">            if(getLength() == 1U)</span>
+            {
+<span style = "background-color:#dfd">                last_ = NULLPTR;
+            }</span>
+            else
+            {
+<span style = "background-color:#dfd">                last_ = last_-&gt;getPrevious();</span>
+            }
+        }
+<span style = "background-color:#dfd">        delete node;
+        count_++;
+        return true;
+    }</span>
+
+    /**
+     * @brief Tests if index is out of this list bounds.
+     *
+     * @param index Checking position in this list.
+     * @return True if index is outed.
+     */
+    bool_t isIndexOutOfBounds(int32_t const index) const
+<span style = "background-color:#dfd">    {
+        if( index &lt; 0 )</span>
+        {
+<span style = "background-color:#dfd">            return true;</span>
+<span style = "background-color:#fdd">        }   ///&lt; UT Justified Line: Compiler dependency</span>
+<span style = "background-color:#dfd">        else if( static_cast&lt;size_t&gt;(index) &gt; getLength() )</span>
+        {
+<span style = "background-color:#dfd">            return true;</span>
+<span style = "background-color:#fdd">        }   ///&lt; UT Justified Line: Compiler dependency</span>
+        else
+        {
+<span style = "background-color:#dfd">            return false;</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @brief Returns reference to self data value.
+     *
+     * @return Data value.
+     */
+    uint32_t&amp; getReferenceToCount()
+<span style = "background-color:#dfd">    {
+        return count_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2
+    }</span>
+
+    /**
+     * @brief Returns reference to self data value.
+     *
+     * @return Data value.
+     */
+    Node*&amp; getReferenceToLast()
+<span style = "background-color:#dfd">    {
+        return last_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2
+    }</span>
+
+    /**
+     * @brief Returns reference to self data value.
+     *
+     * @return Data value.
+     */
+    T&amp; getReferenceToIllegal()
+<span style = "background-color:#dfd">    {
+        return illegal_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2
+    }</span>
+
+private:
+
+    /**
+     * @brief Illegal element of this list.
+     */
+    mutable T illegal_;
+
+    /**
+     * @brief Last node of this list.
+     */
+    Node* last_;
+
+    /**
+     * @brief Number of changes in this list.
+     */
+    uint32_t count_;
+
+};
+        
+} // namespace lib
+} // namespace eoos
+#endif // LIB_ABSTRACTLIST_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>
