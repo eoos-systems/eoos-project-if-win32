@@ -106,10 +106,10 @@ function Build()
             Out-Note -String "Remove old temp test coverage report" -Inf
             Remove-Item -Path ".\CoverageReport*" -Recurse -Force
         }
-        if( Test-Path -Path ".\build\CoverageReport" )
+        if( Test-Path -Path ".\build\coverage" )
         {
             Out-Note -String "Remove old test coverage report" -Inf
-            Remove-Item -Path ".\build\CoverageReport" -Recurse -Force
+            Remove-Item -Path ".\build\coverage" -Recurse -Force
         }        
         if( Test-Path -Path ".\build\codebase\tests\Debug\EoosTests.exe" )
         {
@@ -120,7 +120,7 @@ function Build()
             Out-Note "The unit tests executable file does not exist" -Err
         }
         Out-Note -String "Move new test coverage report" -Inf
-        Move-Item -Path ".\CoverageReport*" -Destination ".\build\CoverageReport"        
+        Move-Item -Path ".\CoverageReport*" -Destination ".\build\coverage"
         cd -Path build # CDIR: REPOSITORY/build>        
     }
     
