@@ -28,7 +28,13 @@ the static library and installs it on Windows for being found by CMake projects 
 
 #### 1.1. Prerequisites on Windows
 
-The process described below is passed on Windows 10 (64-bit) and requires the next tool to be installed on it:
+The process described below is passed on 
+
+- Windows 7 (64-bit)
+- Windows 10 (64-bit)
+- Windows 11 (64-bit)
+
+and requires the next tool to be installed on it:
 
 ###### 1.1.1. Install [Git for Windows](https://git-scm.com/downloads)
 
