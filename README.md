@@ -109,6 +109,9 @@ dot - graphviz version 2.49.3 (20211023.0002)
 Allow the installer to set *Path*. After the installation install the additional modules.
 
 ```
+C:\>pip install colorama
+Successfully installed colorama-0.4.6
+
 C:\>pip install tqdm
 Successfully installed colorama-0.4.4 tqdm-4.63.0
  
