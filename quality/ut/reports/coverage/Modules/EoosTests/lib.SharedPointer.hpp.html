@@ -367,6 +367,14 @@ private:
         }</span>
 
         /**
+         * @copydoc eoos::api::Object::isConstructed()
+         */
+        virtual bool_t isConstructed() const
+<span style = "background-color:#dfd">        {
+            return Parent::isConstructed();
+        }</span>
+
+        /**
          * @brief Destructor.
          */
 <span style = "background-color:#dfd">        virtual ~ControlBlock() {}    </span>

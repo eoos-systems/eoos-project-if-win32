@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <meta charset="utf-8"/>
-	    <title>sys.Object.hpp</title>
+	    <title>sys.NonCopyable.hpp</title>
 	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
 	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
 	</head>
@@ -10,15 +10,14 @@
         <h4></h4>
         <pre class="prettyprint lang-cpp linenums">
 /**
- * @file      sys.Object.hpp
+ * @file      sys.NonCopyable.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2021-2022, Sergey Baigudin, Baigudin Software
  */
-#ifndef SYS_OBJECT_HPP_
-#define SYS_OBJECT_HPP_
+#ifndef SYS_NONCOPYABLE_HPP_
+#define SYS_NONCOPYABLE_HPP_
 
-#include "lib.Object.hpp"
-#include "sys.Types.hpp"
+#include "sys.Object.hpp"
 
 namespace eoos
 {
@@ -26,64 +25,52 @@ namespace sys
 {
 
 /**
- * @class Object
- * @brief Root class of the operating system class hierarchy.
+ * @class NonCopyable
+ * @brief Root class of the operating system for objects which cannot be copied.
  */
-class Object : public lib::Object&lt;&gt;
+class NonCopyable : public Object
 {
-    using Parent = lib::Object&lt;&gt;;
+    using Parent = Object;
 
 public:
 
     /**
      * @brief Constructor.
      */
-<span style = "background-color:#dfd">    Object() = default;</span>
+<span style = "background-color:#dfd">    NonCopyable() = default;</span>
 
     /**
      * @brief Destructor.
      */
-<span style = "background-color:#dfd">    ~Object() override = default;</span>
+<span style = "background-color:#dfd">    ~NonCopyable() override = default;</span>
     
-protected:
-
+private:
+    
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
      */
-    Object(Object const&amp; obj) noexcept 
-        : lib::Object&lt;&gt;(obj) {
-    } 
+    NonCopyable(NonCopyable const&amp;) noexcept = delete;
     
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
      */       
-    Object&amp; operator=(Object const&amp; obj) &amp; noexcept ///&lt; SCA AUTOSAR-C++14 Justified Rule A10-2-1
-    {
-        Parent::operator=(obj);
-        return *this;
-    }    
+    NonCopyable&amp; operator=(NonCopyable const&amp;) noexcept = delete;   
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
      */       
-    Object(Object&amp;&amp; obj) noexcept ///&lt; SCA AUTOSAR-C++14 Defected Rule A8-4-8
-        : lib::Object&lt;&gt;( lib::move(obj) ) {
-    }
+    NonCopyable(NonCopyable&amp;&amp;) noexcept = delete;
     
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */
-    Object&amp; operator=(Object&amp;&amp; obj) &amp; noexcept ///&lt; SCA AUTOSAR-C++14 Justified Rule A10-2-1 and Defected Rule A8-4-8
-    {
-        Parent::operator=( lib::move(obj) );
-        return *this;
-    }
+    NonCopyable&amp; operator=(NonCopyable&amp;&amp;) &amp; noexcept = delete;
 
 };
 
 } // namespace sys
 } // namespace eoos
-#endif // SYS_OBJECT_HPP_</pre>
+#endif // SYS_NONCOPYABLE_HPP_</pre>
         <hr />
         <table width="100%">
             <thead>
