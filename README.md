@@ -96,26 +96,15 @@ Python 3.10.2
 
 NOTE: This is important to install colorama v0.4.6 or higher.
 
-###### 1.1.5. Optionally install [Doxygen](https://www.doxygen.nl/download.html) for documentation creation
+###### 1.1.5. Install [OpenCppCoverage](https://github.com/OpenCppCoverage/OpenCppCoverage/releases/tag/release-0.9.9.0) for code coverage report generation
 
-The installer automatically sets the *Path* system environment variable.
-Having Doxygen installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
-in CMD that Doxygen can be executed properly.
-
-```
-C:\> Doxygen -v
-1.9.2 (caa4e3de211fbbef2c3adf58a6bd4c86d0eb7cb8)
-```
-
-###### 1.1.6. Optionally install [Graphviz](http://www.graphviz.org/download/) for documentation creation
-
-The installer automatically suggest adding Graphviz to the system *Path*, please add it. 
-Having Graphviz installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
-in CMD that Graphviz can be executed properly.
+Allow the installer to set *Path*.
+Having OpenCppCoverage installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
+in CMD that OpenCppCoverage can be executed properly.
 
 ```
-C:\> dot -version
-dot - graphviz version 2.49.3 (20211023.0002)
+C:\> OpenCppCoverage.exe
+OpenCppCoverage Version: 0.9.9.0
 ```
 
 
@@ -156,16 +145,16 @@ C:\REPOSITORY\EOOS> git submodule update --init
 
 #### 1.3. Source Code Build and Installation
 
+EOOS can be executed on various of systems. To standardize the building process, we put most common steps 
+under the hood of the `Make.py` cross-platform script that is located in `scripts/python` directory.
+
 ###### 1.3.1. Build and Installation for Developing on EOOS
 
 Run CMD in *Run as administrator* mode to be able to install EOOS on Windows and execute the commads below.
 
 ```
-C:\REPOSITORY\EOOS> mkdir build
-C:\REPOSITORY\EOOS> cd build
-C:\REPOSITORY\EOOS\build> cmake ..
-C:\REPOSITORY\EOOS\build> cmake --build . --config RelWithDebInfo
-C:\REPOSITORY\EOOS\build> cmake --install . --config RelWithDebInfo
+C:\REPOSITORY\EOOS> cd scripts\python
+C:\REPOSITORY\EOOS\scripts\python> python Make.py --clean --build EOOS --install --config RelWithDebInfo
 ```
 
 None that the *--config* parameter can be one of *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel*, but for developing
@@ -184,7 +173,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(EOOS 0.9.0 REQUIRED)
+find_package(EOOS 0.11.0 REQUIRED)
 
 add_executable(application)
 
@@ -212,26 +201,10 @@ Thus, you will build *EoosApplication.exe* executable file.
 
 This chapter must be useful for EOOS developers and CI/CD engineers, but not prohibited to be used by any other for sure.
 
-**Note:** Before building, if *build* directory exists, you can remove it by executing the command below.
+To build the project with Unit Tests and run them, you have to execute the commands below.
 
 ```
-C:\REPOSITORY\EOOS> rmdir build /q /s
+C:\REPOSITORY\EOOS> cd scripts\python
+C:\REPOSITORY\EOOS\scripts\python> python Make.py --clean --build EOOS --install --config RelWithDebInfo 
 ```
 
-To build the project with Unit Tests you have to execute the commands below.
-
-```
-C:\REPOSITORY\EOOS> mkdir build
-C:\REPOSITORY\EOOS> cd build
-C:\REPOSITORY\EOOS\build> cmake -DEOOS_ENABLE_TESTS=ON ..
-C:\REPOSITORY\EOOS\build> cmake --build . --config RelWithDebInfo
-```
-
-To execute the Unit Tests run the commands below.
-
-```
-C:\REPOSITORY\EOOS\build> .\codebase\tests\RelWithDebInfo\EoosTests --gtest_shuffle
-```
-
-> On developing and intergation stages the *--config* parameter must be checked for all the 
-> *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel* configurations.
