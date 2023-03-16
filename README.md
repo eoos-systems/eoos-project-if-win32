@@ -111,7 +111,7 @@ OpenCppCoverage Version: 0.9.9.0
 
 #### 1.2. Obtain Git Repository
 
-###### 1.2.1. Create an empty directory somewhere on your disk. 
+###### 1.2.1. Create an empty directory somewhere on your disk
 
 For instance we will create *C:\REPOSITORY*.
 
@@ -121,7 +121,7 @@ C:\> cd REPOSITORY
 C:\REPOSITORY>
 ```
 
-###### 1.2.2. Clone this repository. 
+###### 1.2.2. Clone this repository
 
 For instance we will clone it to *EOOS* directory by SSH.
 
@@ -145,7 +145,7 @@ C:\REPOSITORY\EOOS> git submodule update --init
 
 #### 1.3. Source Code Build and Installation
 
-EOOS can be executed on various of systems. To standardize the building process, we put most common steps 
+EOOS can be executed on various systems. To standardize the building process, we put most common steps 
 under the hood of the `Make.py` cross-platform script that is located in `scripts/python` directory.
 
 ###### 1.3.1. Build and Installation for Developing on EOOS
@@ -205,6 +205,6 @@ To build the project with Unit Tests and run them, you have to execute the comma
 
 ```
 C:\REPOSITORY\EOOS> cd scripts\python
-C:\REPOSITORY\EOOS\scripts\python> python Make.py --clean --build EOOS --install --config RelWithDebInfo 
+C:\REPOSITORY\EOOS\scripts\python> python Make.py --clean --build ALL --run --config RelWithDebInfo
 ```
 
