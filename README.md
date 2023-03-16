@@ -41,8 +41,7 @@ and requires the next tool to be installed on it:
 
 The installer automatically sets the *Path* system environment variable.
 But you have to set manually *C:\Program Files\Git\binpath* to the *Path* user environment variable to execute Bash if it needs. 
-Having Git installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
-in CMD that Git and Bash can be executed properly.
+After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
 C:\> git --version
@@ -62,8 +61,7 @@ There is NO WARRANTY, to the extent permitted by law.
 CMake minimum required version 3.20 for EOOS project.
 
 The installer automatically sets the *Path* system environment variable if you chose this way during installation. 
-Having Git installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
-in CMD that CMake can be executed properly.
+After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
 C:\> cmake --version
@@ -72,7 +70,7 @@ cmake version 3.20.6
 
 ###### 1.1.3. Instal [Visual Studio](https://developer.microsoft.com/en-us/windows/downloads/) or [Windows SDK](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/) for purposes that you need
 
-Having a tool installed, you shell check in CMD that MSBuild can be executed properly with the similar output.
+After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
 C:\> MSBuild -version
@@ -84,12 +82,10 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
 ###### 1.1.4. Install [Python 3.10 or higher](https://www.python.org/downloads/) for automation
 
-Allow the installer to set *Path*. After the installation, install the additional modules.
+Allow the installer to set *Path*. 
+After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
-C:\>pip install colorama
-Successfully installed colorama-0.4.6
- 
 C:\>python --version
 Python 3.10.2
 ```
@@ -99,8 +95,7 @@ NOTE: This is important to install colorama v0.4.6 or higher.
 ###### 1.1.5. Install [OpenCppCoverage](https://github.com/OpenCppCoverage/OpenCppCoverage/releases/tag/release-0.9.9.0) for code coverage report generation
 
 Allow the installer to set *Path*.
-Having OpenCppCoverage installed, you should sign out form and sign in to Windows to refresh the environment variables, and can check 
-in CMD that OpenCppCoverage can be executed properly.
+After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
 C:\> OpenCppCoverage.exe
