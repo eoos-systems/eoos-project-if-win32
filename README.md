@@ -80,14 +80,14 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 16.5.0.12403
 ```
 
-###### 1.1.4. Install [Python 3.10 or higher](https://www.python.org/downloads/) for automation
+###### 1.1.4. Install [Python 3.7 or higher](https://www.python.org/downloads/) for automation
 
 Allow the installer to set *Path*. 
 After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
 C:\>python --version
-Python 3.10.2
+Python 3.7.6
 ```
 
 NOTE: This is important to install colorama v0.4.6 or higher.
