@@ -19,15 +19,20 @@ PRIVATE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/system/include/private>"
 )
 
-if(EOOS_ENABLE_TESTS)
+if(EOOS_GLOBAL_ENABLE_NO_HEAP)
+    target_compile_definitions(target-eoos
+    PUBLIC
+        "EOOS_GLOBAL_ENABLE_NO_HEAP"
+    )
+endif()
 
-target_include_directories(target-eoos
-PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/system/include/private>"
-)
-
-add_subdirectory(tests)
-
+if(EOOS_CMAKE_ENABLE_TESTS)
+    target_include_directories(target-eoos
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/system/include/private>"
+    )
+    
+    add_subdirectory(tests)
 endif()
 
 # Load and run CMake code from a file or module

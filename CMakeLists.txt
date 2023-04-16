@@ -7,7 +7,8 @@ cmake_minimum_required(VERSION 3.20)
 project(eoos-if-win32 VERSION 0.11.0 LANGUAGES CXX)
 
 include(cmake/EOOS.cmake)
-message(STATUS "EOOS option EOOS_ENABLE_TESTS=" ${EOOS_ENABLE_TESTS})
+message(STATUS "EOOS option EOOS_CMAKE_ENABLE_TESTS=" ${EOOS_CMAKE_ENABLE_TESTS})
+message(STATUS "EOOS option EOOS_GLOBAL_ENABLE_NO_HEAP=" ${EOOS_GLOBAL_ENABLE_NO_HEAP})
 enable_testing()
 
 set(CMAKE_CXX_STANDARD 11)
