@@ -4,9 +4,16 @@
 # @copyright 2019-2023, Sergey Baigudin, Baigudin Software
 
 add_library(target-eoos STATIC
+    "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Allocator.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Call.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Heap.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Main.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.MutexManager.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.NoAllocator.cpp" 
+    "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.OutStream.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Scheduler.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.SemaphoreManager.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.StreamManager.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.System.cpp"
 )
 
