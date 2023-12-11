@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>sys.OutStream.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      sys.OutStream.cpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2022-2023, Sergey Baigudin, Baigudin Software
+ */
+#include "sys.OutStream.hpp"
+#include "lib.Memory.hpp"
+#include "lib.BaseString.hpp"
+
+namespace eoos
+{
+namespace sys
+{
+
+OutStream::OutStream(Type type) noexcept 
+<span style = "background-color:#dfd">    : NonCopyable&lt;NoAllocator&gt;()
+    , api::OutStream&lt;char_t&gt;()
+    , type_( type ) 
+    , handle_( NULLPTR )
+    , lpConsoleScreenBufferInfo_(){
+    bool_t const isConstructed{ construct() };
+    setConstructed( isConstructed );
+}</span>
+
+OutStream::~OutStream() noexcept
+<span style = "background-color:#dfd">{
+    if(handle_ != NULLPTR)</span>
+    {
+        // It is not required to CloseHandle when done with the handle retrieved from GetStdHandle. 
+        // The returned value is simply a copy of the value stored in the process table.
+        // Moreover, closing the handle will lead to stop outputting if EOOS instance 
+        // will be deleted and created again.
+<span style = "background-color:#dfd">        flushStream();
+        handle_ = NULLPTR;            </span>
+    }        
+<span style = "background-color:#dfd">}</span>
+
+bool_t OutStream::isConstructed() const noexcept
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+api::OutStream&lt;char_t&gt;&amp; OutStream::operator&lt;&lt;(char_t const* source) noexcept
+<span style = "background-color:#dfd">{
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        ::WORD wAttributes( lpConsoleScreenBufferInfo_.wAttributes );
+        if(type_ == Type::CERR)</span>
+        {
+<span style = "background-color:#dfd">            ::WORD wForegroundMask( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
+            wForegroundMask = ~wForegroundMask;
+            wAttributes &amp;= wForegroundMask;
+            wAttributes |= FOREGROUND_RED | FOREGROUND_INTENSITY;</span>
+        }
+<span style = "background-color:#dfd">        static_cast&lt;void&gt;( ::SetConsoleTextAttribute(handle_, wAttributes) );
+        ::DWORD numberOfCharsToWrite( static_cast&lt; ::DWORD &gt;( lib::Memory::strlen(source)) );</span>
+        ::DWORD numberOfCharsWritten; ///&lt; SCA AUTOSAR-C++14 Justified Rule M0-1-4
+<span style = "background-color:#dfd">        static_cast&lt;void&gt;( ::WriteConsoleA(handle_, source, numberOfCharsToWrite, &amp;numberOfCharsWritten, NULL) );
+        static_cast&lt;void&gt;( ::SetConsoleTextAttribute(handle_, lpConsoleScreenBufferInfo_.wAttributes) );</span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}</span>
+
+api::OutStream&lt;char_t&gt;&amp; OutStream::operator&lt;&lt;(int32_t value) noexcept
+<span style = "background-color:#dfd">{
+    lib::BaseString&lt;char_t,16&gt; str(value);
+    return this-&gt;operator&lt;&lt;( str.getChar() );
+}</span>
+
+api::OutStream&lt;char_t&gt;&amp; OutStream::flush() noexcept
+<span style = "background-color:#dfd">{
+    if( isConstructed() )</span>
+    {        
+<span style = "background-color:#dfd">        flushStream();</span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}</span>
+
+bool_t OutStream::construct() noexcept try
+<span style = "background-color:#dfd">{
+    bool_t res{ false };
+    if( isConstructed() )</span>
+    {
+        DWORD nStdHandle;
+<span style = "background-color:#dfd">        if(type_ == Type::COUT)</span>
+        {
+<span style = "background-color:#dfd">            nStdHandle = STD_OUTPUT_HANDLE;
+        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            nStdHandle = STD_ERROR_HANDLE;</span>
+        }
+<span style = "background-color:#dfd">        handle_ = ::GetStdHandle(nStdHandle);
+        if( handle_ != INVALID_HANDLE_VALUE ) ///&lt; SCA AUTOSAR-C++14 Justified Rule M5-2-8 and Rule A5-2-2</span>
+        {
+            // Don't check on NULL here as:
+            // If an application does not have associated standard handles, such as a service running 
+            // on an interactive desktop, and has not redirected them, the return value is NULL.
+            // Thus, if an output handle is not exist, will flush the stream nowhere.
+<span style = "background-color:#dfd">            ::BOOL isGot( ::GetConsoleScreenBufferInfo(handle_, &amp;lpConsoleScreenBufferInfo_) );
+            if( isGot != 0 )</span>
+            {
+<span style = "background-color:#dfd">                res = true;</span>
+            }
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    return false;
+}</span>
+    
+void OutStream::flushStream() const
+<span style = "background-color:#dfd">{
+    static_cast&lt;void&gt;( ::FlushConsoleInputBuffer(handle_) );
+}    </span>
+
+} // namespace sys
+} // namespace eoos</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

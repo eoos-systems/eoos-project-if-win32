@@ -129,9 +129,9 @@ public:
     /**
      * @copydoc eoos::api::Scheduler::yield()
      */
-    static void yield()
+    static bool_t yield()
 <span style = "background-color:#dfd">    {
-        getScheduler().yield();
+        return getScheduler().yield();
     }</span>
 
 protected:

@@ -24,8 +24,6 @@ namespace eoos
 namespace lib
 {
 
-#ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
-
 /**
  * @class SmartPointerDeleter&lt;T&gt;
  * @brief Deleter of smart pointers allocated with new operator.
@@ -71,8 +69,6 @@ public:
         delete [] ptr;
     }</span>
 };
-
-#endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
 
 } // namespace lib
 } // namespace eoos

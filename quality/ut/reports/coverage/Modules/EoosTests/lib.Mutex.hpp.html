@@ -12,7 +12,7 @@
 /**
  * @file      lib.Mutex.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2015-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2015-2023, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_MUTEX_HPP_
 #define LIB_MUTEX_HPP_
@@ -35,7 +35,6 @@ namespace lib
 template &lt;class A = Allocator&gt;
 class Mutex : public NonCopyable&lt;A&gt;, public api::Mutex
 {
-    typedef Mutex&lt;A&gt; Self;
     typedef NonCopyable&lt;A&gt; Parent;
 
 public:
@@ -56,8 +55,11 @@ public:
      */
     virtual ~Mutex()
 <span style = "background-color:#dfd">    {
-        delete mutex_;
-    }</span>
+        if( mutex_ != NULLPTR )</span>
+        {
+<span style = "background-color:#dfd">            delete mutex_;</span>
+        }
+<span style = "background-color:#dfd">    }</span>
     
     /**
      * @copydoc eoos::api::Object::isConstructed()
@@ -73,7 +75,7 @@ public:
     virtual bool_t tryLock()
 <span style = "background-color:#dfd">    {
         bool_t res( false );
-        if( Self::isConstructed() )</span>
+        if( isConstructed() )</span>
         {
 <span style = "background-color:#dfd">            res = mutex_-&gt;tryLock();</span>
         }
@@ -86,7 +88,7 @@ public:
     virtual bool_t lock()
 <span style = "background-color:#dfd">    {
         bool_t res( false );
-        if( Self::isConstructed() )</span>
+        if( isConstructed() )</span>
         {
 <span style = "background-color:#dfd">            res = mutex_-&gt;lock();</span>
         }
@@ -96,13 +98,15 @@ public:
     /**
      * @copydoc eoos::api::Mutex::unlock()
      */
-    virtual void unlock()
+    virtual bool_t unlock()
 <span style = "background-color:#dfd">    {
-        if( Self::isConstructed() )</span>
+        bool_t res( false );
+        if( isConstructed() )</span>
         {
-<span style = "background-color:#dfd">            mutex_-&gt;unlock();</span>
+<span style = "background-color:#dfd">            res = mutex_-&gt;unlock();</span>
         }
-<span style = "background-color:#dfd">    }</span>
+<span style = "background-color:#dfd">        return res;
+    }</span>
 
 protected:
 
@@ -117,21 +121,16 @@ private:
      */
     bool_t construct()
 <span style = "background-color:#dfd">    {
-        bool_t res( false );</span>
-        do
-        {   
-<span style = "background-color:#dfd">            if( !Self::isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                break;</span>
+        bool_t res( false );
+        if( isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            mutex_ = sys::Call::get().getMutexManager().create();
+            if( Parent::isConstructed(mutex_) )</span>
+            {   
+<span style = "background-color:#dfd">                res = true;</span>
             }
-<span style = "background-color:#dfd">            mutex_ = sys::Call::get().createMutex();
-            if( !Parent::isConstructed(mutex_) )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                break;</span>
-            }
-<span style = "background-color:#dfd">            res = true;
-        } while(false);
-        return res;
+        }
+<span style = "background-color:#dfd">        return res;
     }</span>
 
     /**

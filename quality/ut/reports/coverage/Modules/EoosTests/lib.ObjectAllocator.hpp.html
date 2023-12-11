@@ -36,8 +36,6 @@ class ObjectAllocator
 
 public:
 
-    #ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
-
     /**
      * @brief Operator new.
      *
@@ -74,10 +72,8 @@ public:
      * @brief Operator delete.
      */
     static void operator delete(void*, void*)
-<span style = "background-color:#fdd">    {   ///&lt; UT Justified Branch: Language dependency
+<span style = "background-color:#dfd">    {   ///&lt; UT Justified Branch: Language dependency
     }</span>
-
-    #endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
     
 protected:
 

@@ -12,12 +12,11 @@
 /**
  * @file      sys.Heap.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2022-2023, Sergey Baigudin, Baigudin Software
  */
 #ifndef SYS_HEAP_HPP_
 #define SYS_HEAP_HPP_
 
-#include "sys.NonCopyable.hpp"
 #include "api.Heap.hpp"
 
 namespace eoos
@@ -29,22 +28,16 @@ namespace sys
  * @class Heap.
  * @brief Heap class.
  */
-class Heap : public NonCopyable, public api::Heap
+class Heap : public api::Heap
 {
-    using Parent = NonCopyable;
 
 public:
 
     /**
      * @brief Constructor.
      */
-    Heap() noexcept 
-<span style = "background-color:#dfd">        : NonCopyable()
-        , api::Heap() {
-        bool_t const isConstructed{ construct() };
-        setConstructed( isConstructed );
-    }</span>
-
+    Heap() noexcept;
+    
     /**
      * @brief Destructor.
      */
@@ -53,54 +46,19 @@ public:
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    bool_t isConstructed() const noexcept override ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
-<span style = "background-color:#dfd">    {
-        return Parent::isConstructed();
-    }</span>
+    bool_t isConstructed() const noexcept override;
     
     /**
      * @copydoc eoos::api::Heap::allocate(size_t,void*)
      */
-    void* allocate(size_t const size, void* ptr) override ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
-<span style = "background-color:#dfd">    {    </span>
-        static_cast&lt;void&gt;(ptr); // Avoid MISRA-C++:2008 Rule 0â1â3 and AUTOSAR C++14 Rule A0-1-4
-        #ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
-<span style = "background-color:#dfd">        return new ucell_t[size];</span>
-        #else
-        static_cast&lt;void&gt;(size); // Avoid MISRA-C++:2008 Rule 0â1â3 and AUTOSAR C++14 Rule A0-1-4
-        return NULLPTR;
-        #endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
-<span style = "background-color:#dfd">    }</span>
+    void* allocate(size_t const size, void* ptr) noexcept override;
 
     /**
      * @copydoc eoos::api::Heap::free(void*)
      */
-    void free(void* ptr) override ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
-<span style = "background-color:#dfd">    {</span>
-        #ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
-<span style = "background-color:#dfd">        ucell_t* addr{ static_cast&lt;ucell_t*&gt;(ptr) }; ///&lt; SCA AUTOSAR-C++14 Justified Rule M5-2-8
-        delete[] addr;</span>
-        #else
-        static_cast&lt;void&gt;(ptr); // Avoid MISRA-C++:2008 Rule 0â1â3 and AUTOSAR C++14 Rule A0-1-4
-        #endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
-<span style = "background-color:#dfd">    }</span>
+    void free(void* ptr) noexcept override;
     
 private:
-
-    /**
-     * @brief Constructor.
-     *
-     * @return True if object has been constructed successfully.
-     */
-    bool_t construct() const noexcept
-<span style = "background-color:#dfd">    {
-        bool_t res{ false };
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            res = true;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
     
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)

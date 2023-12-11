@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <meta charset="utf-8"/>
-	    <title>sys.Call.cpp</title>
+	    <title>lib.NoAllocator.hpp</title>
 	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
 	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
 	</head>
@@ -10,25 +10,51 @@
         <h4></h4>
         <pre class="prettyprint lang-cpp linenums">
 /**
- * @file      sys.Call.cpp
+ * @file      lib.NoAllocator.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2023, Sergey Baigudin, Baigudin Software
  */
-#include "sys.Call.hpp"
-#include "sys.System.hpp"
+#ifndef LIB_NOALLOCATOR_HPP_
+#define LIB_NOALLOCATOR_HPP_
+
+#include "lib.Types.hpp"
 
 namespace eoos
 {
-namespace sys
+namespace lib
+{
+ 
+/**
+ * @class NoAllocator
+ * @brief No memory allocator.
+ */ 
+class NoAllocator
 {
 
-api::System&amp; Call::get() noexcept
-<span style = "background-color:#dfd">{
-    return System::getSystem();
-}</span>
+public:
 
-} // namespace sys
-} // namespace eoos</pre>
+    /**
+     * @brief Does not allocate memory.
+     *
+     * @return The null pointer.
+     */
+    static void* allocate(size_t)
+<span style = "background-color:#dfd">    {
+        return NULLPTR;
+    }</span>
+
+    /**
+     * @brief Frees allocated memory.
+     */
+    static void free(void*)
+<span style = "background-color:#dfd">    {
+    }</span>
+
+};
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_NOALLOCATOR_HPP_</pre>
         <hr />
         <table width="100%">
             <thead>

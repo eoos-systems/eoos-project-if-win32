@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.ArgumentParser.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.ArgumentParser.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2023, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_ARGUMENTPARSER_HPP_
+#define LIB_ARGUMENTPARSER_HPP_
+
+#include "lib.NonCopyable.hpp"
+#include "lib.LinkedList.hpp"
+#include "lib.BaseString.hpp"
+
+#include &lt;iostream&gt;
+
+namespace eoos
+{
+namespace lib
+{
+
+/**
+ * @class ArgumentParser&lt;A&gt;
+ * @brief Program argument parser class.
+ *
+ * @tparam T A data type of argument string characters.
+ * @tparam L A maximum number of argument string, or 0 for dynamic argument length.
+ * @tparam A Heap memory allocator class. 
+ */
+template &lt;typename T, int32_t L, class A = Allocator&gt;
+class ArgumentParser : public NonCopyable&lt;A&gt;
+{
+    typedef NonCopyable&lt;A&gt; Parent;
+
+public:
+
+    /**
+     * @brief Constructor.
+     * 
+     * @param argc The number of arguments passed to the program.
+     * @param argv An array of c-string of arguments where the last one - argc + 1 is null.
+     */
+    ArgumentParser(int32_t argc, T* argv[])
+<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
+        , args_ ()
+        , ptrs_ (NULLPTR) {
+        bool_t const isConstructed( construct(argc, argv) );
+        setConstructed( isConstructed );
+    }</span>
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ArgumentParser()
+<span style = "background-color:#dfd">    {
+    }</span>
+    
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const
+<span style = "background-color:#dfd">    {
+        return Parent::isConstructed();
+    }</span>
+    
+    /**
+     * @brief Returns list of arguments.
+     * 
+     * @return List of arguments.
+     * 
+     * @todo Declare constant function to satisfy MISRA-C++:2008 Rule 9â3â1
+     */
+    api::List&lt; api::String&lt;T&gt;* &gt;&amp; getArguments()
+<span style = "background-color:#dfd">    {
+        return ptrs_;
+    }</span>
+
+protected:
+
+    using Parent::setConstructed;
+
+private:
+
+    /**
+     * @brief Constructor.
+     *
+     * @param argc The number of arguments passed to the program.
+     * @param argv An array of c-string of arguments where the last one - argc + 1 is null.
+     * @return True if object has been constructed successfully.
+     */
+    bool_t construct(int32_t argc, T* argv[])
+<span style = "background-color:#dfd">    {
+        bool_t res( false );</span>
+        if( ( !isConstructed() )
+         || ( !args_.isConstructed() )
+<span style = "background-color:#dfd">         || ( !addArgs(argc, argv) ) ) </span>
+        {
+<span style = "background-color:#dfd">            res = false;
+        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            res = true;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }</span>
+
+    /**
+     * @brief Adds arguments to the list.
+     *
+     * @param argc The number of arguments passed to the program.
+     * @param argv An array of c-string of arguments where the last one - argc + 1 is null.
+     * @return True if arguments are added successfully.
+     */
+    bool_t addArgs(int32_t argc, T* argv[])
+<span style = "background-color:#dfd">    {
+        bool_t res( true );
+        if( (argc &gt;= 0) &amp;&amp; (argv != NULLPTR) )</span>
+        {
+<span style = "background-color:#dfd">            for(int32_t i(0); i&lt;argc; i++)</span>
+            {
+<span style = "background-color:#dfd">                if( argv[i] != NULLPTR )</span>
+                {
+<span style = "background-color:#dfd">                    if( args_.add(argv[i]) == true )</span>
+                    {
+<span style = "background-color:#dfd">                        if( ptrs_.add( &amp;args_.getLast() ) == true )</span>
+                        {
+<span style = "background-color:#dfd">                            continue;</span>
+                        }
+                    }
+                }
+<span style = "background-color:#dfd">                res = false;
+                break;</span>
+<span style = "background-color:#fdd">            } ///&lt; UT Justified Line: Compiler dependency</span>
+<span style = "background-color:#dfd">            if( res == true )</span>
+            {
+<span style = "background-color:#dfd">                if( argv[argc] != NULLPTR )</span>
+                {
+<span style = "background-color:#dfd">                    res = false;</span>
+                }
+            }
+<span style = "background-color:#dfd">        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            res = false;</span>
+        }
+<span style = "background-color:#dfd">        return res;
+    }   </span>
+
+    /**
+     * List to contain program arguments 
+     */
+    LinkedList&lt;BaseString&lt;T,L,CharTrait&lt;T&gt;,A&gt;,A&gt; args_;
+
+    /**
+     * List to contain pointers to program arguments 
+     */
+    LinkedList&lt;api::String&lt;T&gt;*&gt; ptrs_;
+
+};
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_ARGUMENTPARSER_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

@@ -25,9 +25,7 @@ namespace eoos
 {
 namespace lib
 {
-
-#ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
-    
+   
 /**
  * @class UniquePointer&lt;T,D,A&gt;
  * @brief Unique pointer.
@@ -184,7 +182,7 @@ public:
      */
     virtual void reset(T* ptr)
 <span style = "background-color:#dfd">    {
-		if (get() != ptr)</span>
+        if (get() != ptr)</span>
         {
 <span style = "background-color:#dfd">            Self temp(ptr);
             swap(temp);
@@ -267,18 +265,17 @@ private:
      */     
     bool_t construct(T* const pointer = NULLPTR)
 <span style = "background-color:#dfd">    {
-        bool_t res( false );</span>
-        do
+        bool_t res( false );
+        if( isConstructed() )</span>
         {
-<span style = "background-color:#dfd">            if( !isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                D::free(pointer);
-                break;</span>
-            }
 <span style = "background-color:#dfd">            pointer_ = pointer;
             res = true;
-        } while(false);
-        return res;
+        }</span>
+        else
+        {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">            D::free(pointer);</span>
+        }
+<span style = "background-color:#dfd">        return res;
     }</span>
     
     /**
@@ -336,8 +333,6 @@ inline bool_t operator!=(UniquePointer&lt;T,D,A&gt; const&amp; obj1, UniquePoint
 <span style = "background-color:#dfd">{
     return obj1.get() != obj2.get();
 }</span>
-
-#endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
 
 } // namespace lib
 } // namespace eoos

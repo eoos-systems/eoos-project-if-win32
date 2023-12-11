@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <meta charset="utf-8"/>
-	    <title>api.Scheduler.hpp</title>
+	    <title>api.Guard.hpp</title>
 	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
 	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
 	</head>
@@ -10,27 +10,25 @@
         <h4></h4>
         <pre class="prettyprint lang-cpp linenums">
 /**
- * @file      api.Scheduler.hpp
+ * @file      api.Guard.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2016-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2023, Sergey Baigudin, Baigudin Software
  */
-#ifndef API_SCHEDULER_HPP_
-#define API_SCHEDULER_HPP_
+#ifndef API_GUARD_HPP_
+#define API_GUARD_HPP_
 
 #include "api.Object.hpp"
-#include "api.Thread.hpp"
-#include "api.Task.hpp"
 
 namespace eoos
 {
 namespace api
 {
-    
+
 /**
- * @class Scheduler
- * @brief Threads scheduler interface.
- */
-class Scheduler : public Object
+ * @class Guard
+ * @brief Guard interface.
+ */    
+class Guard : public Object
 {
 
 public:
@@ -38,38 +36,29 @@ public:
     /**
      * @brief Destructor.
      */
-    virtual ~Scheduler() = 0;
+    virtual ~Guard() = 0;
 
     /**
-     * @brief Creates a new thread.
+     * @brief Locks this guard.
      *
-     * @param task An user task which main function will be invoked when created thread is started.
-     * @return A new thread.
+     * @return True if this guard is locked successfully, or false if an error occurred.
      */
-    virtual Thread* createThread(Task&amp; task) = 0;
-    
-    /**
-     * @brief Causes current thread to sleep.
-     *
-     * @param ms A time to sleep in milliseconds.
-     * @return True if thread slept requested time.
-     */
-    virtual bool_t sleep(int32_t ms) = 0;
+    virtual bool_t lock() = 0;
 
     /**
-     * @brief Yields to next thread.
-     * 
-     * @return True if thread is yielded.
+     * @brief Unlocks this guard.
+     *
+     * @return True if this guard is unlocked successfully, or false if an error occurred.     
      */
-    virtual bool_t yield() = 0;
+    virtual bool_t unlock() = 0;
 
 };
 
-<span style = "background-color:#dfd">inline Scheduler::~Scheduler() {}</span>
+<span style = "background-color:#dfd">inline Guard::~Guard() {}</span>
 
 } // namespace api
 } // namespace eoos
-#endif // API_SCHEDULER_HPP_</pre>
+#endif // API_GUARD_HPP_</pre>
         <hr />
         <table width="100%">
             <thead>

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <meta charset="utf-8"/>
-	    <title>sys.NonCopyable.hpp</title>
+	    <title>sys.SemaphoreManager.hpp</title>
 	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
 	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
 	</head>
@@ -10,14 +10,15 @@
         <h4></h4>
         <pre class="prettyprint lang-cpp linenums">
 /**
- * @file      sys.NonCopyable.hpp
+ * @file      sys.SemaphoreManager.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2021-2023, Sergey Baigudin, Baigudin Software
+ * @copyright 2023, Sergey Baigudin, Baigudin Software
  */
-#ifndef SYS_NONCOPYABLE_HPP_
-#define SYS_NONCOPYABLE_HPP_
+#ifndef SYS_SEMAPHOREMANAGER_HPP_
+#define SYS_SEMAPHOREMANAGER_HPP_
 
-#include "sys.Object.hpp"
+#include "sys.NonCopyable.hpp"
+#include "api.SemaphoreManager.hpp"
 
 namespace eoos
 {
@@ -25,54 +26,62 @@ namespace sys
 {
 
 /**
- * @class NonCopyable
- * @brief Root class of the operating system for objects which cannot be copied.
- *
- * @tparam A Heap memory allocator class.
+ * @class SemaphoreManager.
+ * @brief Semaphore sub-system manager.
  */
-template &lt;class A&gt;
-class NonCopyable : public Object&lt;A&gt;
+class SemaphoreManager : public NonCopyable&lt;NoAllocator&gt;, public api::SemaphoreManager
 {
+    using Parent = NonCopyable&lt;NoAllocator&gt;;
 
 public:
 
     /**
      * @brief Constructor.
      */
-<span style = "background-color:#dfd">    NonCopyable() noexcept = default;</span>
+    SemaphoreManager() noexcept;
 
     /**
      * @brief Destructor.
      */
-<span style = "background-color:#dfd">    ~NonCopyable() noexcept override = default;</span>
-    
+<span style = "background-color:#dfd">    ~SemaphoreManager() noexcept override = default;</span>
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    bool_t isConstructed() const noexcept override;
+
+    /**
+     * @copydoc eoos::api::SemaphoreManager::create()
+     */
+    api::Semaphore* create(int32_t permits) noexcept override;
+
 private:
     
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
      */
-    NonCopyable(NonCopyable const&amp;) noexcept = delete;
+    SemaphoreManager(SemaphoreManager const&amp;) noexcept = delete;
     
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
      */       
-    NonCopyable&amp; operator=(NonCopyable const&amp;) noexcept = delete;   
+    SemaphoreManager&amp; operator=(SemaphoreManager const&amp;) noexcept = delete;   
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
      */       
-    NonCopyable(NonCopyable&amp;&amp;) noexcept = delete;
+    SemaphoreManager(SemaphoreManager&amp;&amp;) noexcept = delete;
     
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */
-    NonCopyable&amp; operator=(NonCopyable&amp;&amp;) &amp; noexcept = delete;
+    SemaphoreManager&amp; operator=(SemaphoreManager&amp;&amp;) &amp; noexcept = delete;        
 
 };
 
 } // namespace sys
 } // namespace eoos
-#endif // SYS_NONCOPYABLE_HPP_</pre>
+#endif // SYS_SEMAPHOREMANAGER_HPP_</pre>
         <hr />
         <table width="100%">
             <thead>

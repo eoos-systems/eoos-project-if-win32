@@ -147,20 +147,20 @@ private:
          */
         virtual bool_t add(TT const&amp; element)
 <span style = "background-color:#dfd">        {
-            if( isModifiedByList() )</span>
+            bool_t res( false );
+            if( !isModifiedByList() )</span>
             {
-<span style = "background-color:#dfd">                return false;</span>
-            }
-<span style = "background-color:#dfd">            bool_t const wasEmpty( list_.isEmpty() );
-            int32_t const index = ( wasEmpty ) ? 0 : curs_-&gt;getIndex(); 
-            bool_t const res( list_.add(index, element) );
-            if( res == true )</span>
-            {
-<span style = "background-color:#dfd">                count_.self++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
-                rindex_ = ILLEGAL_INDEX;
-                if( wasEmpty )</span>
+<span style = "background-color:#dfd">                bool_t const wasEmpty( list_.isEmpty() );
+                int32_t const index = ( wasEmpty ) ? 0 : curs_-&gt;getIndex(); 
+                res = list_.add(index, element);
+                if( res == true )</span>
                 {
-<span style = "background-color:#dfd">                    curs_ = last_;</span>
+<span style = "background-color:#dfd">                    count_.self++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
+                    rindex_ = ILLEGAL_INDEX;
+                    if( wasEmpty )</span>
+                    {
+<span style = "background-color:#dfd">                        curs_ = last_;</span>
+                    }
                 }
             }            
 <span style = "background-color:#dfd">            return res;
@@ -171,25 +171,21 @@ private:
          */
         virtual bool_t remove()
 <span style = "background-color:#dfd">        {
-            if( isModifiedByList() )</span>
+            bool_t res( false );
+            if( !isModifiedByList() &amp;&amp; (rindex_ != ILLEGAL_INDEX) )</span>
             {
-<span style = "background-color:#dfd">                return false;</span>
-            }
-<span style = "background-color:#dfd">            if(rindex_ == ILLEGAL_INDEX)</span>
-            {
-<span style = "background-color:#dfd">                return false;</span>
-            }
-<span style = "background-color:#dfd">            Node* curs( curs_ );            
-            if(curs_-&gt;getIndex() == rindex_)</span>
-            {
-<span style = "background-color:#dfd">                curs = curs_-&gt;getNext();</span>
-            }
-<span style = "background-color:#dfd">            bool_t res( list_.remove(rindex_) );            
-            if(res == true)</span>
-            {
-<span style = "background-color:#dfd">                count_.self++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
-                rindex_ = ILLEGAL_INDEX;
-                curs_ = ( list_.isEmpty() ) ? NULLPTR : curs;</span>
+<span style = "background-color:#dfd">                Node* curs( curs_ );            
+                if(curs_-&gt;getIndex() == rindex_)</span>
+                {
+<span style = "background-color:#dfd">                    curs = curs_-&gt;getNext();</span>
+                }
+<span style = "background-color:#dfd">                res = list_.remove(rindex_);            
+                if(res == true)</span>
+                {
+<span style = "background-color:#dfd">                    count_.self++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
+                    rindex_ = ILLEGAL_INDEX;
+                    curs_ = ( list_.isEmpty() ) ? NULLPTR : curs;</span>
+                }
             }
 <span style = "background-color:#dfd">            return res;
         }</span>
@@ -199,14 +195,19 @@ private:
          */
         virtual TT&amp; getPrevious()
 <span style = "background-color:#dfd">        {
-            if( !hasPrevious())</span>
+            bool_t res( false );
+            if( hasPrevious() )</span>
             {
-<span style = "background-color:#dfd">                rindex_ = ILLEGAL_INDEX;                
-                return illegal_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2</span>
+<span style = "background-color:#dfd">                curs_ = curs_-&gt;getPrevious();
+                rindex_ = curs_-&gt;getIndex();
+                res = true;                
+            }</span>
+            else
+            {
+<span style = "background-color:#dfd">                rindex_ = ILLEGAL_INDEX;
+                res = false;</span>
             }
-<span style = "background-color:#dfd">            curs_ = curs_-&gt;getPrevious();
-            rindex_ = curs_-&gt;getIndex();
-            return curs_-&gt;getElement();
+<span style = "background-color:#dfd">            return (res == true ) ? curs_-&gt;getElement() : illegal_;
         }</span>
 
         /**
@@ -214,11 +215,12 @@ private:
          */
         virtual int32_t getPreviousIndex() const
 <span style = "background-color:#dfd">        {
-            if( isModifiedByList() )</span>
+            int32_t index( api::ListIterator&lt;TT&gt;::ERROR_INDEX );
+            if( !isModifiedByList() )</span>
             {
-<span style = "background-color:#dfd">                return api::ListIterator&lt;TT&gt;::ERROR_INDEX;</span>
+<span style = "background-color:#dfd">                index = hasPrevious() ? curs_-&gt;getPrevious()-&gt;getIndex() : -1;</span>
             }                        
-<span style = "background-color:#dfd">            return hasPrevious() ? curs_-&gt;getPrevious()-&gt;getIndex() : -1;
+<span style = "background-color:#dfd">            return index;
         }</span>
 
         /**
@@ -226,15 +228,15 @@ private:
          */
         virtual bool_t hasPrevious() const
 <span style = "background-color:#dfd">        {
-            if( isModifiedByList() )</span>
+            bool_t res( false );
+            if( !isModifiedByList() )</span>
             {
-<span style = "background-color:#dfd">                return false;</span>
+<span style = "background-color:#dfd">                if(curs_ != NULLPTR)</span>
+                {
+<span style = "background-color:#dfd">                    res = true;</span>
+                }
             }
-<span style = "background-color:#dfd">            if(curs_ == NULLPTR)</span>
-            {
-<span style = "background-color:#dfd">                return false;</span>
-            }
-<span style = "background-color:#dfd">            return true;
+<span style = "background-color:#dfd">            return res;
         }</span>
 
         /**
@@ -242,27 +244,33 @@ private:
          */
         virtual TT&amp; getNext()
 <span style = "background-color:#dfd">        {
-            if( !hasNext() )</span>
+            TT* element( &amp;illegal_ );
+            if( hasNext() )</span>
             {
-<span style = "background-color:#dfd">                rindex_ = ILLEGAL_INDEX;                
-                return illegal_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2</span>
+<span style = "background-color:#dfd">                Node* const node( curs_ );
+                curs_ = curs_-&gt;getNext();
+                rindex_ = node-&gt;getIndex();
+                element = &amp;node-&gt;getElement();
+            }</span>
+            else
+            {
+<span style = "background-color:#dfd">                rindex_ = ILLEGAL_INDEX;</span>
             }
-<span style = "background-color:#dfd">            Node* const node( curs_ );
-            curs_ = curs_-&gt;getNext();
-            rindex_ = node-&gt;getIndex();
-            return node-&gt;getElement();
-        }</span>
+<span style = "background-color:#dfd">            return *element;</span>
+
+<span style = "background-color:#dfd">        }</span>
 
         /**
          * @copydoc eoos::api::ListIterator::getNextIndex()
          */
         virtual int32_t getNextIndex() const
 <span style = "background-color:#dfd">        {
-            if( isModifiedByList() )</span>
+            int32_t index( api::ListIterator&lt;TT&gt;::ERROR_INDEX );
+            if( !isModifiedByList() )</span>
             {
-<span style = "background-color:#dfd">                return api::ListIterator&lt;TT&gt;::ERROR_INDEX;</span>
+<span style = "background-color:#dfd">                index = hasNext() ? curs_-&gt;getIndex() : -1;</span>
             }
-<span style = "background-color:#dfd">            return hasNext() ? curs_-&gt;getIndex() : -1;
+<span style = "background-color:#dfd">            return index;
         }</span>
 
         /**
@@ -270,15 +278,15 @@ private:
          */
         virtual bool_t hasNext() const
 <span style = "background-color:#dfd">        {
-            if( isModifiedByList() )</span>
+            bool_t res( false );
+            if( !isModifiedByList() )</span>
             {
-<span style = "background-color:#dfd">                return false;</span>
+<span style = "background-color:#dfd">                if(curs_ != NULLPTR)</span>
+                {
+<span style = "background-color:#dfd">                    res = true;</span>
+                }
             }
-<span style = "background-color:#dfd">            if(curs_ == NULLPTR)</span>
-            {
-<span style = "background-color:#dfd">                return false;</span>
-            }
-<span style = "background-color:#dfd">            return true;
+<span style = "background-color:#dfd">            return res;
         }</span>
 
         /**
@@ -314,28 +322,28 @@ private:
          */
         bool_t construct(int32_t index)
 <span style = "background-color:#dfd">        {
-            if( !isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                return false;</span>
-            }
-<span style = "background-color:#dfd">            if( !list_.isConstructed())</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                return false;</span>
-            }
-<span style = "background-color:#dfd">            if( list_.isIndexOutOfBounds(index) )</span>
+            bool_t res( false );
+            if( isConstructed() &amp;&amp; list_.isConstructed() )</span>
             {
-<span style = "background-color:#dfd">                return false;</span>
-            }
-<span style = "background-color:#dfd">            if( !list_.isEmpty() )</span>
-            {
-<span style = "background-color:#dfd">                if( static_cast&lt;size_t&gt;(index) == list_.getLength() )</span>
-                {
-<span style = "background-color:#dfd">                    return false;</span>
+<span style = "background-color:#dfd">                if( !list_.isIndexOutOfBounds(index) )</span>
+                { 
+<span style = "background-color:#dfd">                    if( !list_.isEmpty() )</span>
+                    {
+<span style = "background-color:#dfd">                        if( static_cast&lt;size_t&gt;(index) != list_.getLength() )</span>
+                        {
+<span style = "background-color:#dfd">                            curs_ = list_.getNodeByIndex(index);
+                            res = true;</span>
+                        }
+<span style = "background-color:#dfd">                    }</span>
+                    else
+                    {
+<span style = "background-color:#dfd">                        res = true;</span>
+                    }
                 }
-<span style = "background-color:#dfd">                curs_ = list_.getNodeByIndex(index);</span>
             }
-<span style = "background-color:#dfd">            return true;
-        }</span>
+<span style = "background-color:#dfd">            return res;</span>
+
+<span style = "background-color:#dfd">        }</span>
         
         /**
          * @brief Tests if list was modified by list object.

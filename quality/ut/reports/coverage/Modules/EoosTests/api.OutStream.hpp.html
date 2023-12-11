@@ -43,12 +43,20 @@ public:
     virtual ~OutStream() = 0;
 
     /**
-     * @brief Writes to an output stream.
+     * @brief Writes array to an output stream.
      *
      * @param source A source character string to be output.
      * @return This interface.
      */
     virtual OutStream&lt;T&gt;&amp; operator&lt;&lt;(T const* source) = 0;
+
+    /**
+     * @brief Writes integer to an output stream.
+     *
+     * @param value An integer value.
+     * @return This interface.
+     */
+    virtual OutStream&lt;T&gt;&amp; operator&lt;&lt;(int32_t value) = 0;
 
     /**
      * @brief Flushes buffered data to a storage device.
@@ -60,7 +68,7 @@ public:
 };
 
 template &lt;typename T&gt; ///&lt; SCA MISRA-C++:2008 Defected Rule 7-3-1
-<span style = "background-color:#dfd">inline OutStream&lt;T&gt;::~OutStream() {}</span>
+<span style = "background-color:#dfd">OutStream&lt;T&gt;::~OutStream() {}</span>
         
 } // namespace api
 } // namespace eoos

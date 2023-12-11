@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <meta charset="utf-8"/>
-	    <title>sys.Call.cpp</title>
+	    <title>sys.Allocator.cpp</title>
 	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
 	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
 	</head>
@@ -10,21 +10,26 @@
         <h4></h4>
         <pre class="prettyprint lang-cpp linenums">
 /**
- * @file      sys.Call.cpp
+ * @file      sys.Allocator.cpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2016-2023, Sergey Baigudin, Baigudin Software
  */
+#include "sys.Allocator.hpp"
 #include "sys.Call.hpp"
-#include "sys.System.hpp"
 
 namespace eoos
 {
 namespace sys
 {
-
-api::System&amp; Call::get() noexcept
+ 
+void* Allocator::allocate(size_t size)
 <span style = "background-color:#dfd">{
-    return System::getSystem();
+    return sys::Call::get().getHeap().allocate(size, NULLPTR);
+}</span>
+
+void Allocator::free(void* ptr)
+<span style = "background-color:#dfd">{
+    return sys::Call::get().getHeap().free(ptr);    
 }</span>
 
 } // namespace sys

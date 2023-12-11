@@ -12,14 +12,11 @@
 /**
  * @file      sys.System.cpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2023, Sergey Baigudin, Baigudin Software
  */
 #include "sys.System.hpp"
-#include "sys.Mutex.hpp"
-#include "sys.Semaphore.hpp"
 #include "Program.hpp"
 #include "lib.LinkedList.hpp"
-#include "lib.UniquePointer.hpp"
 
 namespace eoos
 {
@@ -28,189 +25,76 @@ namespace sys
         
 <span style = "background-color:#dfd">api::System* System::eoos_{ NULLPTR };</span>
 
-System::System() 
-<span style = "background-color:#dfd">    : NonCopyable()
+System::System() noexcept
+<span style = "background-color:#dfd">    : NonCopyable&lt;NoAllocator&gt;()
     , api::System() {
     bool_t const isConstructed{ construct() };
     setConstructed( isConstructed );
 }</span>
 
-System::~System()
+System::~System() noexcept
 <span style = "background-color:#dfd">{
-    cout_.flush();
-    cerr_.flush();
     eoos_ = NULLPTR;
 }</span>
 
-bool_t System::isConstructed() const
+bool_t System::isConstructed() const noexcept
 <span style = "background-color:#dfd">{
     return Parent::isConstructed();
 }</span>
 
-api::Scheduler&amp; System::getScheduler()
+api::Heap&amp; System::getHeap() noexcept
 <span style = "background-color:#dfd">{
-    if( !isConstructed() )</span>
-    {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">        exit(Error::SYSCALL_CALLED);</span>
-    }
-<span style = "background-color:#dfd">    return scheduler_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
+    return heap_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
 }</span>
 
-api::Heap&amp; System::getHeap()
+api::Scheduler&amp; System::getScheduler() noexcept
 <span style = "background-color:#dfd">{
-    if( !isConstructed() )</span>
-    {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">        exit(Error::SYSCALL_CALLED);</span>
-    }
-<span style = "background-color:#dfd">    return heap_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
+    return scheduler_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
 }</span>
 
-api::OutStream&lt;char_t&gt;&amp; System::getOutStreamChar()
+api::MutexManager&amp; System::getMutexManager() noexcept
 <span style = "background-color:#dfd">{
-    if( !isConstructed() )</span>
-    {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">        exit(Error::SYSCALL_CALLED);</span>
-    }
-<span style = "background-color:#dfd">    return cout_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
+    return mutexManager_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
 }</span>
 
-api::OutStream&lt;char_t&gt;&amp; System::getErrorStreamChar()
+api::SemaphoreManager&amp; System::getSemaphoreManager() noexcept
 <span style = "background-color:#dfd">{
-    if( !isConstructed() )</span>
-    {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">        exit(Error::SYSCALL_CALLED);</span>
-    }
-<span style = "background-color:#dfd">    return cerr_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
+    return semaphoreManager_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
 }</span>
 
-api::Mutex* System::createMutex() try
+api::StreamManager&amp; System::getStreamManager() noexcept
 <span style = "background-color:#dfd">{
-    lib::UniquePointer&lt;api::Mutex&gt; res;
-    if( isConstructed() )</span>
-    {   
-<span style = "background-color:#dfd">        res.reset( new Mutex() ); ///&lt; SCA AUTOSAR-C++14 Justified Rule A18-5-2
-        if( !res.isNull() )</span>
-        {
-<span style = "background-color:#dfd">            if( !res-&gt;isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                res.reset();</span>
-            }
-        }
-    }
-<span style = "background-color:#dfd">    return res.release();
-} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">    return NULLPTR;
+    return streamManager_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1    
 }</span>
 
-api::Semaphore* System::createSemaphore(int32_t permits) try
+int32_t System::execute(int32_t argc, char_t* argv[]) const noexcept ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
 <span style = "background-color:#dfd">{
-    lib::UniquePointer&lt;api::Semaphore&gt; res;
-    if( isConstructed() )</span>
-    {
-<span style = "background-color:#dfd">        res.reset( new Semaphore(permits) ); ///&lt; SCA AUTOSAR-C++14 Justified Rule A18-5-2
-        if( !res.isNull() )</span>
-        {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#dfd">            if( !res-&gt;isConstructed() )</span>
-            {
-<span style = "background-color:#dfd">                res.reset();</span>
-            }
-        }
-    }
-<span style = "background-color:#dfd">    return res.release();
-} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">    return NULLPTR;
+    return Program::start(argc, argv);
 }</span>
 
-int32_t System::execute() const ///&lt; SCA AUTOSAR-C++14 Justified Rule M9-3-3
-<span style = "background-color:#dfd">{
-    char_t* args[]{ NULLPTR };
-    return execute(0, args); ///&lt; SCA AUTOSAR-C++14 Justified Rule A5-2-12
-}</span>
-
-int32_t System::execute(int32_t argc, char_t* argv[]) const ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
-<span style = "background-color:#dfd">{
-    int32_t error( static_cast&lt;int32_t&gt;(Error::OK) );
-    if( isConstructed() &amp;&amp; (argc &gt;= 0) &amp;&amp; (argv != NULLPTR) )</span>
-    {
-<span style = "background-color:#dfd">        lib::LinkedList&lt;char_t*&gt; args;
-        for(int32_t i(0); i&lt;argc; i++)</span>
-        {
-<span style = "background-color:#dfd">            if( argv[i] != NULLPTR )</span>
-            {
-<span style = "background-color:#dfd">                if( args.add(argv[i]) )</span>
-                {
-<span style = "background-color:#dfd">                    continue;</span>
-                }
-            }
-<span style = "background-color:#dfd">            error = static_cast&lt;int32_t&gt;(Error::ARGUMENT);
-            break;</span>
-<span style = "background-color:#fdd">        } ///&lt; UT Justified Line: Compiler dependency</span>
-<span style = "background-color:#dfd">        if( (error != static_cast&lt;int32_t&gt;(Error::ARGUMENT) ) &amp;&amp; (argv[argc] != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            error = static_cast&lt;int32_t&gt;(Error::ARGUMENT);</span>
-        }
-<span style = "background-color:#dfd">        if( error != static_cast&lt;int32_t&gt;(Error::ARGUMENT) )</span>
-        {
-<span style = "background-color:#dfd">            error = Program::start(args);</span>
-        }
-<span style = "background-color:#dfd">    }</span>
-    else
-    {
-<span style = "background-color:#dfd">        error = static_cast&lt;int32_t&gt;(Error::ARGUMENT);</span>
-    }
-<span style = "background-color:#dfd">    return error;
-}</span>
-
-api::System&amp; System::getSystem()
+api::System&amp; System::getSystem() noexcept
 <span style = "background-color:#dfd">{
     if(eoos_ == NULLPTR)</span>
     {   ///&lt; UT Justified Branch: Startup dependency
-<span style = "background-color:#fdd">        exit(Error::SYSCALL_CALLED);</span>
+<span style = "background-color:#fdd">        ::ExitProcess(static_cast&lt; ::UINT &gt;(Error::SYSCALL_CALLED));</span>
     }
 <span style = "background-color:#dfd">    return *eoos_;
 }</span>
 
-void System::exit(Error const error) ///&lt; UT Justified Branch: OS dependency
-<span style = "background-color:#fdd">{
-    ::ExitProcess(static_cast&lt; ::UINT &gt;(error));</span>
-    // This code must NOT be executed
-    // @todo throw an exection here is better.
-<span style = "background-color:#fdd">    while( true ){}
-}</span>
-
-bool_t System::construct()
+bool_t System::construct() noexcept
 <span style = "background-color:#dfd">{
-    bool_t res( false );
-    while(true) </span>
-    {
-<span style = "background-color:#dfd">        if( !isConstructed() )</span>
-        {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">            break;</span>
-        }
-<span style = "background-color:#dfd">        if( eoos_ != NULLPTR )</span>
-        {   ///&lt; UT Justified Branch: Startup dependency
-<span style = "background-color:#fdd">            break;</span>
-        }        
-<span style = "background-color:#dfd">        if( !scheduler_.isConstructed() )</span>
-        {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">            break;</span>
-        }
-<span style = "background-color:#dfd">        if( !heap_.isConstructed() )</span>
-        {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">            break;</span>
-        }
-<span style = "background-color:#dfd">        if( !cout_.isConstructed() )</span>
-        {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">            break;</span>
-        }
-<span style = "background-color:#dfd">        if( !cerr_.isConstructed() )</span>
-        {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">            break;</span>
-        }
+    bool_t res{ false };</span>
+    if( ( isConstructed() )
+     &amp;&amp; ( eoos_ == NULLPTR )
+     &amp;&amp; ( heap_.isConstructed() )
+     &amp;&amp; ( scheduler_.isConstructed() )
+     &amp;&amp; ( mutexManager_.isConstructed() )
+     &amp;&amp; ( semaphoreManager_.isConstructed() )
+<span style = "background-color:#dfd">     &amp;&amp; ( streamManager_.isConstructed() ) ) </span>
+    {                
 <span style = "background-color:#dfd">        eoos_ = this;
-        res = true;
-        break;</span>
-<span style = "background-color:#fdd">    } ///&lt; UT Justified Line: Compiler dependency</span>
+        res = true;</span>
+    }
 <span style = "background-color:#dfd">    return res;
 }</span>
 

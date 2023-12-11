@@ -12,7 +12,7 @@
 /**
  * @file      sys.Thread.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2023, Sergey Baigudin, Baigudin Software
  */
 #ifndef SYS_THREAD_HPP_
 #define SYS_THREAD_HPP_
@@ -29,130 +29,52 @@ namespace sys
 /**
  * @class Thread
  * @brief Thread class.
+ * 
+ * @tparam A Heap memory allocator class.
  */
-class Thread : public NonCopyable, public api::Thread
+template &lt;class A&gt;
+class Thread : public NonCopyable&lt;A&gt;, public api::Thread
 {
-    using Parent = NonCopyable;
+    using Parent = NonCopyable&lt;A&gt;;
 
 public:
 
     /**
      * @brief Constructor of not constructed object.
      *
-     * @param task      A task interface whose main function is invoked when this thread is started.
+     * @param task A task interface whose main function is invoked when this thread is started.
      */
-    Thread(api::Task&amp; task) ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
-<span style = "background-color:#dfd">        : NonCopyable()
-        , api::Thread()
-        , task_(&amp;task)       
-        , status_(STATUS_NEW)
-        , priority_(PRIORITY_NORM)    
-        , id_(0U)
-        , handle_(NULLPTR) {
-        bool_t const isConstructed{ construct() };
-        setConstructed( isConstructed );
-    }</span>
+    Thread(api::Task&amp; task) noexcept;
         
     /**
      * @brief Destructor.
      */
-    ~Thread() override
-<span style = "background-color:#dfd">    {
-        if(handle_ != NULLPTR)</span>
-        {
-            // @todo The handle closing means the thread will stay in detached mode.
-            // Thus, to keep compatibility, common approach for all OSs shall be found.
-<span style = "background-color:#dfd">            static_cast&lt;void&gt;( ::CloseHandle(handle_) );
-            status_ = STATUS_DEAD;            
-            handle_ = NULLPTR;</span>
-        }
-<span style = "background-color:#dfd">    }   </span>
+    ~Thread() noexcept override;
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    bool_t isConstructed() const override ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
-<span style = "background-color:#dfd">    {
-        return Parent::isConstructed();
-    }</span>
+    bool_t isConstructed() const noexcept override;
 
     /**
      * @copydoc eoos::api::Thread::execute()
      */
-    bool_t execute() override try
-<span style = "background-color:#dfd">    {
-        bool_t res{ false };
-        if( isConstructed() &amp;&amp; (status_ == STATUS_NEW) )</span>
-        {
-<span style = "background-color:#dfd">            ::DWORD const exitCode{ ::ResumeThread(handle_) };</span>
-            // If the exitCode is 1, the specified thread was suspended but was restarted.
-<span style = "background-color:#dfd">            if(exitCode == 1U)</span>
-            {
-<span style = "background-color:#dfd">                status_ = STATUS_RUNNABLE;
-                res = true;
-            }</span>
-            else
-            {   ///&lt; UT Justified Branch: OS dependency
-<span style = "background-color:#fdd">                status_ = STATUS_DEAD;</span>
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">        status_ = STATUS_DEAD;
-        return false;
-    }</span>
+    bool_t execute() noexcept override;
     
     /**
      * @copydoc eoos::api::Thread::join()
      */
-    bool_t join() override try
-<span style = "background-color:#dfd">    {
-        bool_t res{ false };
-	    if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            ::DWORD const error{ ::WaitForSingleObject(handle_, INFINITE) };
-            res = (error == 0U) ? true : false;
-            status_ = STATUS_DEAD;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">        return false;
-    }</span>
+    bool_t join() noexcept override;
 
     /**
      * @copydoc eoos::api::Thread::getPriority()
      */
-    int32_t getPriority() const override
-<span style = "background-color:#dfd">    {
-        return isConstructed() ? priority_ : PRIORITY_WRONG;        
-    }</span>
+    int32_t getPriority() const noexcept override;
 
     /**
      * @copydoc eoos::api::Thread::setPriority(int32_t)
      */
-    bool_t setPriority(int32_t priority) override
-<span style = "background-color:#dfd">    {
-        bool_t res{ false };
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            if( (PRIORITY_MIN &lt;= priority) &amp;&amp; (priority &lt;= PRIORITY_MAX) )</span>
-            {
-<span style = "background-color:#dfd">                priority_ = priority;
-                res = true;
-            }
-            else if (priority == PRIORITY_LOCK)</span>
-            {
-<span style = "background-color:#dfd">                priority_ = priority;
-                res = true;
-            }</span>
-            else 
-            {
-<span style = "background-color:#dfd">                res = false;</span>
-            }
-        }
-        // @todo Implemet setting priority on system level regarding common API rage
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t setPriority(int32_t priority) noexcept override;
 
 private:
 
@@ -161,78 +83,7 @@ private:
      *
      * @return True if object has been constructed successfully.
      */
-    bool_t construct() try
-<span style = "background-color:#dfd">    {  
-        bool_t res{ false };
-        while(true)</span>
-        {
-<span style = "background-color:#dfd">            if( !isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                break;</span>
-            }
-<span style = "background-color:#dfd">            if( task_ == NULLPTR )</span>
-            {   ///&lt; UT Justified Branch: OS dependency
-<span style = "background-color:#fdd">                break;</span>
-            }
-<span style = "background-color:#dfd">            if( !task_-&gt;isConstructed() )</span>
-            {
-<span style = "background-color:#dfd">                break;</span>
-            }
-            // A pointer to a SECURITY_ATTRIBUTES structure that determines whether the returned handle 
-            // can be inherited by child processes. If lpThreadAttributes is NULL, the handle cannot be inherited.
-            // The lpSecurityDescriptor member of the structure specifies a security descriptor for the new thread. 
-            // If lpThreadAttributes is NULL, the thread gets a default security descriptor. The ACLs in the default 
-            // security descriptor for a thread come from the primary token of the creator.
-<span style = "background-color:#dfd">            ::LPSECURITY_ATTRIBUTES const lpThreadAttributes{ NULL };</span>
-            
-            // The initial size of the stack, in bytes. The system rounds this value to the nearest page. 
-            // If this parameter is zero, the new thread uses the default size for the executable. 
-            // For more information, see Thread Stack Size.
-<span style = "background-color:#dfd">            size_t const stackSize{ task_-&gt;getStackSize() };
-            ::SIZE_T const dwStackSize{ static_cast&lt;SIZE_T&gt;(stackSize) };</span>
-            
-            // A pointer to the application-defined function to be executed by the thread. 
-            // This pointer represents the starting address of the thread. 
-            // For more information on the thread function, see ThreadProc.
-<span style = "background-color:#dfd">            ::LPTHREAD_START_ROUTINE const lpStartAddress{ &amp;start };</span>
-            
-            // A pointer to a variable to be passed to the thread.
-<span style = "background-color:#dfd">            ::LPVOID const lpParameter{ &amp;task_ };</span>
-            
-            // The flags that control the creation of the thread.
-            // WIN32_CREATE_SUSPENDED to wait, or 0.
-<span style = "background-color:#dfd">            ::DWORD const dwCreationFlags{ WIN32_CREATE_SUSPENDED };</span>
-            
-            // A pointer to a variable that receives the thread identifier. 
-            // If this parameter is NULL, the thread identifier is not returned.
-<span style = "background-color:#dfd">            ::LPDWORD lpThreadId{ &amp;id_ };</span>
-            
-<span style = "background-color:#dfd">            ::HANDLE const handle{ ::CreateThread(</span>
-                lpThreadAttributes, 
-                dwStackSize, 
-                lpStartAddress, 
-                lpParameter, 
-                dwCreationFlags, 
-                lpThreadId
-            ) };
-<span style = "background-color:#dfd">            if(handle == NULLPTR)</span>
-            {   ///&lt; UT Justified Branch: OS dependency
-<span style = "background-color:#fdd">                break;</span>
-            }
-<span style = "background-color:#dfd">            status_ = STATUS_NEW;
-            handle_ = handle;
-            res = true;
-            break;</span>
-<span style = "background-color:#fdd">        } ///&lt; UT Justified Line: Compiler dependency</span>
-<span style = "background-color:#dfd">        if( res == false )</span>
-        {
-<span style = "background-color:#dfd">            status_ = STATUS_DEAD;</span>
-        }
-<span style = "background-color:#dfd">        return res;    
-    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">        return false;
-    }</span>
-
+    bool_t construct() noexcept;
 
     /**
      * @brief Runs a function of Runnable interface start vector.
@@ -240,25 +91,7 @@ private:
      * @param argument Thread arguments.
      * @return Thread execution resualt.
      */
-    static ::DWORD start(::LPVOID argument) try ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
-<span style = "background-color:#dfd">    {
-        int32_t error{ -1 };
-        if(argument != NULLPTR)</span>
-        {
-<span style = "background-color:#dfd">            api::Task* const task{ *static_cast&lt;api::Task**&gt;(argument) }; ///&lt; SCA AUTOSAR-C++14 Justified Rule M5-2-8
-            if(task != NULLPTR)</span>
-            {
-<span style = "background-color:#dfd">                if(task-&gt;isConstructed())</span>
-                {
-<span style = "background-color:#dfd">                    task-&gt;start();
-                    error = 0;</span>
-                }
-            }
-        }        
-<span style = "background-color:#dfd">        return static_cast&lt; ::DWORD &gt;(error);
-    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">        return static_cast&lt; ::DWORD &gt;(-1);
-    }</span>
+    static ::DWORD start(::LPVOID argument);
     
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
@@ -318,6 +151,184 @@ private:
     ::HANDLE handle_;
 
 };
+
+template &lt;class A&gt;
+Thread&lt;A&gt;::Thread(api::Task&amp; task) noexcept ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , api::Thread()
+    , task_(&amp;task)       
+    , status_(STATUS_NEW)
+    , priority_(PRIORITY_NORM)    
+    , id_(0U)
+    , handle_(NULLPTR) {
+    bool_t const isConstructed{ construct() };
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;class A&gt;
+Thread&lt;A&gt;::~Thread() noexcept
+<span style = "background-color:#dfd">{
+    if(handle_ != NULLPTR)</span>
+    {
+        // @todo The handle closing means the thread will stay in detached mode.
+        // Thus, to keep compatibility, common approach for all OSs shall be found.
+<span style = "background-color:#dfd">        static_cast&lt;void&gt;( ::CloseHandle(handle_) );
+        status_ = STATUS_DEAD;            
+        handle_ = NULLPTR;</span>
+    }
+<span style = "background-color:#dfd">}   </span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::isConstructed() const noexcept
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::execute() noexcept try
+<span style = "background-color:#dfd">{
+    bool_t res{ false };
+    if( isConstructed() &amp;&amp; (status_ == STATUS_NEW) )</span>
+    {
+<span style = "background-color:#dfd">        ::DWORD const exitCode{ ::ResumeThread(handle_) };</span>
+        // If the exitCode is 1, the specified thread was suspended but was restarted.
+<span style = "background-color:#dfd">        if(exitCode == 1U)</span>
+        {
+<span style = "background-color:#dfd">            status_ = STATUS_RUNNABLE;
+            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    status_ = STATUS_DEAD;
+    return false;
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::join() noexcept try
+<span style = "background-color:#dfd">{
+    bool_t res{ false };
+    if( isConstructed() &amp;&amp; (status_ == STATUS_RUNNABLE) )</span>
+    {
+<span style = "background-color:#dfd">        ::DWORD const error{ ::WaitForSingleObject(handle_, INFINITE) };
+        res = (error == 0U) ? true : false;
+        status_ = STATUS_DEAD;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    return false;
+}</span>
+
+template &lt;class A&gt;
+int32_t Thread&lt;A&gt;::getPriority() const noexcept
+<span style = "background-color:#dfd">{
+    return isConstructed() ? priority_ : PRIORITY_WRONG;        
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::setPriority(int32_t priority) noexcept
+<span style = "background-color:#dfd">{
+    bool_t res{ false };
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        if( (PRIORITY_MIN &lt;= priority) &amp;&amp; (priority &lt;= PRIORITY_MAX) )</span>
+        {
+<span style = "background-color:#dfd">            priority_ = priority;
+            res = true;
+        }
+        else if (priority == PRIORITY_LOCK)</span>
+        {
+<span style = "background-color:#dfd">            priority_ = priority;
+            res = true;
+        }</span>
+        else 
+        {
+<span style = "background-color:#dfd">            res = false;</span>
+        }
+    }
+    // @todo Implemet setting priority on system level regarding common API rage
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::construct() noexcept try
+<span style = "background-color:#dfd">{  
+    bool_t res{ false };
+    if( isConstructed() &amp;&amp; Parent::isConstructed(task_) )</span>
+    {
+        // A pointer to a SECURITY_ATTRIBUTES structure that determines whether the returned handle 
+        // can be inherited by child processes. If lpThreadAttributes is NULL, the handle cannot be inherited.
+        // The lpSecurityDescriptor member of the structure specifies a security descriptor for the new thread. 
+        // If lpThreadAttributes is NULL, the thread gets a default security descriptor. The ACLs in the default 
+        // security descriptor for a thread come from the primary token of the creator.
+<span style = "background-color:#dfd">        ::LPSECURITY_ATTRIBUTES const lpThreadAttributes{ NULL };</span>
+        
+        // The initial size of the stack, in bytes. The system rounds this value to the nearest page. 
+        // If this parameter is zero, the new thread uses the default size for the executable. 
+        // For more information, see Thread Stack Size.
+<span style = "background-color:#dfd">        size_t const stackSize{ task_-&gt;getStackSize() };
+        ::SIZE_T const dwStackSize{ static_cast&lt;SIZE_T&gt;(stackSize) };</span>
+        
+        // A pointer to the application-defined function to be executed by the thread. 
+        // This pointer represents the starting address of the thread. 
+        // For more information on the thread function, see ThreadProc.
+<span style = "background-color:#dfd">        ::LPTHREAD_START_ROUTINE const lpStartAddress{ &amp;start };</span>
+        
+        // A pointer to a variable to be passed to the thread.
+<span style = "background-color:#dfd">        ::LPVOID const lpParameter{ &amp;task_ };</span>
+        
+        // The flags that control the creation of the thread.
+        // WIN32_CREATE_SUSPENDED to wait, or 0.
+<span style = "background-color:#dfd">        ::DWORD const dwCreationFlags{ WIN32_CREATE_SUSPENDED };</span>
+        
+        // A pointer to a variable that receives the thread identifier. 
+        // If this parameter is NULL, the thread identifier is not returned.
+<span style = "background-color:#dfd">        ::LPDWORD lpThreadId{ &amp;id_ };</span>
+        
+<span style = "background-color:#dfd">        ::HANDLE const handle{ ::CreateThread(</span>
+            lpThreadAttributes, 
+            dwStackSize, 
+            lpStartAddress, 
+            lpParameter, 
+            dwCreationFlags, 
+            lpThreadId
+        ) };
+<span style = "background-color:#dfd">        if(handle != NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            status_ = STATUS_NEW;
+            handle_ = handle;
+            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    if( res == false )</span>
+    {
+<span style = "background-color:#dfd">        status_ = STATUS_DEAD;</span>
+    }
+<span style = "background-color:#dfd">    return res;    
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    return false;
+}</span>
+
+template &lt;class A&gt;
+::DWORD Thread&lt;A&gt;::start(::LPVOID argument) try ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
+<span style = "background-color:#dfd">{
+    int32_t error{ -1 };
+    if(argument != NULLPTR)</span>
+    {
+<span style = "background-color:#dfd">        api::Task* const task{ *static_cast&lt;api::Task**&gt;(argument) }; ///&lt; SCA AUTOSAR-C++14 Justified Rule M5-2-8
+        if(task != NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            if(task-&gt;isConstructed())</span>
+            {
+<span style = "background-color:#dfd">                task-&gt;start();
+                error = 0;</span>
+            }
+        }
+    }        
+<span style = "background-color:#dfd">    return static_cast&lt; ::DWORD &gt;(error);
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    return static_cast&lt; ::DWORD &gt;(-1);
+}</span>
 
 } // namespace sys
 } // namespace eoos

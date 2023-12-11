@@ -29,41 +29,41 @@ namespace sys
  * @class Scheduler
  * @brief Thread tasks scheduler class.
  */
-class Scheduler : public NonCopyable, public api::Scheduler
+class Scheduler : public NonCopyable&lt;NoAllocator&gt;, public api::Scheduler
 {
-    using Parent = NonCopyable;
+    using Parent = NonCopyable&lt;NoAllocator&gt;;
 
 public:
 
     /**
      * @brief Constructor.
      */
-    Scheduler();
+    Scheduler() noexcept;
 
     /**
      * @brief Destructor.
      */
-<span style = "background-color:#dfd">    ~Scheduler() override = default;</span>
+<span style = "background-color:#dfd">    ~Scheduler() noexcept override = default;</span>
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    bool_t isConstructed() const override; ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
+    bool_t isConstructed() const noexcept override; ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
 
     /**
      * @copydoc eoos::api::Scheduler::createThread(api::Task&amp;)
      */     
-    api::Thread* createThread(api::Task&amp; task) override; ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
+    api::Thread* createThread(api::Task&amp; task) noexcept override; ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
     
     /**
      * @copydoc eoos::api::Scheduler::sleep(int32_t)
      */
-    bool_t sleep(int32_t ms) override;        
+    bool_t sleep(int32_t ms) noexcept override;
 
     /**
      * @copydoc eoos::api::Scheduler::yield()
      */
-    void yield() override;
+    bool_t yield() noexcept override;
 
 private:
 
@@ -72,7 +72,7 @@ private:
      *
      * @return true if object has been constructed successfully.
      */
-    bool_t construct();
+    bool_t construct() noexcept;
     
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)

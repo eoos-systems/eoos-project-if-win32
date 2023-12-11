@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <meta charset="utf-8"/>
-	    <title>lib.MutexGuard.hpp</title>
+	    <title>lib.Guard.hpp</title>
 	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
 	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
 	</head>
@@ -10,15 +10,15 @@
         <h4></h4>
         <pre class="prettyprint lang-cpp linenums">
 /**
- * @file      lib.MutexGuard.hpp
+ * @file      lib.Guard.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2020-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2020-2023, Sergey Baigudin, Baigudin Software
  */
-#ifndef LIB_MUTEXGUARD_HPP_
-#define LIB_MUTEXGUARD_HPP_
+#ifndef LIB_GUARD_HPP_
+#define LIB_GUARD_HPP_
 
 #include "lib.NonCopyable.hpp"
-#include "lib.Mutex.hpp"
+#include "api.Guard.hpp"
 
 namespace eoos
 {
@@ -26,13 +26,13 @@ namespace lib
 {
     
 /**
- * @class MutexGuard&lt;A&gt;
- * @brief Guard of mutex.
+ * @class Guard&lt;A&gt;
+ * @brief Guard of RAII implementation.
  *
  * @tparam A heap memory allocator class.
  */    
 template &lt;class A = Allocator&gt;
-class MutexGuard : public NonCopyable&lt;A&gt;
+class Guard : public NonCopyable&lt;A&gt;
 {
     typedef NonCopyable&lt;A&gt; Parent;            
 
@@ -43,11 +43,11 @@ public:
     /**
      * @brief Constructor.
      *
-     * @param mutex A mutex for guarding.
+     * @param guard A guard for guarding.
      */
-    MutexGuard(api::Mutex&amp; mutex) 
+    Guard(api::Guard&amp; guard) 
 <span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
-        , mutex_ (mutex){
+        , guard_( guard ){
         bool_t const isConstructed( construct() );
         setConstructed( isConstructed );                    
     }</span>
@@ -55,11 +55,11 @@ public:
     /**        
      * @brief Destructor.
      */
-    virtual ~MutexGuard()
+    virtual ~Guard()
 <span style = "background-color:#dfd">    {
         if( isConstructed() )</span>
         {
-<span style = "background-color:#dfd">            mutex_.unlock();</span>
+<span style = "background-color:#dfd">            static_cast&lt;void&gt;( guard_.unlock() );</span>
         }
 <span style = "background-color:#dfd">    }</span>
     
@@ -76,31 +76,23 @@ private:
      */
     bool_t construct()
 <span style = "background-color:#dfd">    {
-        bool_t res( false );</span>
-        do
+        bool_t res( false );
+        if( isConstructed() )</span>
         {
-<span style = "background-color:#dfd">            if( !isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                break;</span>
-            }
-<span style = "background-color:#dfd">            if( !mutex_.isConstructed() )</span>
-            {
-<span style = "background-color:#dfd">                break;</span>
-            }
-<span style = "background-color:#dfd">            res = mutex_.lock();
-        } while(false);
-        return res;
+<span style = "background-color:#dfd">            res = guard_.lock();</span>
+        }
+<span style = "background-color:#dfd">        return res;
     }</span>
-
+    
     /**
-     * @brief Mutex resource identifier.
+     * @brief Guard resource identifier.
      */
-    api::Mutex&amp; mutex_;
+    api::Guard&amp; guard_;
 };
 
 } // namespace lib
 } // namespace eoos
-#endif // LIB_MUTEXGUARD_HPP_</pre>
+#endif // LIB_GUARD_HPP_</pre>
         <hr />
         <table width="100%">
             <thead>

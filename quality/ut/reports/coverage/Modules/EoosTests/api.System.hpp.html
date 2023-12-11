@@ -12,7 +12,7 @@
 /**
  * @file      api.System.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2017-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2017-2023, Sergey Baigudin, Baigudin Software
  */
 #ifndef API_SYSTEM_HPP_
 #define API_SYSTEM_HPP_
@@ -20,9 +20,9 @@
 #include "api.Object.hpp"
 #include "api.Scheduler.hpp"
 #include "api.Heap.hpp"
-#include "api.Mutex.hpp"
-#include "api.Semaphore.hpp"
-#include "api.OutStream.hpp"
+#include "api.MutexManager.hpp"
+#include "api.SemaphoreManager.hpp"
+#include "api.StreamManager.hpp"
 
 namespace eoos
 {
@@ -39,13 +39,6 @@ class System : public Object
 public:
 
     /**
-     * @brief Returns the system scheduler.
-     *
-     * @return The system scheduler.
-     */
-    virtual Scheduler&amp; getScheduler() = 0;
-
-    /**
      * @brief Returns the system heap memory.
      *
      * @return The system heap memory.
@@ -53,33 +46,32 @@ public:
     virtual Heap&amp; getHeap() = 0;
 
     /**
-     * @brief Returns system output character stream.
+     * @brief Returns the system scheduler.
      *
-     * @return The system output character stream.
+     * @return The system scheduler.
      */
-    virtual OutStream&lt;char_t&gt;&amp; getOutStreamChar() = 0;
+    virtual Scheduler&amp; getScheduler() = 0;
 
     /**
-     * @brief Returns system error output character stream.
+     * @brief Returns mutex sub-system.
      *
-     * @return The system error output character stream.
+     * @return The mutex sub-system.
      */
-    virtual OutStream&lt;char_t&gt;&amp; getErrorStreamChar() = 0;
+    virtual MutexManager&amp; getMutexManager() = 0;
 
     /**
-     * @brief Creates a new mutex resource.
+     * @brief Returns semaphore sub-system.
      *
-     * @return A new mutex resource, or NULLPTR if an error has been occurred.
+     * @return The semaphore sub-system.
      */
-    virtual Mutex* createMutex() = 0;
+    virtual SemaphoreManager&amp; getSemaphoreManager() = 0;
 
     /**
-     * @brief Creates a new semaphore resource.
+     * @brief Returns stream sub-system.
      *
-     * @param permits The initial number of permits available.
-     * @return A new semaphore resource, or NULLPTR if an error has been occurred.
+     * @return The stream sub-system.
      */
-    virtual Semaphore* createSemaphore(int32_t permits) = 0;
+    virtual StreamManager&amp; getStreamManager() = 0;
     
 protected:
 

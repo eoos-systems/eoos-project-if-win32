@@ -389,7 +389,7 @@ private:
         int32_t index( LENGTH - 1 );</span>
         T temp[LENGTH];
 <span style = "background-color:#dfd">        temp[index] = R::getTerminator();
-		index -= 1;		</span>
+        index -= 1;</span>
         do
         {
             // Test for available base
@@ -451,7 +451,7 @@ private:
 <span style = "background-color:#dfd">        while(false);
         if(res == true)</span>
         {
-<span style = "background-color:#dfd">			index += 1;
+<span style = "background-color:#dfd">            index += 1;
             res = copyRaw(&amp;temp[index]);</span>
         }
 <span style = "background-color:#dfd">        return res;

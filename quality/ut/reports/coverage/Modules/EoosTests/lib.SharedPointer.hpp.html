@@ -20,15 +20,14 @@
 #include "lib.Object.hpp"
 #include "api.SmartPointer.hpp"
 #include "lib.SmartPointerDeleter.hpp"
-#include "lib.MutexGuard.hpp"
+#include "lib.Guard.hpp"
+#include "lib.Mutex.hpp"
 #include "lib.NonCopyable.hpp"
 
 namespace eoos
 {
 namespace lib
 {
-
-#ifdef EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
     
 /**
  * @class SharedPointer&lt;T,D,A&gt;
@@ -211,7 +210,7 @@ public:
      */
     virtual void reset(T* ptr)
 <span style = "background-color:#dfd">    {
-		if (get() != ptr)</span>
+        if (get() != ptr)</span>
         {
 <span style = "background-color:#dfd">            Self temp(ptr);
             swap(temp);
@@ -276,33 +275,23 @@ private:
      *
      * @param pointer A pointer to get ownership.
      * @return True if this object has been constructed successfully.
-     */     
+     */
     bool_t construct(T* const pointer = NULLPTR)
 <span style = "background-color:#dfd">    {
-        bool_t res( false );</span>
-        do
+        bool_t res( false );
+        if( isConstructed() )</span>
         {
-<span style = "background-color:#dfd">            if( !isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                D::free(pointer);
-                break;</span>
-            }
 <span style = "background-color:#dfd">            cb_ = new ControlBlock&lt;T,D,A&gt;(pointer);
-            if(cb_ == NULLPTR)</span>
+            if( Parent::isConstructed(cb_) )</span>
             {
-<span style = "background-color:#dfd">                D::free(pointer);
-                break;</span>
+<span style = "background-color:#dfd">                res = true;</span>
             }
-<span style = "background-color:#dfd">            if( !cb_-&gt;isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                D::free(pointer);                
-                delete cb_;
-                cb_ = NULLPTR;
-                break;</span>
-            }
-<span style = "background-color:#dfd">            res = true;
-        } while(false);
-        return res;
+        }
+<span style = "background-color:#dfd">        if( res != true )</span>
+        {
+<span style = "background-color:#dfd">            deleteControlBlock(pointer);</span>
+        }
+<span style = "background-color:#dfd">        return res;
     }</span>
 
     /**
@@ -315,12 +304,10 @@ private:
 <span style = "background-color:#dfd">            int32_t const counter( cb_-&gt;decrease() );
             if(counter == 0)</span>
             {
-<span style = "background-color:#dfd">                D::free(cb_-&gt;getPointer());
-                delete cb_;
-                cb_ = NULLPTR;            </span>
+<span style = "background-color:#dfd">                deleteControlBlock(cb_-&gt;getPointer());</span>
             }
         }
-<span style = "background-color:#dfd">    }        </span>
+<span style = "background-color:#dfd">    }  </span>
 
     /**
      * @brief Acquires a managed object by control block.
@@ -330,6 +317,21 @@ private:
         if( cb_ != NULLPTR )</span>
         {
 <span style = "background-color:#dfd">            cb_-&gt;increase();</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+
+    /**
+     * @brief Deletes the control block.
+     *
+     * @param pointer A pointer to get ownership.
+     */
+    void deleteControlBlock(T* const pointer)
+<span style = "background-color:#dfd">    {
+        D::free(pointer);
+        if( cb_ != NULLPTR )</span>
+        {
+<span style = "background-color:#dfd">            delete cb_;
+            cb_ = NULLPTR;</span>
         }
 <span style = "background-color:#dfd">    }</span>
 
@@ -384,7 +386,7 @@ private:
          */
         void increase()
 <span style = "background-color:#dfd">        {
-            MutexGuard&lt;AA&gt; const guard(mutex_);</span>
+            Guard&lt;AA&gt; const guard(mutex_);</span>
             static_cast&lt;void&gt;(guard);            
 <span style = "background-color:#dfd">            ++counter_;
         }</span>
@@ -396,7 +398,7 @@ private:
          */        
         int32_t decrease()
 <span style = "background-color:#dfd">        {
-            MutexGuard&lt;AA&gt; const guard(mutex_);</span>
+            Guard&lt;AA&gt; const guard(mutex_);</span>
             static_cast&lt;void&gt;(guard);            
 <span style = "background-color:#dfd">            return --counter_;
         }</span>
@@ -428,20 +430,15 @@ private:
          */     
         bool_t construct()
 <span style = "background-color:#dfd">        {
-            bool_t res( false );</span>
-            do
+            bool_t res( false );
+            if( isConstructed() )</span>
             {
-<span style = "background-color:#dfd">                if( !isConstructed() )</span>
-                {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                    break;</span>
+<span style = "background-color:#dfd">                if( mutex_.isConstructed() )</span>
+                {
+<span style = "background-color:#dfd">                    res = true;</span>
                 }
-<span style = "background-color:#dfd">                if( !mutex_.isConstructed() )</span>
-                {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                    break;</span>
-                }
-<span style = "background-color:#dfd">                res = true;
-            } while(false);
-            return res;
+            }
+<span style = "background-color:#dfd">            return res;
         }</span>
         
         /**
@@ -492,8 +489,6 @@ inline bool_t operator!=(SharedPointer&lt;T,D,A&gt; const&amp; obj1, SharedPoint
 <span style = "background-color:#dfd">{
     return obj1.get() != obj2.get();
 }</span>
-
-#endif // EOOS_ENABLE_DYNAMIC_HEAP_MEMORY
 
 } // namespace lib
 } // namespace eoos

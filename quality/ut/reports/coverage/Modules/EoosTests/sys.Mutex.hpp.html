@@ -28,82 +28,45 @@ namespace sys
 /**
  * @class Mutex.
  * @brief Mutex class.
+ * 
+ * @tparam A Heap memory allocator class.
  */
-class Mutex : public NonCopyable, public api::Mutex
+template &lt;class A&gt;
+class Mutex : public NonCopyable&lt;A&gt;, public api::Mutex
 {
-    using Parent = NonCopyable;
+    using Parent = NonCopyable&lt;A&gt;;
 
 public:
 
     /**
      * @brief Constructor.
      */
-    Mutex() noexcept 
-<span style = "background-color:#dfd">        : NonCopyable()
-        , api::Mutex() {
-        bool_t const isConstructed{ construct() };
-        setConstructed( isConstructed );
-    }</span>
+    Mutex() noexcept;
 
     /**
      * @brief Destructor.
      */
-    ~Mutex() noexcept override
-<span style = "background-color:#dfd">    {
-        ::DeleteCriticalSection(pcs_);
-    }</span>
+    ~Mutex() noexcept override;
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    bool_t isConstructed() const noexcept override ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
-<span style = "background-color:#dfd">    {
-        return Parent::isConstructed();
-    }</span>
+    bool_t isConstructed() const noexcept override;
     
     /**
      * @copydoc eoos::api::Mutex::tryLock()
      */
-    bool_t tryLock() noexcept override try
-<span style = "background-color:#dfd">    {
-        bool_t res{ false };
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            res = ::TryEnterCriticalSection(pcs_) != 0;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">        return false;
-    }    </span>
+    bool_t tryLock() noexcept override;
 
     /**
      * @copydoc eoos::api::Mutex::lock()
      */
-    bool_t lock() noexcept override try
-<span style = "background-color:#dfd">    {
-        bool_t res{ false };
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            ::EnterCriticalSection(pcs_);
-            res = true;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">        return false;
-    }</span>
+    bool_t lock() noexcept override;
 
     /**
      * @copydoc eoos::api::Mutex::unlock()
      */
-    void unlock() noexcept override try
-<span style = "background-color:#dfd">    {
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            ::LeaveCriticalSection(pcs_);</span>
-        }
-<span style = "background-color:#dfd">    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">        return;
-    }</span>
+    bool_t unlock() noexcept override;
 
 private:
 
@@ -112,28 +75,7 @@ private:
      *
      * @return True if object has been constructed successfully.
      */
-    bool_t construct() const noexcept try
-<span style = "background-color:#dfd">    {
-        bool_t res{ false };
-        while(true)</span>
-        {   
-<span style = "background-color:#dfd">            if( !isConstructed() )</span>
-            {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">                break;</span>
-            }
-<span style = "background-color:#dfd">            ::DWORD const spinCount{ 4000U };
-            ::BOOL const isInitialize{ ::InitializeCriticalSectionAndSpinCount(pcs_, spinCount) };
-            if(isInitialize == 0)</span>
-            {   ///&lt; UT Justified Branch: OS dependency
-<span style = "background-color:#fdd">                break;</span>
-            }
-<span style = "background-color:#dfd">            res = true;
-            break;</span>
-<span style = "background-color:#fdd">        }</span>
-<span style = "background-color:#dfd">        return res;
-    } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">        return false;
-    }</span>
+    bool_t construct() const noexcept;
     
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
@@ -166,6 +108,85 @@ private:
 <span style = "background-color:#dfd">    ::LPCRITICAL_SECTION const pcs_{ &amp;cs_ };    </span>
 
 };
+
+template &lt;class A&gt;
+Mutex&lt;A&gt;::Mutex() noexcept
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , api::Mutex() {
+    bool_t const isConstructed{ construct() };
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;class A&gt;
+Mutex&lt;A&gt;::~Mutex() noexcept
+<span style = "background-color:#dfd">{
+    ::DeleteCriticalSection(pcs_);
+}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::isConstructed() const noexcept
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::tryLock() noexcept try
+<span style = "background-color:#dfd">{
+    bool_t res{ false };
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = ::TryEnterCriticalSection(pcs_) != 0;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    return false;
+}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::lock() noexcept try
+<span style = "background-color:#dfd">{
+    bool_t res{ false };
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        ::EnterCriticalSection(pcs_);
+        res = true;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    return false;
+}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::unlock() noexcept try
+<span style = "background-color:#dfd">{
+    bool_t res{ false };    
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        ::LeaveCriticalSection(pcs_);
+        res = true;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    return false;
+}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::construct() const noexcept try
+<span style = "background-color:#dfd">{
+    bool_t res{ false };
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        ::DWORD const spinCount{ 4000U };
+        ::BOOL const isInitialize{ ::InitializeCriticalSectionAndSpinCount(pcs_, spinCount) };
+        if(isInitialize != 0)</span>
+        {
+<span style = "background-color:#dfd">            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
+<span style = "background-color:#fdd">    return false;
+}</span>
 
 } // namespace sys
 } // namespace eoos

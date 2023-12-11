@@ -23,24 +23,24 @@ namespace eoos
 namespace sys
 {
     
-Scheduler::Scheduler()
-<span style = "background-color:#dfd">    : NonCopyable()
+Scheduler::Scheduler() noexcept
+<span style = "background-color:#dfd">    : NonCopyable&lt;NoAllocator&gt;()
     , api::Scheduler() {
     bool_t const isConstructed{ construct() };
     setConstructed( isConstructed );
 }</span>
 
-bool_t Scheduler::isConstructed() const
+bool_t Scheduler::isConstructed() const noexcept
 <span style = "background-color:#dfd">{
     return Parent::isConstructed();
 }</span>
 
-api::Thread* Scheduler::createThread(api::Task&amp; task) try ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
+api::Thread* Scheduler::createThread(api::Task&amp; task) noexcept try ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
 <span style = "background-color:#dfd">{
-    lib::UniquePointer&lt;Thread&gt; res;
+    lib::UniquePointer&lt;api::Thread&gt; res;
     if( isConstructed() )</span>
     {
-<span style = "background-color:#dfd">        res.reset( new Thread(task) ); ///&lt; SCA AUTOSAR-C++14 Justified Rule A18-5-2
+<span style = "background-color:#dfd">        res.reset( new Thread&lt;Allocator&gt;(task) ); ///&lt; SCA AUTOSAR-C++14 Justified Rule A18-5-2
         if( !res.isNull() )</span>
         {
 <span style = "background-color:#dfd">            if( !res-&gt;isConstructed() )</span>
@@ -54,7 +54,7 @@ api::Thread* Scheduler::createThread(api::Task&amp; task) try ///&lt; SCA AUTOSA
 <span style = "background-color:#fdd">    return NULLPTR;
 }</span>
 
-bool_t Scheduler::sleep(int32_t ms) try
+bool_t Scheduler::sleep(int32_t ms) noexcept try
 <span style = "background-color:#dfd">{
     bool_t res{ false };
     if(ms &gt;= 0)</span>
@@ -67,35 +67,29 @@ bool_t Scheduler::sleep(int32_t ms) try
 <span style = "background-color:#fdd">    return false;
 }</span>
 
-void Scheduler::yield() try
+bool_t Scheduler::yield() noexcept try
 <span style = "background-color:#dfd">{
     ::Sleep(0U);
+    return true;
 } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
-<span style = "background-color:#fdd">    return;
+<span style = "background-color:#fdd">    return false;
 }</span>
 
-bool_t Scheduler::construct() try
+bool_t Scheduler::construct() noexcept try
 <span style = "background-color:#dfd">{
     bool_t res{ false };
-    while(true)</span>
+    if( isConstructed() )</span>
     {
-<span style = "background-color:#dfd">        if( !isConstructed() )</span>
-        {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">            break;</span>
-        }
 <span style = "background-color:#dfd">        processHandle_ = ::GetCurrentProcess();
-        if(processHandle_ == NULLPTR)</span>
-        {   ///&lt; UT Justified Branch: OS dependency
-<span style = "background-color:#fdd">            break;</span>
+        if(processHandle_ != NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            processPriority_ = ::GetPriorityClass(processHandle_);
+            if(processPriority_ != 0U)</span>
+            {
+<span style = "background-color:#dfd">                res = true;</span>
+            }
         }
-<span style = "background-color:#dfd">        processPriority_ = ::GetPriorityClass(processHandle_);
-        if(processPriority_ == 0U)</span>
-        {   ///&lt; UT Justified Branch: OS dependency
-<span style = "background-color:#fdd">            break;</span>
-        }
-<span style = "background-color:#dfd">        res = true;
-        break;</span>
-<span style = "background-color:#fdd">    }</span>
+    }
 <span style = "background-color:#dfd">    return res;
 } catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
 <span style = "background-color:#fdd">    return false;

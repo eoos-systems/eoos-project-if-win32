@@ -12,13 +12,14 @@
 /**
  * @file      sys.Object.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2023, Sergey Baigudin, Baigudin Software
  */
 #ifndef SYS_OBJECT_HPP_
 #define SYS_OBJECT_HPP_
 
 #include "lib.Object.hpp"
-#include "sys.Types.hpp"
+#include "sys.Allocator.hpp"
+#include "sys.NoAllocator.hpp"
 
 namespace eoos
 {
@@ -28,58 +29,73 @@ namespace sys
 /**
  * @class Object
  * @brief Root class of the operating system class hierarchy.
+ *
+ * @tparam A Heap memory allocator class.
  */
-class Object : public lib::Object&lt;&gt;
+template &lt;class A&gt;
+class Object : public lib::Object&lt;A&gt;
 {
-    using Parent = lib::Object&lt;&gt;;
+    using Parent = lib::Object&lt;A&gt;;
 
 public:
 
     /**
      * @brief Constructor.
      */
-<span style = "background-color:#dfd">    Object() = default;</span>
+<span style = "background-color:#dfd">    Object() noexcept = default;</span>
 
     /**
      * @brief Destructor.
      */
-<span style = "background-color:#dfd">    ~Object() override = default;</span>
+<span style = "background-color:#dfd">    ~Object() noexcept override = default;</span>
     
 protected:
 
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
      */
-    Object(Object const&amp; obj) noexcept 
-        : lib::Object&lt;&gt;(obj) {
-    } 
+    Object(Object const&amp; obj) noexcept;
     
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
      */       
-    Object&amp; operator=(Object const&amp; obj) &amp; noexcept ///&lt; SCA AUTOSAR-C++14 Justified Rule A10-2-1
-    {
-        Parent::operator=(obj);
-        return *this;
-    }    
+    Object&amp; operator=(Object const&amp; obj) &amp; noexcept;
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
      */       
-    Object(Object&amp;&amp; obj) noexcept ///&lt; SCA AUTOSAR-C++14 Defected Rule A8-4-8
-        : lib::Object&lt;&gt;( lib::move(obj) ) {
-    }
+    Object(Object&amp;&amp; obj) noexcept;
     
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */
-    Object&amp; operator=(Object&amp;&amp; obj) &amp; noexcept ///&lt; SCA AUTOSAR-C++14 Justified Rule A10-2-1 and Defected Rule A8-4-8
-    {
-        Parent::operator=( lib::move(obj) );
-        return *this;
-    }
+    Object&amp; operator=(Object&amp;&amp; obj) &amp; noexcept;
 
 };
+
+template &lt;class A&gt;
+Object&lt;A&gt;::Object(Object const&amp; obj) noexcept 
+    : lib::Object&lt;A&gt;(obj) {
+} 
+
+template &lt;class A&gt;
+Object&lt;A&gt;&amp; Object&lt;A&gt;::operator=(Object const&amp; obj) &amp; noexcept
+{
+    Parent::operator=(obj);
+    return *this;
+}    
+
+template &lt;class A&gt;
+Object&lt;A&gt;::Object(Object&amp;&amp; obj) noexcept
+    : lib::Object&lt;A&gt;( lib::move(obj) ) {
+}
+
+template &lt;class A&gt;
+Object&lt;A&gt;&amp; Object&lt;A&gt;::operator=(Object&amp;&amp; obj) &amp; noexcept
+{
+    Parent::operator=( lib::move(obj) );
+    return *this;
+}
 
 } // namespace sys
 } // namespace eoos
