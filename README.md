@@ -16,7 +16,7 @@ EOOS Automotive WIN32 is developed within **ISO C++ standards**, complied with *
 Quality of EOOS Automotive WIN32:
 
 - MISRA C++ and AUTOSAR C++: **0** violations
-- Unit Tests coverage: **98%**
+- Unit Tests coverage: more than **98%**
 
 ---
 
