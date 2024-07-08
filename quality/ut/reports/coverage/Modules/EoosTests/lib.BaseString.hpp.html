@@ -12,7 +12,7 @@
 /**
  * @file      lib.BaseString.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2017-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2017-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_BASESTRING_HPP_
 #define LIB_BASESTRING_HPP_
@@ -48,33 +48,21 @@ public:
     /**
      * @brief Constructor.
      */
-    BaseString() 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;() {
-        bool_t const isConstructed( construct() );
-        setConstructed( isConstructed );
-    }</span>
+    BaseString();
     
     /**
      * @brief Constructor.
      *
      * @param source A source object interface.
      */
-    BaseString(api::String&lt;T&gt; const&amp; source) 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;() {
-        bool_t const isConstructed( construct( source.getChar() ) );
-        setConstructed( isConstructed );            
-    }</span>
+    BaseString(api::String&lt;T&gt; const&amp; source);
 
     /**
      * @brief Constructor.
      *
      * @param source A source character string.
      */
-    BaseString(T const* const source) 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;() {
-        bool_t const isConstructed( construct( source ) );
-        setConstructed( isConstructed );            
-    }</span>
+    BaseString(T const* const source);
     
     /**
      * @brief Constructor.
@@ -82,96 +70,46 @@ public:
      * @param value A source numerical value.
      * @param base  A numerical base used to represent a value as this string.     
      */
-    explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10) 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;() {    
-        bool_t isConstructed( construct() );
-        if( isConstructed )</span>
-        {
-<span style = "background-color:#dfd">            isConstructed = convert(value, base);</span>
-        }
-<span style = "background-color:#dfd">        setConstructed( isConstructed );
-    }</span>
+    explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10);
 
     /**
      * @brief Destructor.
      */
-    virtual ~BaseString()
-<span style = "background-color:#dfd">    {
-    }</span>
-    
+    virtual ~BaseString();
+
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
      */
-    BaseString(BaseString const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justified Rule 12-8-1
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;(obj) {
-        bool_t const isConstructed( construct( obj.getChar() ) );
-        setConstructed( isConstructed );
-    }</span>
+    BaseString(BaseString const&amp; obj);
 
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
      */       
-    BaseString&amp; operator=(BaseString const&amp; obj)
-<span style = "background-color:#dfd">    {
-        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
-        {
-<span style = "background-color:#dfd">            copyRaw3(str_, obj.str_, L);
-            Parent::operator=(obj);            </span>
-        }
-<span style = "background-color:#dfd">        return *this;
-    }    </span>
+    BaseString&amp; operator=(BaseString const&amp; obj);
 
     #if EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
      */       
-    BaseString(BaseString&amp;&amp; obj) noexcept 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;( move(obj) ) {
-        copyRaw3(str_, obj.str_, L);
-    }</span>
+    BaseString(BaseString&amp;&amp; obj) noexcept;
 
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */
-    BaseString&amp; operator=(BaseString&amp;&amp; obj) &amp; noexcept
-<span style = "background-color:#dfd">    {
-        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
-        {
-<span style = "background-color:#dfd">            copyRaw3(str_, obj.str_, L);
-            Parent::operator=( move(obj) );            </span>
-        }
-<span style = "background-color:#dfd">        return *this;
-    }        </span>
+    BaseString&amp; operator=(BaseString&amp;&amp; obj) &amp; noexcept;
 
     #endif // EOOS_CPP_STANDARD &gt;= 2011    
 
     /**
      * @copydoc eoos::api::Collection::getLength()
      */
-    virtual size_t getLength() const
-<span style = "background-color:#dfd">    {
-        size_t length( 0U );
-        if( isConstructed() )</span>
-        {
-            // @todo Rework here not to calculate length, but take it form a class member.
-<span style = "background-color:#dfd">            length = getLengthRaw(str_);</span>
-        }
-<span style = "background-color:#dfd">        return length;
-    }</span>
+    virtual size_t getLength() const;
 
     /**
      * @copydoc eoos::api::String::getChar()
      */
-    virtual T const* getChar() const
-<span style = "background-color:#dfd">    {
-        T const* str( NULLPTR );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            str = str_;</span>
-        }
-<span style = "background-color:#dfd">        return str;
-    }</span>
+    virtual T const* getChar() const;
     
 protected:
 
@@ -186,45 +124,17 @@ private:
     /**
      * @copydoc eoos::lib::AbstractBaseString::copyRaw(T const*)
      */
-    virtual bool_t copyRaw(T const* const str)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            copyRaw3(str_, str, L);
-            res = true;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    virtual bool_t copyRaw(T const* const str);
     
     /**
      * @copydoc eoos::lib::AbstractBaseString::concatenate(T const*)
      */
-    virtual bool_t concatenateRaw(T const* const str)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            concatenateRaw3(str_, str, L);
-            res = true;</span>
-        }
-<span style = "background-color:#dfd">        return res;</span>
-
-<span style = "background-color:#dfd">    }</span>
+    virtual bool_t concatenateRaw(T const* const str);
     
     /**
      * @copydoc eoos::lib::AbstractBaseString::isEqualToRaw(T const*)
      */
-    virtual bool_t isEqualToRaw(T const* const str) const
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            res = isEqualRaw2(str_, str);</span>
-        }
-<span style = "background-color:#dfd">        return res;</span>
-
-<span style = "background-color:#dfd">    }</span>
+    virtual bool_t isEqualToRaw(T const* const str) const;
     
     /**
      * @brief Constructs this object.
@@ -232,21 +142,7 @@ private:
      * @param str A string to be copied on construction.
      * @return True if this object has been constructed successfully.
      */     
-    bool_t construct(T const* const str = NULLPTR)
-<span style = "background-color:#dfd">    {
-        str_[0] = R::getTerminator();
-        bool_t res( false );</span>
-        do
-        {
-<span style = "background-color:#dfd">            if( !isConstructed() )</span>
-            {
-<span style = "background-color:#dfd">                break;</span>
-            }
-<span style = "background-color:#dfd">            res = ( str == NULLPTR ) ? true : copyRaw(str);            
-        } while(false);
-        return res;
-    }</span>
-    
+    bool_t construct(T const* const str = NULLPTR);
 
     /**
      * @brief The buffer of characters of this string.
@@ -278,39 +174,21 @@ public:
     /**
      * @brief Constructor.
      */
-    BaseString() 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;()
-        , len_(0)
-        , str_(NULLPTR){
-        bool_t const isConstructed( construct() );
-        setConstructed( isConstructed );
-    }</span>
+    BaseString();
     
     /**
      * @brief Constructor.
      *
      * @param source A source object interface.
      */
-    BaseString(api::String&lt;T&gt; const&amp; source) 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;()
-        , len_(0)
-        , str_(NULLPTR){
-        bool_t const isConstructed( construct( source.getChar() ) );
-        setConstructed( isConstructed );
-    }</span>
+    BaseString(api::String&lt;T&gt; const&amp; source);
 
     /**
      * @brief Constructor.
      *
      * @param source A source character string.
      */
-    BaseString(T const* const source) 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;()
-        , len_(0)
-        , str_(NULLPTR){
-        bool_t const isConstructed( construct( source ) );
-        setConstructed( isConstructed );
-    }</span>
+    BaseString(T const* const source);
     
     /**
      * @brief Constructor.
@@ -318,106 +196,46 @@ public:
      * @param value A source numerical value.     
      * @param base  A numerical base used to represent a value as this string.
      */
-    explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10)
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;()
-        , len_(0)
-        , str_(NULLPTR){
-        bool_t isConstructed( construct() );
-        if( isConstructed )</span>
-        {
-<span style = "background-color:#dfd">            isConstructed = convert(value, base);</span>
-        }
-<span style = "background-color:#dfd">        setConstructed( isConstructed );
-    }    </span>
+    explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10);
 
     /**
      * @brief Destructor.
      */
-    virtual ~BaseString()
-<span style = "background-color:#dfd">    {
-        free();
-    }</span>
+    virtual ~BaseString();
 
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
      */
-    BaseString(BaseString const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justified Rule 12-8-1
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;(obj)
-        , len_(0)
-        , str_(NULLPTR){
-        bool_t const isConstructed( construct( obj.getChar() ) );
-        setConstructed( isConstructed );
-    }</span>
+    BaseString(BaseString const&amp; obj);
 
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
      */       
-    BaseString&amp; operator=(BaseString const&amp; obj)
-<span style = "background-color:#dfd">    {
-        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
-        {
-<span style = "background-color:#dfd">            static_cast&lt;void&gt;( copyRaw( obj.getChar() ) );
-            Parent::operator=(obj);</span>
-        }
-<span style = "background-color:#dfd">        return *this;
-    }    </span>
+    BaseString&amp; operator=(BaseString const&amp; obj);
 
     #if EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
      */       
-    BaseString(BaseString&amp;&amp; obj) noexcept 
-<span style = "background-color:#dfd">        : AbstractBaseString&lt;T,R,A&gt;( move(obj) )
-        , len_(obj.len_)
-        , str_(obj.str_){
-        obj.clean();
-    }</span>
+    BaseString(BaseString&amp;&amp; obj) noexcept;
 
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */
-    BaseString&amp; operator=(BaseString&amp;&amp; obj) &amp; noexcept
-<span style = "background-color:#dfd">    {
-        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
-        {
-<span style = "background-color:#dfd">            free();
-            len_ = obj.len_;
-            str_ = obj.str_;
-            obj.clean();
-            Parent::operator=( move(obj) );            </span>
-        }
-<span style = "background-color:#dfd">        return *this;
-    }        </span>
+    BaseString&amp; operator=(BaseString&amp;&amp; obj) &amp; noexcept;
 
     #endif // EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::api::Collection::getLength()
      */
-    virtual size_t getLength() const
-<span style = "background-color:#dfd">    {
-        size_t length( 0U );
-        if( isConstructed() )</span>
-        {
-            // @todo Rework here not to calculate length, but take it form a class member.
-<span style = "background-color:#dfd">            length = getLengthRaw(str_);</span>
-        }
-<span style = "background-color:#dfd">        return length;
-    }</span>
+    virtual size_t getLength() const;
 
     /**
      * @copydoc eoos::api::String::getChar()
      */
-    virtual T const* getChar() const
-<span style = "background-color:#dfd">    {
-        T const* str( NULLPTR );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            str = str_;</span>
-        }
-<span style = "background-color:#dfd">        return str;
-    }</span>
+    virtual T const* getChar() const;
 
 protected:
 
@@ -432,55 +250,17 @@ private:
     /**
      * @copydoc eoos::lib::AbstractBaseString::copyRaw(T const*)
      */
-    virtual bool_t copyRaw(T const* const str)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            size_t const length( getLengthRaw(str) );            
-            bool_t isPrepared( prepareCopy(length) );
-            if( isPrepared )</span>
-            {
-<span style = "background-color:#dfd">                copyRaw3(str_, str, len_);
-                res = true;</span>
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    virtual bool_t copyRaw(T const* const str);
     
     /**
      * @copydoc eoos::lib::AbstractBaseString::concatenate(T const*)
      */
-    virtual bool_t concatenateRaw(T const* const str)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            size_t const length( getLength() + getLengthRaw(str) );
-            bool_t isPrepared( prepareConcatenate(length) );
-            if( isPrepared )</span>
-            {
-<span style = "background-color:#dfd">                concatenateRaw3(str_, str, len_);
-                res = true;</span>
-            }
-        }
-<span style = "background-color:#dfd">        return res;</span>
-
-<span style = "background-color:#dfd">    }</span>
+    virtual bool_t concatenateRaw(T const* const str);
     
     /**
      * @copydoc eoos::lib::AbstractBaseString::isEqualToRaw(T const*)
      */
-    virtual bool_t isEqualToRaw(T const* const str) const
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            res = isEqualRaw2(str_, str);</span>
-        }
-<span style = "background-color:#dfd">        return res;</span>
-
-<span style = "background-color:#dfd">    }</span>
+    virtual bool_t isEqualToRaw(T const* const str) const;
 
     /**
      * @brief Constructs this object.
@@ -488,29 +268,7 @@ private:
      * @param str A string to be copied on construction.
      * @return True if this object has been constructed successfully.
      */     
-    bool_t construct(T const* const str = NULLPTR)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );</span>
-        do
-        {
-<span style = "background-color:#dfd">            if( !isConstructed() )</span>
-            {
-<span style = "background-color:#dfd">                break;</span>
-            }
-<span style = "background-color:#dfd">            size_t length( LENGTH_ON_CONSTRUCTION );
-            if( str != NULLPTR )</span>
-            {
-<span style = "background-color:#dfd">                length = getLengthRaw(str);</span>
-            }
-<span style = "background-color:#dfd">            bool_t isAllocated( allocate(length) );
-            if( !isAllocated )</span>
-            {
-<span style = "background-color:#dfd">                break;</span>
-            }
-<span style = "background-color:#dfd">            res = ( str == NULLPTR ) ? true : copyRaw(str);
-        } while(false);
-        return res;
-    }</span>
+    bool_t construct(T const* const str = NULLPTR);
     
     /**
      * @brief Prepare this string for a new length to copy.
@@ -518,16 +276,7 @@ private:
      * @param length A number of string characters.
      * @return True if the the string is prepared.
      */
-    bool_t prepareCopy(size_t length)
-<span style = "background-color:#dfd">    {
-        bool_t res(true);
-        if( !isFit(length) )</span>
-        {
-<span style = "background-color:#dfd">            free();
-            res = allocate(length);</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t prepareCopy(size_t length);
 
     /**
      * @brief Prepare this string for a new length to copy.
@@ -535,24 +284,7 @@ private:
      * @param length A number of string characters.
      * @return True if the the string is prepared.
      */
-    bool_t prepareConcatenate(size_t length)
-<span style = "background-color:#dfd">    {
-        bool_t res(true);
-        if( !isFit(length) )</span>
-        {
-            // @todo Refactor this implementation to make it be more clear.
-<span style = "background-color:#dfd">            T* const str( str_ );
-            size_t const len( len_ );            
-            clean();
-            res = allocate(length);
-            if( res )</span>
-            {
-<span style = "background-color:#dfd">                copyRaw3(str_, str, len);</span>
-            }
-<span style = "background-color:#dfd">            A::free(str);</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t prepareConcatenate(size_t length);
     
     /**
      * @brief Allocates memory for a string.
@@ -560,45 +292,17 @@ private:
      * @param length A number of string characters.
      * @return True if the context has been allocated successfully.
      */
-    bool_t allocate(size_t const length)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( (str_ == NULLPTR) &amp;&amp; (length != 0U) )</span>
-        {
-<span style = "background-color:#dfd">            size_t const size( calculateSize(length) );
-            T* const string( reinterpret_cast&lt;T*&gt;( A::allocate(size) ) );
-            if(string != NULLPTR)</span>
-            {
-<span style = "background-color:#dfd">                str_ = string;
-                len_ = length;
-                str_[0] = R::getTerminator();                
-                res = true;</span>
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    } </span>
+    bool_t allocate(size_t const length);
     
     /**
      * @brief Frees this contex.
      */
-    void free()
-<span style = "background-color:#dfd">    {
-        if(str_ != NULLPTR)</span>
-        {
-<span style = "background-color:#dfd">            A::free(str_);
-            str_ = NULLPTR;
-            len_ = 0U;</span>
-        }
-<span style = "background-color:#dfd">    }</span>
+    void free();
     
     /**
      * @brief Cleans this contex.
      */
-    void clean()
-<span style = "background-color:#dfd">    {
-        str_ = NULLPTR;
-        len_ = 0U;
-    }</span>
+    void clean();
     
     /**
      * @brief Returns size in byte for a string length.
@@ -606,10 +310,7 @@ private:
      * @param len A number of string characters.
      * @return Size in byte for a passed string.
      */
-    static size_t calculateSize(size_t len)
-<span style = "background-color:#dfd">    {
-        return (len * sizeof(T)) + sizeof(T);
-    }</span>
+    static size_t calculateSize(size_t len);
     
     /**
      * @brief Tests if a passed length fits to allocated available length.
@@ -617,10 +318,7 @@ private:
      * @param len A number of string characters.
      * @return True if this length will be fit successfully.
      */
-    bool_t isFit(size_t len) const ///&lt; SCA MISRA-C++:2008 Justified Rule 2-10-2
-<span style = "background-color:#dfd">    {
-        return len &lt;= len_;
-    }</span>
+    bool_t isFit(size_t len) const;
     
     /**
      * @brief Lenght of the buffer of characters on construction.
@@ -643,6 +341,7 @@ private:
      * reduce size of the class object, revise using a `union` type.
      */
     T* str_;
+
 };
 
 /**
@@ -718,6 +417,415 @@ inline BaseString&lt;T,L,R,A&gt; operator+(T const* const source1, BaseString&lt
     BaseString&lt;T,L,R,A&gt; string(source1);
     string += source2;
     return string;
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;::BaseString() 
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;::BaseString(api::String&lt;T&gt; const&amp; source) 
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {
+    bool_t const isConstructed( construct( source.getChar() ) );
+    setConstructed( isConstructed );            
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;::BaseString(T const* const source) 
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {
+    bool_t const isConstructed( construct( source ) );
+    setConstructed( isConstructed );            
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;::BaseString(int32_t const value, Number::Base const base) 
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {    
+    bool_t isConstructed( construct() );
+    if( isConstructed )</span>
+    {
+<span style = "background-color:#dfd">        isConstructed = convert(value, base);</span>
+    }
+<span style = "background-color:#dfd">    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;::~BaseString()
+<span style = "background-color:#dfd">{
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;::BaseString(BaseString const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justified Rule 12-8-1
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;(obj) {
+    bool_t const isConstructed( construct( obj.getChar() ) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;&amp; BaseString&lt;T,L,R,A&gt;::operator=(BaseString const&amp; obj)
+<span style = "background-color:#dfd">{
+    if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+    {
+<span style = "background-color:#dfd">        copyRaw3(str_, obj.str_, L);
+        Parent::operator=(obj);            </span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}    </span>
+
+#if EOOS_CPP_STANDARD &gt;= 2011
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;::BaseString(BaseString&amp;&amp; obj) noexcept
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;( move(obj) ) {
+    copyRaw3(str_, obj.str_, L);
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+BaseString&lt;T,L,R,A&gt;&amp; BaseString&lt;T,L,R,A&gt;::operator=(BaseString&amp;&amp; obj) &amp; noexcept
+<span style = "background-color:#dfd">{
+    if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+    {
+<span style = "background-color:#dfd">        copyRaw3(str_, obj.str_, L);
+        Parent::operator=( move(obj) );            </span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}        </span>
+
+#endif // EOOS_CPP_STANDARD &gt;= 2011    
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+size_t BaseString&lt;T,L,R,A&gt;::getLength() const
+<span style = "background-color:#dfd">{
+    size_t length( 0U );
+    if( isConstructed() )</span>
+    {
+        // @todo Rework here not to calculate length, but take it form a class member.
+<span style = "background-color:#dfd">        length = getLengthRaw(str_);</span>
+    }
+<span style = "background-color:#dfd">    return length;
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+T const* BaseString&lt;T,L,R,A&gt;::getChar() const
+<span style = "background-color:#dfd">{
+    T const* str( NULLPTR );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        str = str_;</span>
+    }
+<span style = "background-color:#dfd">    return str;
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+bool_t BaseString&lt;T,L,R,A&gt;::copyRaw(T const* const str)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        copyRaw3(str_, str, L);
+        res = true;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+bool_t BaseString&lt;T,L,R,A&gt;::concatenateRaw(T const* const str)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        concatenateRaw3(str_, str, L);
+        res = true;</span>
+    }
+<span style = "background-color:#dfd">    return res;</span>
+
+<span style = "background-color:#dfd">}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+bool_t BaseString&lt;T,L,R,A&gt;::isEqualToRaw(T const* const str) const
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        res = isEqualRaw2(str_, str);</span>
+    }
+<span style = "background-color:#dfd">    return res;</span>
+
+<span style = "background-color:#dfd">}</span>
+
+template &lt;typename T, int32_t L, class R, class A&gt;
+bool_t BaseString&lt;T,L,R,A&gt;::construct(T const* const str)
+<span style = "background-color:#dfd">{
+    str_[0] = R::getTerminator();
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = ( str == NULLPTR ) ? true : copyRaw(str);</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;::BaseString() 
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;()
+    , len_(0)
+    , str_(NULLPTR){
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;::BaseString(api::String&lt;T&gt; const&amp; source) 
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;()
+    , len_(0)
+    , str_(NULLPTR){
+    bool_t const isConstructed( construct( source.getChar() ) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;::BaseString(T const* const source) 
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;()
+    , len_(0)
+    , str_(NULLPTR){
+    bool_t const isConstructed( construct( source ) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;::BaseString(int32_t const value, Number::Base const base)
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;()
+    , len_(0)
+    , str_(NULLPTR){
+    bool_t isConstructed( construct() );
+    if( isConstructed )</span>
+    {
+<span style = "background-color:#dfd">        isConstructed = convert(value, base);</span>
+    }
+<span style = "background-color:#dfd">    setConstructed( isConstructed );
+}    </span>
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;::~BaseString()
+<span style = "background-color:#dfd">{
+    free();
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;::BaseString(BaseString const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justified Rule 12-8-1
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;(obj)
+    , len_(0)
+    , str_(NULLPTR){
+    bool_t const isConstructed( construct( obj.getChar() ) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;&amp; BaseString&lt;T,0,R,A&gt;::operator=(BaseString const&amp; obj)
+<span style = "background-color:#dfd">{
+    if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+    {
+<span style = "background-color:#dfd">        static_cast&lt;void&gt;( copyRaw( obj.getChar() ) );
+        Parent::operator=(obj);</span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}    </span>
+
+#if EOOS_CPP_STANDARD &gt;= 2011
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;::BaseString(BaseString&amp;&amp; obj) noexcept 
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;( move(obj) )
+    , len_(obj.len_)
+    , str_(obj.str_){
+    obj.clean();
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+BaseString&lt;T,0,R,A&gt;&amp; BaseString&lt;T,0,R,A&gt;::operator=(BaseString&amp;&amp; obj) &amp; noexcept
+<span style = "background-color:#dfd">{
+    if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+    {
+<span style = "background-color:#dfd">        free();
+        len_ = obj.len_;
+        str_ = obj.str_;
+        obj.clean();
+        Parent::operator=( move(obj) );            </span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}        </span>
+
+#endif // EOOS_CPP_STANDARD &gt;= 2011
+
+template &lt;typename T, class R, class A&gt;
+size_t BaseString&lt;T,0,R,A&gt;::getLength() const
+<span style = "background-color:#dfd">{
+    size_t length( 0U );
+    if( isConstructed() )</span>
+    {
+        // @todo Rework here not to calculate length, but take it form a class member.
+<span style = "background-color:#dfd">        length = getLengthRaw(str_);</span>
+    }
+<span style = "background-color:#dfd">    return length;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+T const* BaseString&lt;T,0,R,A&gt;::getChar() const
+<span style = "background-color:#dfd">{
+    T const* str( NULLPTR );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        str = str_;</span>
+    }
+<span style = "background-color:#dfd">    return str;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+bool_t BaseString&lt;T,0,R,A&gt;::copyRaw(T const* const str)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        size_t const length( getLengthRaw(str) );            
+        bool_t isPrepared( prepareCopy(length) );
+        if( isPrepared )</span>
+        {
+<span style = "background-color:#dfd">            copyRaw3(str_, str, len_);
+            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+bool_t BaseString&lt;T,0,R,A&gt;::concatenateRaw(T const* const str)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        size_t const length( getLength() + getLengthRaw(str) );
+        bool_t isPrepared( prepareConcatenate(length) );
+        if( isPrepared )</span>
+        {
+<span style = "background-color:#dfd">            concatenateRaw3(str_, str, len_);
+            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+bool_t BaseString&lt;T,0,R,A&gt;::isEqualToRaw(T const* const str) const
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        res = isEqualRaw2(str_, str);</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+bool_t BaseString&lt;T,0,R,A&gt;::construct(T const* const str)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        size_t length( LENGTH_ON_CONSTRUCTION );
+        if( str != NULLPTR )</span>
+        {
+<span style = "background-color:#dfd">            length = getLengthRaw(str);</span>
+        }
+<span style = "background-color:#dfd">        bool_t isAllocated( allocate(length) );
+        if( isAllocated )</span>
+        {
+<span style = "background-color:#dfd">            res = ( str == NULLPTR ) ? true : copyRaw(str);</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+bool_t BaseString&lt;T,0,R,A&gt;::prepareCopy(size_t length)
+<span style = "background-color:#dfd">{
+    bool_t res(true);
+    if( !isFit(length) )</span>
+    {
+<span style = "background-color:#dfd">        free();
+        res = allocate(length);</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+bool_t BaseString&lt;T,0,R,A&gt;::prepareConcatenate(size_t length)
+<span style = "background-color:#dfd">{
+    bool_t res(true);
+    if( !isFit(length) )</span>
+    {
+        // @todo Refactor this implementation to make it be more clear.
+<span style = "background-color:#dfd">        T* const str( str_ );
+        size_t const len( len_ );            
+        clean();
+        res = allocate(length);
+        if( res )</span>
+        {
+<span style = "background-color:#dfd">            copyRaw3(str_, str, len);</span>
+        }
+<span style = "background-color:#dfd">        A::free(str);</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+bool_t BaseString&lt;T,0,R,A&gt;::allocate(size_t const length)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( (str_ == NULLPTR) &amp;&amp; (length != 0U) )</span>
+    {
+<span style = "background-color:#dfd">        size_t const size( calculateSize(length) );
+        T* const string( reinterpret_cast&lt;T*&gt;( A::allocate(size) ) );
+        if(string != NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            str_ = string;
+            len_ = length;
+            str_[0] = R::getTerminator();                
+            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+} </span>
+
+template &lt;typename T, class R, class A&gt;
+void BaseString&lt;T,0,R,A&gt;::free()
+<span style = "background-color:#dfd">{
+    if(str_ != NULLPTR)</span>
+    {
+<span style = "background-color:#dfd">        A::free(str_);
+        str_ = NULLPTR;
+        len_ = 0U;</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+template &lt;typename T, class R, class A&gt;
+void BaseString&lt;T,0,R,A&gt;::clean()
+<span style = "background-color:#dfd">{
+    str_ = NULLPTR;
+    len_ = 0U;
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+size_t BaseString&lt;T,0,R,A&gt;::calculateSize(size_t len)
+<span style = "background-color:#dfd">{
+    return (len * sizeof(T)) + sizeof(T);
+}</span>
+
+template &lt;typename T, class R, class A&gt;
+bool_t BaseString&lt;T,0,R,A&gt;::isFit(size_t len) const ///&lt; SCA MISRA-C++:2008 Justified Rule 2-10-2
+<span style = "background-color:#dfd">{
+    return len &lt;= len_;
 }</span>
 
 } // namespace lib

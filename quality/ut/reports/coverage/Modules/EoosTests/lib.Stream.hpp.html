@@ -12,7 +12,7 @@
 /**
  * @file      lib.Stream.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2022-2023, Sergey Baigudin, Baigudin Software
+ * @copyright 2022-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_STREAM_HPP_
 #define LIB_STREAM_HPP_
@@ -48,20 +48,14 @@ public:
      *
      * @return The system output character stream.
      */
-    static api::OutStream&lt;char_t&gt;&amp; cout()
-<span style = "background-color:#dfd">    {
-        return sys::Call::get().getStreamManager().getCout();
-    }</span>
+    static api::OutStream&lt;char_t&gt;&amp; cout();
 
     /**
      * @brief Returns system error output character stream.
      *
      * @return The system error output character stream.
      */
-    static api::OutStream&lt;char_t&gt;&amp; cerr()
-<span style = "background-color:#dfd">    {
-        return sys::Call::get().getStreamManager().getCerr();
-    }</span>
+    static api::OutStream&lt;char_t&gt;&amp; cerr();
 
     /**
      * @brief Sets a new output character stream.
@@ -70,57 +64,71 @@ public:
      * @param stream A new stream to set.
      * @return True if the output character stream is set.
      */
-    static bool_t set(Type type, api::OutStream&lt;char_t&gt;&amp; stream)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        switch(type)</span>
-        {
-            case TYPE_COUT:
-            {
-<span style = "background-color:#dfd">                res = sys::Call::get().getStreamManager().setCout(stream);
-                break;</span>
-            }
-            case TYPE_CERR:
-            {
-<span style = "background-color:#dfd">                res = sys::Call::get().getStreamManager().setCerr(stream);
-                break;</span>
-            }
-            default:
-            {
-<span style = "background-color:#dfd">                res = false;</span>
-                break;
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    static bool_t set(Type type, api::OutStream&lt;char_t&gt;&amp; stream);
 
     /**
      * @brief Resets the output character stream to default.
      * 
      * @param type Stream type.
      */
-    static void reset(Type type)
-<span style = "background-color:#dfd">    {
-        switch(type)</span>
-        {
-            case TYPE_COUT:
-            {
-<span style = "background-color:#dfd">                sys::Call::get().getStreamManager().resetCout();
-                break;</span>
-            }
-            case TYPE_CERR:
-            {
-<span style = "background-color:#dfd">                sys::Call::get().getStreamManager().resetCerr();</span>
-                break;
-            }
-            default:
-            {
-                break;
-            }
-        }
-<span style = "background-color:#dfd">    }</span>
+    static void reset(Type type);
 
 };
+
+inline api::OutStream&lt;char_t&gt;&amp; Stream::cout()
+<span style = "background-color:#dfd">{
+    return sys::Call::get().getStreamManager().getCout();
+}</span>
+
+inline api::OutStream&lt;char_t&gt;&amp; Stream::cerr()
+<span style = "background-color:#dfd">{
+    return sys::Call::get().getStreamManager().getCerr();
+}</span>
+
+inline bool_t Stream::set(Type type, api::OutStream&lt;char_t&gt;&amp; stream)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    switch(type)</span>
+    {
+        case TYPE_COUT:
+        {
+<span style = "background-color:#dfd">            res = sys::Call::get().getStreamManager().setCout(stream);
+            break;</span>
+        }
+        case TYPE_CERR:
+        {
+<span style = "background-color:#dfd">            res = sys::Call::get().getStreamManager().setCerr(stream);
+            break;</span>
+        }
+        default:
+        {
+<span style = "background-color:#dfd">            res = false;</span>
+            break;
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+inline void Stream::reset(Type type)
+<span style = "background-color:#dfd">{
+    switch(type)</span>
+    {
+        case TYPE_COUT:
+        {
+<span style = "background-color:#dfd">            sys::Call::get().getStreamManager().resetCout();
+            break;</span>
+        }
+        case TYPE_CERR:
+        {
+<span style = "background-color:#dfd">            sys::Call::get().getStreamManager().resetCerr();</span>
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+<span style = "background-color:#dfd">}</span>
 
 } // namespace lib
 } // namespace eoos

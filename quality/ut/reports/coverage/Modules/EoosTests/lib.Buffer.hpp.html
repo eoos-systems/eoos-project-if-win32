@@ -12,7 +12,7 @@
 /**
  * @file      lib.Buffer.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_BUFFER_HPP_
 #define LIB_BUFFER_HPP_
@@ -47,10 +47,7 @@ public:
     /**
      * @brief Constructor.
      */
-    Buffer() 
-<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(L)
-        , buf_(arr_){
-    }</span>
+    Buffer();
 
     /**
      * @brief Constructor.
@@ -59,30 +56,17 @@ public:
      *
      * @param illegal An illegal value.
      */
-    Buffer(T const&amp; illegal) 
-<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(L, illegal)
-        , buf_ (arr_){
-    }</span>
+    Buffer(T const&amp; illegal);
 
     /**
      * @brief Destructor.
      */
-    virtual ~Buffer()
-<span style = "background-color:#dfd">    {
-    }</span>
+    virtual ~Buffer();
     
     /**
      * @copydoc eoos::api::SequenceContainer::getData()
      */
-    virtual T* getData() const
-<span style = "background-color:#dfd">    {
-        T* buf( NULLPTR );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            buf = buf_;</span>
-        }
-<span style = "background-color:#dfd">        return buf;
-    }</span>
+    virtual T* getData() const;
 
     /**
      * @brief Assignment operator.
@@ -93,14 +77,7 @@ public:
      * @param buf Reference to source buffer.
      * @return Reference to this object.
      */
-    Buffer&amp; operator=(api::SequenceContainer&lt;T&gt; const&amp; buf)
-<span style = "background-color:#dfd">    {
-        if( isConstructed() &amp;&amp; buf.isConstructed() )</span>
-        {        
-<span style = "background-color:#dfd">            copy(buf);</span>
-        }
-<span style = "background-color:#dfd">        return *this;
-    }</span>
+    Buffer&amp; operator=(api::SequenceContainer&lt;T&gt; const&amp; buf);
     
 protected:
 
@@ -147,13 +124,7 @@ public:
      *
      * @param length Count of buffer elements.
      */
-    explicit Buffer(size_t const length) 
-<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(length)
-        , buf_(NULLPTR)
-        , isDeleted_(true) {
-        bool_t const isConstructed( construct(length) );
-        setConstructed( isConstructed );
-    }</span>
+    explicit Buffer(size_t const length);
 
     /**
      * @brief Constructor.
@@ -163,13 +134,7 @@ public:
      * @param length  Count of buffer elements.
      * @param illegal Illegal value.
      */
-    Buffer(size_t const length, T const&amp; illegal) 
-<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(length, illegal)
-        , buf_(NULLPTR)
-        , isDeleted_(true) {
-        bool_t const isConstructed( construct(length) );
-        setConstructed( isConstructed );
-    }</span>
+    Buffer(size_t const length, T const&amp; illegal);
 
     /**
      * @brief Constructor.
@@ -179,13 +144,7 @@ public:
      * @param length Number of elements.
      * @param buf    Pointer to external buffer.
      */
-    Buffer(size_t const length, T* const buf) 
-<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(length)
-        , buf_(buf)
-        , isDeleted_(false) {
-        bool_t const isConstructed( construct(length) );
-        setConstructed( isConstructed );
-    }</span>
+    Buffer(size_t const length, T* const buf);
 
     /**
      * @brief Constructor.
@@ -197,37 +156,17 @@ public:
      * @param buf     Pointer to external buffer.
      * @param illegal Illegal value.
      */
-    Buffer(size_t const length, T* const buf, T const&amp; illegal) 
-<span style = "background-color:#dfd">        : AbstractBuffer&lt;T,A&gt;(length, illegal)
-        , buf_(buf)
-        , isDeleted_(false) {
-        bool_t const isConstructed( construct(length) );
-        setConstructed( isConstructed );
-    }</span>
+    Buffer(size_t const length, T* const buf, T const&amp; illegal);
 
     /**
      * @brief Destructor.
      */
-    virtual ~Buffer()
-<span style = "background-color:#dfd">    {
-        if( isDeleted_ == true )</span>
-        {
-<span style = "background-color:#dfd">            A::free(buf_);</span>
-        }
-<span style = "background-color:#dfd">    }</span>
+    virtual ~Buffer();
     
     /**
      * @copydoc eoos::api::SequenceContainer::getData()
      */
-    virtual T* getData() const
-<span style = "background-color:#dfd">    {
-        T* buf( NULLPTR );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            buf = buf_;</span>
-        }
-<span style = "background-color:#dfd">        return buf;
-    }    </span>
+    virtual T* getData() const;
 
     /**
      * @brief Assignment operator.
@@ -238,14 +177,7 @@ public:
      * @param buf Reference to source buffer.
      * @return Reference to this object.
      */
-    Buffer&amp; operator=(api::SequenceContainer&lt;T&gt; const&amp; buf)
-<span style = "background-color:#dfd">    {
-        if( isConstructed() &amp;&amp; buf.isConstructed() )</span>
-        {        
-<span style = "background-color:#dfd">            copy(buf);</span>
-        }
-<span style = "background-color:#dfd">        return *this;
-    }</span>
+    Buffer&amp; operator=(api::SequenceContainer&lt;T&gt; const&amp; buf);
     
 protected:
 
@@ -260,20 +192,7 @@ private:
      * @param length Count of buffer elements.
      * @return Boolean result.
      */
-    bool_t construct(size_t const length)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (length &gt; 0U) )</span>
-        {
-<span style = "background-color:#dfd">            if(buf_ == NULLPTR)</span>
-            {
-<span style = "background-color:#dfd">                void* const addr( A::allocate(length * (sizeof(T))) );
-                buf_ = reinterpret_cast&lt;T*&gt;( addr ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8</span>
-            }
-<span style = "background-color:#dfd">            res = buf_ != NULLPTR;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t construct(size_t const length);
 
     /**
      * @brief Pointer to external given or self created array.
@@ -289,6 +208,126 @@ private:
     bool_t isDeleted_;
 
 };
+
+template &lt;typename T, int32_t L, class A&gt;
+Buffer&lt;T,L,A&gt;::Buffer() 
+<span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(L)
+    , buf_(arr_){
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+Buffer&lt;T,L,A&gt;::Buffer(T const&amp; illegal) 
+<span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(L, illegal)
+    , buf_ (arr_){
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+Buffer&lt;T,L,A&gt;::~Buffer()
+<span style = "background-color:#dfd">{
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+T* Buffer&lt;T,L,A&gt;::getData() const
+<span style = "background-color:#dfd">{
+    T* buf( NULLPTR );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        buf = buf_;</span>
+    }
+<span style = "background-color:#dfd">    return buf;
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+Buffer&lt;T,L,A&gt;&amp; Buffer&lt;T,L,A&gt;::operator=(api::SequenceContainer&lt;T&gt; const&amp; buf)
+<span style = "background-color:#dfd">{
+    if( isConstructed() &amp;&amp; buf.isConstructed() )</span>
+    {        
+<span style = "background-color:#dfd">        copy(buf);</span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}</span>
+
+template &lt;typename T, class A&gt;
+Buffer&lt;T,0,A&gt;::Buffer(size_t const length) 
+<span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(length)
+    , buf_(NULLPTR)
+    , isDeleted_(true) {
+    bool_t const isConstructed( construct(length) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, class A&gt;
+Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T const&amp; illegal) 
+<span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(length, illegal)
+    , buf_(NULLPTR)
+    , isDeleted_(true) {
+    bool_t const isConstructed( construct(length) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, class A&gt;
+Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T* const buf) 
+<span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(length)
+    , buf_(buf)
+    , isDeleted_(false) {
+    bool_t const isConstructed( construct(length) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, class A&gt;
+Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T* const buf, T const&amp; illegal) 
+<span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(length, illegal)
+    , buf_(buf)
+    , isDeleted_(false) {
+    bool_t const isConstructed( construct(length) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, class A&gt;
+Buffer&lt;T,0,A&gt;::~Buffer()
+<span style = "background-color:#dfd">{
+    if( isDeleted_ == true )</span>
+    {
+<span style = "background-color:#dfd">        A::free(buf_);</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+template &lt;typename T, class A&gt;
+T* Buffer&lt;T,0,A&gt;::getData() const
+<span style = "background-color:#dfd">{
+    T* buf( NULLPTR );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        buf = buf_;</span>
+    }
+<span style = "background-color:#dfd">    return buf;
+}    </span>
+
+template &lt;typename T, class A&gt;
+Buffer&lt;T,0,A&gt;&amp; Buffer&lt;T,0,A&gt;::operator=(api::SequenceContainer&lt;T&gt; const&amp; buf)
+<span style = "background-color:#dfd">{
+    if( isConstructed() &amp;&amp; buf.isConstructed() )</span>
+    {        
+<span style = "background-color:#dfd">        copy(buf);</span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}</span>
+
+template &lt;typename T, class A&gt;
+bool_t Buffer&lt;T,0,A&gt;::construct(size_t const length)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (length &gt; 0U) )</span>
+    {
+<span style = "background-color:#dfd">        if(buf_ == NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            void* const addr( A::allocate(length * (sizeof(T))) );
+            buf_ = reinterpret_cast&lt;T*&gt;( addr ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8</span>
+        }
+<span style = "background-color:#dfd">        res = buf_ != NULLPTR;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
 
 } // namespace lib
 } // namespace eoos

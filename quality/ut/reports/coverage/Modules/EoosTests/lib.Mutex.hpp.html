@@ -12,7 +12,7 @@
 /**
  * @file      lib.Mutex.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2015-2023, Sergey Baigudin, Baigudin Software
+ * @copyright 2015-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_MUTEX_HPP_
 #define LIB_MUTEX_HPP_
@@ -42,71 +42,32 @@ public:
     /**
      * @brief Constructor.
      */
-    Mutex() 
-<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
-        , api::Mutex()
-        , mutex_ (NULLPTR){
-        bool_t const isConstructed( construct() );
-        setConstructed( isConstructed );
-    }</span>
+    Mutex();
 
     /**
      * @brief Destructor.
      */
-    virtual ~Mutex()
-<span style = "background-color:#dfd">    {
-        if( mutex_ != NULLPTR )</span>
-        {
-<span style = "background-color:#dfd">            delete mutex_;</span>
-        }
-<span style = "background-color:#dfd">    }</span>
+    virtual ~Mutex();
     
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    virtual bool_t isConstructed() const
-<span style = "background-color:#dfd">    {
-        return Parent::isConstructed();
-    }</span>
+    virtual bool_t isConstructed() const;
     
     /**
      * @copydoc eoos::api::Mutex::tryLock()
      */
-    virtual bool_t tryLock()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            res = mutex_-&gt;tryLock();</span>
-        }
-<span style = "background-color:#dfd">        return res;        
-    }        </span>
+    virtual bool_t tryLock();
 
     /**
      * @copydoc eoos::api::Mutex::lock()
      */
-    virtual bool_t lock()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            res = mutex_-&gt;lock();</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    virtual bool_t lock();
 
     /**
      * @copydoc eoos::api::Mutex::unlock()
      */
-    virtual bool_t unlock()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            res = mutex_-&gt;unlock();</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    virtual bool_t unlock();
 
 protected:
 
@@ -119,19 +80,7 @@ private:
      *
      * @return True if object has been constructed successfully.
      */
-    bool_t construct()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            mutex_ = sys::Call::get().getMutexManager().create();
-            if( Parent::isConstructed(mutex_) )</span>
-            {   
-<span style = "background-color:#dfd">                res = true;</span>
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t construct();
 
     /**
      * @brief System mutex interface.
@@ -139,6 +88,78 @@ private:
     api::Mutex* mutex_;
 
 };
+
+template &lt;class A&gt;
+Mutex&lt;A&gt;::Mutex() 
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , api::Mutex()
+    , mutex_ (NULLPTR){
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;class A&gt;
+Mutex&lt;A&gt;::~Mutex()
+<span style = "background-color:#dfd">{
+    if( mutex_ != NULLPTR )</span>
+    {
+<span style = "background-color:#dfd">        delete mutex_;</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::isConstructed() const
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::tryLock()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = mutex_-&gt;tryLock();</span>
+    }
+<span style = "background-color:#dfd">    return res;        
+}        </span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::lock()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = mutex_-&gt;lock();</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::unlock()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = mutex_-&gt;unlock();</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+bool_t Mutex&lt;A&gt;::construct()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        mutex_ = sys::Call::get().getMutexManager().create();
+        if( Parent::isConstructed(mutex_) )</span>
+        {   
+<span style = "background-color:#dfd">            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
 
 } // namespace lib
 } // namespace eoos

@@ -12,7 +12,7 @@
 /**
  * @file      Object.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_OBJECT_HPP_
 #define LIB_OBJECT_HPP_
@@ -40,27 +40,19 @@ public:
     /**
      * @brief Constructor.
      */
-<span style = "background-color:#dfd">    Object() : ObjectAllocator&lt;A&gt;(), api::Object(),
-        isConstructed_ (true){
-    }</span>
+    Object();
 
     /**
      * @brief Destructor.
      */
-    virtual ~Object()
-<span style = "background-color:#dfd">    {
-        isConstructed_ = false;
-    }</span>
+    virtual ~Object();
     
     /**
      * @brief Copy constructor.
      *
      * @param obj Reference to a source object.
      */
-<span style = "background-color:#dfd">    Object(Object const&amp; obj) : ObjectAllocator&lt;A&gt;(obj), api::Object(obj),
-        isConstructed_(obj.isConstructed_){
-    }</span>
-    
+    Object(Object const&amp; obj);
     
     /**
      * @brief Copy assignment operator.
@@ -68,14 +60,7 @@ public:
      * @param obj Reference to a source object.
      * @return Reference to this object.
      */       
-    Object&amp; operator=(Object const&amp; obj)
-<span style = "background-color:#dfd">    {
-        if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
-        {
-<span style = "background-color:#dfd">            isConstructed_ = obj.isConstructed_;</span>
-        }
-<span style = "background-color:#dfd">        return *this;
-    }    </span>
+    Object&amp; operator=(Object const&amp; obj);
 
     #if EOOS_CPP_STANDARD &gt;= 2011
 
@@ -84,10 +69,7 @@ public:
      *
      * @param obj Right reference to a source object.
      */       
-    Object(Object&amp;&amp; obj) noexcept :
-<span style = "background-color:#dfd">        isConstructed_(obj.isConstructed_){
-        obj.setConstructed(false);
-    }   </span>
+    Object(Object&amp;&amp; obj) noexcept;
     
     /**
      * @brief Move assignment operator.
@@ -95,25 +77,14 @@ public:
      * @param obj Right reference to a source object.
      * @return Reference to this object.
      */
-    Object&amp; operator=(Object&amp;&amp; obj) &amp; noexcept
-<span style = "background-color:#dfd">    {
-        if( this != &amp;obj &amp;&amp; isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            isConstructed_ = obj.isConstructed_;
-            obj.setConstructed(false);</span>
-        }
-<span style = "background-color:#dfd">        return *this;
-    }        </span>
+    Object&amp; operator=(Object&amp;&amp; obj) &amp; noexcept;
     
     #endif // EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    virtual bool_t isConstructed() const
-<span style = "background-color:#dfd">    {
-        return isConstructed_;
-    }</span>
+    virtual bool_t isConstructed() const;
     
     /**
      * @brief Tests if an object has been constructed.
@@ -121,15 +92,7 @@ public:
      * @param obj Object to be tested.
      * @return True if object has been constructed successfully.
      */
-    static bool_t isConstructed(api::Object* const obj)
-<span style = "background-color:#dfd">    {
-        bool_t isConstructed( false );
-        if(obj != NULLPTR)</span>
-        {
-<span style = "background-color:#dfd">            isConstructed = obj-&gt;isConstructed();</span>
-        }
-<span style = "background-color:#dfd">        return isConstructed;
-    }</span>
+    static bool_t isConstructed(api::Object* const obj);
 
 protected:
 
@@ -138,13 +101,7 @@ protected:
      *
      * @param flag A new constructed flag.
      */
-    void setConstructed(bool_t const flag)
-<span style = "background-color:#dfd">    {
-        if( isConstructed_ == true )</span>
-        {
-<span style = "background-color:#dfd">            isConstructed_ = flag;</span>
-        }
-<span style = "background-color:#dfd">    }</span>
+    void setConstructed(bool_t const flag);
 
 private:
 
@@ -154,6 +111,79 @@ private:
     bool_t isConstructed_;
 
 };
+
+template &lt;class A&gt;
+<span style = "background-color:#dfd">Object&lt;A&gt;::Object() : ObjectAllocator&lt;A&gt;(), api::Object(),
+    isConstructed_ (true){
+}</span>
+
+template &lt;class A&gt;
+Object&lt;A&gt;::~Object()
+<span style = "background-color:#dfd">{
+    isConstructed_ = false;
+}</span>
+
+template &lt;class A&gt;
+<span style = "background-color:#dfd">Object&lt;A&gt;::Object(Object const&amp; obj) : ObjectAllocator&lt;A&gt;(obj), api::Object(obj),
+    isConstructed_(obj.isConstructed_){
+}</span>
+
+template &lt;class A&gt;
+Object&lt;A&gt;&amp; Object&lt;A&gt;::operator=(Object const&amp; obj)
+<span style = "background-color:#dfd">{
+    if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
+    {
+<span style = "background-color:#dfd">        isConstructed_ = obj.isConstructed_;</span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}    </span>
+
+#if EOOS_CPP_STANDARD &gt;= 2011
+
+template &lt;class A&gt;
+Object&lt;A&gt;::Object(Object&amp;&amp; obj) noexcept :
+<span style = "background-color:#dfd">    isConstructed_(obj.isConstructed_){
+    obj.setConstructed(false);
+}   </span>
+
+template &lt;class A&gt;
+Object&lt;A&gt;&amp; Object&lt;A&gt;::operator=(Object&amp;&amp; obj) &amp; noexcept
+<span style = "background-color:#dfd">{
+    if( this != &amp;obj &amp;&amp; isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        isConstructed_ = obj.isConstructed_;
+        obj.setConstructed(false);</span>
+    }
+<span style = "background-color:#dfd">    return *this;
+}        </span>
+
+#endif // EOOS_CPP_STANDARD &gt;= 2011
+
+template &lt;class A&gt;
+bool_t Object&lt;A&gt;::isConstructed() const
+<span style = "background-color:#dfd">{
+    return isConstructed_;
+}</span>
+
+template &lt;class A&gt;
+bool_t Object&lt;A&gt;::isConstructed(api::Object* const obj)
+<span style = "background-color:#dfd">{
+    bool_t isConstructed( false );
+    if(obj != NULLPTR)</span>
+    {
+<span style = "background-color:#dfd">        isConstructed = obj-&gt;isConstructed();</span>
+    }
+<span style = "background-color:#dfd">    return isConstructed;
+}</span>
+
+template &lt;class A&gt;
+void Object&lt;A&gt;::setConstructed(bool_t const flag)
+<span style = "background-color:#dfd">{
+    if( isConstructed_ == true )</span>
+    {
+<span style = "background-color:#dfd">        isConstructed_ = flag;</span>
+    }
+<span style = "background-color:#dfd">}</span>
   
 } // namespace lib
 } // namespace eoos

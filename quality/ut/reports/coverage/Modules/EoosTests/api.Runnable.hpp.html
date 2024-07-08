@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <meta charset="utf-8"/>
-	    <title>lib.NoAllocator.hpp</title>
+	    <title>api.Runnable.hpp</title>
 	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
 	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
 	</head>
@@ -10,55 +10,48 @@
         <h4></h4>
         <pre class="prettyprint lang-cpp linenums">
 /**
- * @file      lib.NoAllocator.hpp
+ * @file      api.Runnable.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2023-2024, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2024, Sergey Baigudin, Baigudin Software
  */
-#ifndef LIB_NOALLOCATOR_HPP_
-#define LIB_NOALLOCATOR_HPP_
+#ifndef API_RUNNABLE_HPP_
+#define API_RUNNABLE_HPP_
 
-#include "lib.Types.hpp"
+#include "api.Object.hpp"
 
 namespace eoos
 {
-namespace lib
+namespace api
 {
- 
+    
 /**
- * @class NoAllocator
- * @brief No memory allocator.
- */ 
-class NoAllocator
+ * @class Runnable
+ * @brief Runnable interface.
+ *
+ * The interface of a task that is being executed in self context.
+ */        
+class Runnable : public Object
 {
 
 public:
 
     /**
-     * @brief Does not allocate memory.
-     *
-     * @return The null pointer.
+     * @brief Destructor.
      */
-    static void* allocate(size_t);
+    virtual ~Runnable() = 0;
 
     /**
-     * @brief Frees allocated memory.
+     * @brief Starts executing an operating system task in itself context.
      */
-    static void free(void*);
+    virtual void start() = 0;
 
 };
 
-inline void* NoAllocator::allocate(size_t)
-<span style = "background-color:#dfd">{
-    return NULLPTR;
-}</span>
-
-inline void NoAllocator::free(void*)
-<span style = "background-color:#dfd">{
-}</span>
-
-} // namespace lib
+<span style = "background-color:#dfd">inline Runnable::~Runnable() {}</span>
+        
+} // namespace api
 } // namespace eoos
-#endif // LIB_NOALLOCATOR_HPP_</pre>
+#endif // API_RUNNABLE_HPP_</pre>
         <hr />
         <table width="100%">
             <thead>

@@ -12,7 +12,7 @@
 /**
  * @file      lib.CharTrait.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2022-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_CHARTRAIT_HPP_
 #define LIB_CHARTRAIT_HPP_
@@ -59,8 +59,8 @@ struct CharTrait
      * @return Minus sign.
      */
     static T getMinusSign();
-};
 
+};
 
 /**
  * @struct CharTrait&lt;char_t&gt;
@@ -72,48 +72,19 @@ struct CharTrait&lt;char_t&gt;
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getTerminator()
      */
-    static char_t getTerminator()
-<span style = "background-color:#dfd">    {
-        return '\0';
-    }</span>
+    static char_t getTerminator();
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
      */    
     template &lt;typename I&gt;
-    static char_t convertDigitToChar(I val)
-<span style = "background-color:#dfd">    {
-        char_t ch( ' ' );
-        switch(val)</span>
-        {
-<span style = "background-color:#dfd">            case 0x00: { ch = '0'; break;}
-            case 0x01: { ch = '1'; break;}
-            case 0x02: { ch = '2'; break;}
-            case 0x03: { ch = '3'; break;}
-            case 0x04: { ch = '4'; break;}
-            case 0x05: { ch = '5'; break;}
-            case 0x06: { ch = '6'; break;}
-            case 0x07: { ch = '7'; break;}
-            case 0x08: { ch = '8'; break;}
-            case 0x09: { ch = '9'; break;}
-            case 0x0A: { ch = 'a'; break;}
-            case 0x0B: { ch = 'b'; break;}
-            case 0x0C: { ch = 'c'; break;}
-            case 0x0D: { ch = 'd'; break;}
-            case 0x0E: { ch = 'e'; break;}
-            case 0x0F: { ch = 'f'; break;}
-            default:   { ch = ' '; break;} ///&lt; UT Justified Branch: SCA dependency</span>
-        }
-<span style = "background-color:#dfd">        return ch;
-    }</span>
+    static char_t convertDigitToChar(I val);
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getMinusSign()
      */
-    static char_t getMinusSign()
-<span style = "background-color:#dfd">    {
-        return '-';
-    }</span>
+    static char_t getMinusSign();
+
 };
 
 /**
@@ -126,48 +97,19 @@ struct CharTrait&lt;wchar_t&gt;
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getTerminator()
      */
-    static wchar_t getTerminator()
-<span style = "background-color:#dfd">    {
-        return L'\0';
-    }</span>
+    static wchar_t getTerminator();
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
      */    
     template &lt;typename I&gt;
-    static wchar_t convertDigitToChar(I val)
-<span style = "background-color:#dfd">    {
-        wchar_t ch( L' ' ); ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-        switch(val)</span>
-        {
-<span style = "background-color:#dfd">            case 0x00: { ch = L'0'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x01: { ch = L'1'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x02: { ch = L'2'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x03: { ch = L'3'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x04: { ch = L'4'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x05: { ch = L'5'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x06: { ch = L'6'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x07: { ch = L'7'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x08: { ch = L'8'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x09: { ch = L'9'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x0A: { ch = L'a'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x0B: { ch = L'b'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x0C: { ch = L'c'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x0D: { ch = L'd'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x0E: { ch = L'e'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            case 0x0F: { ch = L'f'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
-            default:   { ch = L' '; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11 and UT Justified Branch: SCA dependency</span>
-        }
-<span style = "background-color:#dfd">        return ch;
-    }</span>
+    static wchar_t convertDigitToChar(I val);
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getMinusSign()
      */
-    static wchar_t getMinusSign()
-<span style = "background-color:#dfd">    {
-        return L'-';
-    }    </span>
+    static wchar_t getMinusSign();
+
 };
 
 #if EOOS_CPP_STANDARD &gt;= 2011
@@ -182,48 +124,19 @@ struct CharTrait&lt;char16_t&gt;
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getTerminator()
      */
-    static char16_t getTerminator()
-<span style = "background-color:#dfd">    {
-        return u'\0';
-    }</span>
+    static char16_t getTerminator();
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
      */    
     template &lt;typename I&gt;
-    static char16_t convertDigitToChar(I val)
-<span style = "background-color:#dfd">    {
-        char16_t ch( u' ' );
-        switch(val)</span>
-        {
-<span style = "background-color:#dfd">            case 0x00: { ch = u'0'; break;}
-            case 0x01: { ch = u'1'; break;}
-            case 0x02: { ch = u'2'; break;}
-            case 0x03: { ch = u'3'; break;}
-            case 0x04: { ch = u'4'; break;}
-            case 0x05: { ch = u'5'; break;}
-            case 0x06: { ch = u'6'; break;}
-            case 0x07: { ch = u'7'; break;}
-            case 0x08: { ch = u'8'; break;}
-            case 0x09: { ch = u'9'; break;}
-            case 0x0A: { ch = u'a'; break;}
-            case 0x0B: { ch = u'b'; break;}
-            case 0x0C: { ch = u'c'; break;}
-            case 0x0D: { ch = u'd'; break;}
-            case 0x0E: { ch = u'e'; break;}
-            case 0x0F: { ch = u'f'; break;}
-            default:   { ch = u' '; break;} ///&lt; UT Justified Branch: SCA dependency</span>
-        }
-<span style = "background-color:#dfd">        return ch;
-    }</span>
-
+    static char16_t convertDigitToChar(I val);
+    
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getMinusSign()
      */
-    static char16_t getMinusSign()
-<span style = "background-color:#dfd">    {
-        return u'-';
-    }    </span>
+    static char16_t getMinusSign();
+
 };
 
 /**
@@ -236,48 +149,19 @@ struct CharTrait&lt;char32_t&gt;
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getTerminator()
      */
-    static char32_t getTerminator()
-<span style = "background-color:#dfd">    {
-        return U'\0';
-    }</span>
+    static char32_t getTerminator();
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
      */    
     template &lt;typename I&gt;
-    static char32_t convertDigitToChar(I val)
-<span style = "background-color:#dfd">    {
-        char32_t ch( U' ' );
-        switch(val)</span>
-        {
-<span style = "background-color:#dfd">            case 0x00: { ch = U'0'; break;}
-            case 0x01: { ch = U'1'; break;}
-            case 0x02: { ch = U'2'; break;}
-            case 0x03: { ch = U'3'; break;}
-            case 0x04: { ch = U'4'; break;}
-            case 0x05: { ch = U'5'; break;}
-            case 0x06: { ch = U'6'; break;}
-            case 0x07: { ch = U'7'; break;}
-            case 0x08: { ch = U'8'; break;}
-            case 0x09: { ch = U'9'; break;}
-            case 0x0A: { ch = U'a'; break;}
-            case 0x0B: { ch = U'b'; break;}
-            case 0x0C: { ch = U'c'; break;}
-            case 0x0D: { ch = U'd'; break;}
-            case 0x0E: { ch = U'e'; break;}
-            case 0x0F: { ch = U'f'; break;}
-            default:   { ch = U' '; break;} ///&lt; UT Justified Branch: SCA dependency</span>
-        }
-<span style = "background-color:#dfd">        return ch;
-    }</span>
+    static char32_t convertDigitToChar(I val);
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getMinusSign()
      */
-    static char32_t getMinusSign()
-<span style = "background-color:#dfd">    {
-        return U'-';
-    }    </span>
+    static char32_t getMinusSign();
+
 };
 
 #endif // EOOS_CPP_STANDARD &gt;= 2011
@@ -294,49 +178,213 @@ struct CharTrait&lt;char8_t&gt;
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getTerminator()
      */
-    static char8_t getTerminator()
-    {
-        return u8'\0';
-    }
+    static char8_t getTerminator();
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
      */    
     template &lt;typename I&gt;
-    static char8_t convertDigitToChar(I val)
-    {
-        char8_t ch( u8' ' );
-        switch(val)
-        {
-            case 0x00: { ch = u8'0'; break;}
-            case 0x01: { ch = u8'1'; break;}
-            case 0x02: { ch = u8'2'; break;}
-            case 0x03: { ch = u8'3'; break;}
-            case 0x04: { ch = u8'4'; break;}
-            case 0x05: { ch = u8'5'; break;}
-            case 0x06: { ch = u8'6'; break;}
-            case 0x07: { ch = u8'7'; break;}
-            case 0x08: { ch = u8'8'; break;}
-            case 0x09: { ch = u8'9'; break;}
-            case 0x0A: { ch = u8'a'; break;}
-            case 0x0B: { ch = u8'b'; break;}
-            case 0x0C: { ch = u8'c'; break;}
-            case 0x0D: { ch = u8'd'; break;}
-            case 0x0E: { ch = u8'e'; break;}
-            case 0x0F: { ch = u8'f'; break;}
-            default:   { ch = u8' '; break;} ///&lt; UT Justified Branch: SCA dependency
-        }
-        return ch;
-    }
+    static char8_t convertDigitToChar(I val);
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getMinusSign()
      */
-    static char8_t getMinusSign()
-    {
-        return u8'-';
-    }    
+    static char8_t getMinusSign();
+
 };
+
+#endif // EOOS_CPP_STANDARD &gt;= 2020
+
+inline char_t CharTrait&lt;char_t&gt;::getTerminator()
+<span style = "background-color:#dfd">{
+    return '\0';
+}</span>
+
+template &lt;typename I&gt;
+char_t CharTrait&lt;char_t&gt;::convertDigitToChar(I val)
+<span style = "background-color:#dfd">{
+    char_t ch( ' ' );
+    switch(val)</span>
+    {
+<span style = "background-color:#dfd">        case 0x00: { ch = '0'; break;}
+        case 0x01: { ch = '1'; break;}
+        case 0x02: { ch = '2'; break;}
+        case 0x03: { ch = '3'; break;}
+        case 0x04: { ch = '4'; break;}
+        case 0x05: { ch = '5'; break;}
+        case 0x06: { ch = '6'; break;}
+        case 0x07: { ch = '7'; break;}
+        case 0x08: { ch = '8'; break;}
+        case 0x09: { ch = '9'; break;}
+        case 0x0A: { ch = 'a'; break;}
+        case 0x0B: { ch = 'b'; break;}
+        case 0x0C: { ch = 'c'; break;}
+        case 0x0D: { ch = 'd'; break;}
+        case 0x0E: { ch = 'e'; break;}
+        case 0x0F: { ch = 'f'; break;}
+        default:   { ch = ' '; break;} ///&lt; UT Justified Branch: SCA dependency</span>
+    }
+<span style = "background-color:#dfd">    return ch;
+}</span>
+
+inline char_t CharTrait&lt;char_t&gt;::getMinusSign()
+<span style = "background-color:#dfd">{
+    return '-';
+}</span>
+
+inline wchar_t CharTrait&lt;wchar_t&gt;::getTerminator()
+<span style = "background-color:#dfd">{
+    return L'\0';
+}</span>
+
+template &lt;typename I&gt;
+wchar_t CharTrait&lt;wchar_t&gt;::convertDigitToChar(I val)
+<span style = "background-color:#dfd">{
+    wchar_t ch( L' ' ); ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+    switch(val)</span>
+    {
+<span style = "background-color:#dfd">        case 0x00: { ch = L'0'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x01: { ch = L'1'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x02: { ch = L'2'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x03: { ch = L'3'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x04: { ch = L'4'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x05: { ch = L'5'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x06: { ch = L'6'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x07: { ch = L'7'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x08: { ch = L'8'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x09: { ch = L'9'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x0A: { ch = L'a'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x0B: { ch = L'b'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x0C: { ch = L'c'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x0D: { ch = L'd'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x0E: { ch = L'e'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        case 0x0F: { ch = L'f'; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11
+        default:   { ch = L' '; break;} ///&lt; SCA MISRA-C++:2008 Defected Rule 5-0-11 and UT Justified Branch: SCA dependency</span>
+    }
+<span style = "background-color:#dfd">    return ch;
+}</span>
+
+inline wchar_t CharTrait&lt;wchar_t&gt;::getMinusSign()
+<span style = "background-color:#dfd">{
+    return L'-';
+}  </span>
+
+#if EOOS_CPP_STANDARD &gt;= 2011
+
+inline char16_t CharTrait&lt;char16_t&gt;::getTerminator()
+<span style = "background-color:#dfd">{
+    return u'\0';
+}</span>
+
+template &lt;typename I&gt;
+char16_t CharTrait&lt;char16_t&gt;::convertDigitToChar(I val)
+<span style = "background-color:#dfd">{
+    char16_t ch( u' ' );
+    switch(val)</span>
+    {
+<span style = "background-color:#dfd">        case 0x00: { ch = u'0'; break;}
+        case 0x01: { ch = u'1'; break;}
+        case 0x02: { ch = u'2'; break;}
+        case 0x03: { ch = u'3'; break;}
+        case 0x04: { ch = u'4'; break;}
+        case 0x05: { ch = u'5'; break;}
+        case 0x06: { ch = u'6'; break;}
+        case 0x07: { ch = u'7'; break;}
+        case 0x08: { ch = u'8'; break;}
+        case 0x09: { ch = u'9'; break;}
+        case 0x0A: { ch = u'a'; break;}
+        case 0x0B: { ch = u'b'; break;}
+        case 0x0C: { ch = u'c'; break;}
+        case 0x0D: { ch = u'd'; break;}
+        case 0x0E: { ch = u'e'; break;}
+        case 0x0F: { ch = u'f'; break;}
+        default:   { ch = u' '; break;} ///&lt; UT Justified Branch: SCA dependency</span>
+    }
+<span style = "background-color:#dfd">    return ch;
+}</span>
+
+inline char16_t CharTrait&lt;char16_t&gt;::getMinusSign()
+<span style = "background-color:#dfd">{
+    return u'-';
+}    </span>
+
+inline char32_t CharTrait&lt;char32_t&gt;::getTerminator()
+<span style = "background-color:#dfd">{
+    return U'\0';
+}</span>
+
+template &lt;typename I&gt;
+char32_t CharTrait&lt;char32_t&gt;::convertDigitToChar(I val)
+<span style = "background-color:#dfd">{
+    char32_t ch( U' ' );
+    switch(val)</span>
+    {
+<span style = "background-color:#dfd">        case 0x00: { ch = U'0'; break;}
+        case 0x01: { ch = U'1'; break;}
+        case 0x02: { ch = U'2'; break;}
+        case 0x03: { ch = U'3'; break;}
+        case 0x04: { ch = U'4'; break;}
+        case 0x05: { ch = U'5'; break;}
+        case 0x06: { ch = U'6'; break;}
+        case 0x07: { ch = U'7'; break;}
+        case 0x08: { ch = U'8'; break;}
+        case 0x09: { ch = U'9'; break;}
+        case 0x0A: { ch = U'a'; break;}
+        case 0x0B: { ch = U'b'; break;}
+        case 0x0C: { ch = U'c'; break;}
+        case 0x0D: { ch = U'd'; break;}
+        case 0x0E: { ch = U'e'; break;}
+        case 0x0F: { ch = U'f'; break;}
+        default:   { ch = U' '; break;} ///&lt; UT Justified Branch: SCA dependency</span>
+    }
+<span style = "background-color:#dfd">    return ch;
+}</span>
+
+inline char32_t CharTrait&lt;char32_t&gt;::getMinusSign()
+<span style = "background-color:#dfd">{
+    return U'-';
+}    </span>
+
+#endif // EOOS_CPP_STANDARD &gt;= 2011
+
+#if EOOS_CPP_STANDARD &gt;= 2020
+
+inline char8_t CharTrait&lt;char8_t&gt;::getTerminator()
+{
+    return u8'\0';
+}
+
+template &lt;typename I&gt;
+char8_t CharTrait&lt;char8_t&gt;::convertDigitToChar(I val)
+{
+    char8_t ch( u8' ' );
+    switch(val)
+    {
+        case 0x00: { ch = u8'0'; break;}
+        case 0x01: { ch = u8'1'; break;}
+        case 0x02: { ch = u8'2'; break;}
+        case 0x03: { ch = u8'3'; break;}
+        case 0x04: { ch = u8'4'; break;}
+        case 0x05: { ch = u8'5'; break;}
+        case 0x06: { ch = u8'6'; break;}
+        case 0x07: { ch = u8'7'; break;}
+        case 0x08: { ch = u8'8'; break;}
+        case 0x09: { ch = u8'9'; break;}
+        case 0x0A: { ch = u8'a'; break;}
+        case 0x0B: { ch = u8'b'; break;}
+        case 0x0C: { ch = u8'c'; break;}
+        case 0x0D: { ch = u8'd'; break;}
+        case 0x0E: { ch = u8'e'; break;}
+        case 0x0F: { ch = u8'f'; break;}
+        default:   { ch = u8' '; break;} ///&lt; UT Justified Branch: SCA dependency
+    }
+    return ch;
+}
+
+inline char8_t CharTrait&lt;char8_t&gt;::getMinusSign()
+{
+    return u8'-';
+}    
 
 #endif // EOOS_CPP_STANDARD &gt;= 2020
 

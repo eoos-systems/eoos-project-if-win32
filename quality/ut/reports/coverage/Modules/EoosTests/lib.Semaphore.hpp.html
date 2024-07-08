@@ -12,7 +12,7 @@
 /**
  * @file      lib.Semaphore.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2023, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_SEMAPHORE_HPP_
 #define LIB_SEMAPHORE_HPP_
@@ -44,58 +44,27 @@ public:
      *
      * @param permits The initial number of permits available.
      */
-    explicit Semaphore(int32_t const permits) 
-<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
-        , api::Semaphore()
-        , semaphore_(NULLPTR) {
-        bool_t const isConstructed( construct(permits) );
-        setConstructed( isConstructed );
-    }</span>
+    explicit Semaphore(int32_t const permits);
 
     /**
      * @brief Destructor.
      */
-    virtual ~Semaphore()
-<span style = "background-color:#dfd">    {
-        if( semaphore_ != NULLPTR )</span>
-        {
-<span style = "background-color:#dfd">            delete semaphore_;</span>
-        }
-<span style = "background-color:#dfd">    }</span>
+    virtual ~Semaphore();
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    virtual bool_t isConstructed() const
-<span style = "background-color:#dfd">    {
-        return Parent::isConstructed();
-    }</span>
+    virtual bool_t isConstructed() const;
 
     /**
      * @copydoc eoos::api::Semaphore::acquire()
      */
-    virtual bool_t acquire()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            res = semaphore_-&gt;acquire();</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    virtual bool_t acquire();
 
     /**
      * @copydoc eoos::api::Semaphore::release()
      */
-    virtual bool_t release()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );        
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            res = semaphore_-&gt;release();</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    virtual bool_t release();
 
 protected:
 
@@ -109,19 +78,7 @@ private:
      * @param permits The initial number of permits available.
      * @return True if object has been constructed successfully.
      */
-    bool_t construct(int32_t const permits)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            semaphore_ = sys::Call::get().getSemaphoreManager().create(permits);
-            if( Parent::isConstructed(semaphore_) )</span>
-            {
-<span style = "background-color:#dfd">                res = true;</span>
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t construct(int32_t const permits);
 
     /**
      * @brief System semaphore interface.
@@ -129,6 +86,67 @@ private:
     api::Semaphore* semaphore_;
 
 };
+
+template &lt;class A&gt;
+Semaphore&lt;A&gt;::Semaphore(int32_t const permits) 
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , api::Semaphore()
+    , semaphore_(NULLPTR) {
+    bool_t const isConstructed( construct(permits) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;class A&gt;
+Semaphore&lt;A&gt;::~Semaphore()
+<span style = "background-color:#dfd">{
+    if( semaphore_ != NULLPTR )</span>
+    {
+<span style = "background-color:#dfd">        delete semaphore_;</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+template &lt;class A&gt;
+bool_t Semaphore&lt;A&gt;::isConstructed() const
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;class A&gt;
+bool_t Semaphore&lt;A&gt;::acquire()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = semaphore_-&gt;acquire();</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+bool_t Semaphore&lt;A&gt;::release()
+<span style = "background-color:#dfd">{
+    bool_t res( false );        
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = semaphore_-&gt;release();</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+bool_t Semaphore&lt;A&gt;::construct(int32_t const permits)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        semaphore_ = sys::Call::get().getSemaphoreManager().create(permits);
+        if( Parent::isConstructed(semaphore_) )</span>
+        {
+<span style = "background-color:#dfd">            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
 
 } // namespace lib
 } // namespace eoos

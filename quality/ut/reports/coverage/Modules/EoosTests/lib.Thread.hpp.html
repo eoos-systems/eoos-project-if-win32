@@ -12,7 +12,7 @@
 /**
  * @file      lib.Thread.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_THREAD_HPP_
 #define LIB_THREAD_HPP_
@@ -32,7 +32,7 @@ namespace lib
  *
  * @tparam A Heap memory allocator class. 
  */
-template &lt;class A = Allocator&gt;   
+template &lt;class A = Allocator&gt;
 class Thread : public NonCopyable&lt;A&gt;, public api::Thread
 {
     typedef NonCopyable&lt;A&gt; Parent;
@@ -44,95 +44,47 @@ public:
      *
      * @param task A task interface whose start function is invoked when this thread is started.
      */
-    Thread(api::Task&amp; task)
-<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
-        , api::Thread()
-        , thread_(NULLPTR) {
-        bool_t const isConstructed( construct(&amp;task) );
-        setConstructed( isConstructed );
-    }</span>
+    Thread(api::Task&amp; task);
 
     /**
      * @brief Destructor.
      */
-    virtual ~Thread()
-<span style = "background-color:#dfd">    {
-        if( thread_ != NULLPTR )</span>
-        {
-<span style = "background-color:#dfd">            delete thread_;</span>
-        }
-<span style = "background-color:#dfd">    }</span>
+    virtual ~Thread();
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    virtual bool_t isConstructed() const
-<span style = "background-color:#dfd">    {
-        return Parent::isConstructed();
-    }</span>
+    virtual bool_t isConstructed() const;
 
     /**
      * @copydoc eoos::api::Thread::execute()
      */
-    virtual bool_t execute()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (thread_ != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            res = thread_-&gt;execute();</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    virtual bool_t execute();
 
     /**
      * @copydoc eoos::api::Thread::join()
      */
-    virtual bool_t join()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() &amp;&amp; (thread_ != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            res = thread_-&gt;join();</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    virtual bool_t join();
 
     /**
      * @copydoc eoos::api::Thread::getPriority()
      */
-    virtual int32_t getPriority() const
-<span style = "background-color:#dfd">    {
-        int32_t priority( PRIORITY_WRONG );
-        if( isConstructed() &amp;&amp; (thread_ != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            priority = thread_-&gt;getPriority();</span>
-        }
-<span style = "background-color:#dfd">        return priority;
-    }</span>
+    virtual int32_t getPriority() const;
 
     /**
      * @copydoc eoos::api::Thread::setPriority(int32_t)
      */
-    virtual bool_t setPriority(int32_t const priority)
-<span style = "background-color:#dfd">    {
-        return ( isConstructed() &amp;&amp; (thread_ != NULLPTR) ) ? thread_-&gt;setPriority(priority) : false;
-    }</span>
+    virtual bool_t setPriority(int32_t const priority);
     
     /**
      * @copydoc eoos::api::Scheduler::sleep(int32_t)
      */
-    static bool_t sleep(int32_t const ms)
-<span style = "background-color:#dfd">    {
-        return getScheduler().sleep(ms);
-    }</span>
+    static bool_t sleep(int32_t const ms);
 
     /**
      * @copydoc eoos::api::Scheduler::yield()
      */
-    static bool_t yield()
-<span style = "background-color:#dfd">    {
-        return getScheduler().yield();
-    }</span>
+    static bool_t yield();
 
 protected:
 
@@ -143,13 +95,7 @@ protected:
      *
      * @param task A task interface whose start function is invoked when this thread is started.
      */
-    Thread() 
-<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
-        , api::Thread()
-        , thread_(NULLPTR){
-        bool_t const isConstructed( construct(NULLPTR) );
-        setConstructed( isConstructed );
-    }    </span>
+    Thread();
     
     /**
      * @brief Sets a task.
@@ -157,20 +103,7 @@ protected:
      * @param task An task interface whose start function is invoked when this thread is started.
      * @return True if the task has been set successfully.
      */
-    bool_t setTask(api::Task&amp; task)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( thread_ == NULLPTR )</span>
-        {
-<span style = "background-color:#dfd">            api::Scheduler&amp; scheduler( getScheduler() );
-            thread_ = scheduler.createThread(task);
-            if( (thread_ != NULLPTR) &amp;&amp; thread_-&gt;isConstructed() )</span>
-            {
-<span style = "background-color:#dfd">                res = true;</span>
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t setTask(api::Task&amp; task);
 
 private:
 
@@ -180,33 +113,14 @@ private:
      * @param task An task interface whose start function is invoked when this thread is started.
      * @return True if object has been constructed successfully.
      */
-    bool_t construct(api::Task* const task)
-<span style = "background-color:#dfd">    {
-        bool_t res( isConstructed() );
-        if( res == true )</span>
-        {
-<span style = "background-color:#dfd">            if(task != NULLPTR)</span>
-            {
-<span style = "background-color:#dfd">                res = setTask(*task);</span>
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t construct(api::Task* const task);
     
     /**
      * @brief Returns the OS scheduler.
      *
      * @return The OS scheduler.
      */    
-    static api::Scheduler&amp; getScheduler()
-<span style = "background-color:#dfd">    {</span>
-        // @note Visual Studio 16 2019. The CXX compiler identification is MSVC 19.28.29335.0
-        // Saving result of sys::Call::get().getScheduler() to local static variable is a cause of error
-        // SEH exception with code 0xc0000005 thrown in the test body.
-        // Exception thrown: read access violation. scheduler. was 0xFFFFFFFFFFFFFFEF.
-        // Therefore, each time of calling this getScheduler() return the system call getScheduler() function result
-<span style = "background-color:#dfd">        return sys::Call::get().getScheduler();
-    }</span>
+    static api::Scheduler&amp; getScheduler();
 
     /**
      * @brief A system scheduler thread.
@@ -214,6 +128,131 @@ private:
     api::Thread* thread_;
 
 };
+
+template &lt;class A&gt;
+Thread&lt;A&gt;::Thread(api::Task&amp; task)
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , api::Thread()
+    , thread_(NULLPTR) {
+    bool_t const isConstructed( construct(&amp;task) );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;class A&gt;
+Thread&lt;A&gt;::~Thread()
+<span style = "background-color:#dfd">{
+    if( thread_ != NULLPTR )</span>
+    {
+<span style = "background-color:#dfd">        delete thread_;</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::isConstructed() const
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::execute()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (thread_ != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        res = thread_-&gt;execute();</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::join()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() &amp;&amp; (thread_ != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        res = thread_-&gt;join();</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+int32_t Thread&lt;A&gt;::getPriority() const
+<span style = "background-color:#dfd">{
+    int32_t priority( PRIORITY_WRONG );
+    if( isConstructed() &amp;&amp; (thread_ != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        priority = thread_-&gt;getPriority();</span>
+    }
+<span style = "background-color:#dfd">    return priority;
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::setPriority(int32_t const priority)
+<span style = "background-color:#dfd">{
+    return ( isConstructed() &amp;&amp; (thread_ != NULLPTR) ) ? thread_-&gt;setPriority(priority) : false;
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::sleep(int32_t const ms)
+<span style = "background-color:#dfd">{
+    return getScheduler().sleep(ms);
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::yield()
+<span style = "background-color:#dfd">{
+    return getScheduler().yield();
+}</span>
+
+template &lt;class A&gt;
+Thread&lt;A&gt;::Thread() 
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , api::Thread()
+    , thread_(NULLPTR){
+    bool_t const isConstructed( construct(NULLPTR) );
+    setConstructed( isConstructed );
+}    </span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::setTask(api::Task&amp; task)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( thread_ == NULLPTR )</span>
+    {
+<span style = "background-color:#dfd">        api::Scheduler&amp; scheduler( getScheduler() );
+        thread_ = scheduler.createThread(task);
+        if( (thread_ != NULLPTR) &amp;&amp; thread_-&gt;isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+bool_t Thread&lt;A&gt;::construct(api::Task* const task)
+<span style = "background-color:#dfd">{
+    bool_t res( isConstructed() );
+    if( res == true )</span>
+    {
+<span style = "background-color:#dfd">        if(task != NULLPTR)</span>
+        {
+<span style = "background-color:#dfd">            res = setTask(*task);</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;class A&gt;
+api::Scheduler&amp; Thread&lt;A&gt;::getScheduler()
+<span style = "background-color:#dfd">{</span>
+    // @note Visual Studio 16 2019. The CXX compiler identification is MSVC 19.28.29335.0
+    // Saving result of sys::Call::get().getScheduler() to local static variable is a cause of error
+    // SEH exception with code 0xc0000005 thrown in the test body.
+    // Exception thrown: read access violation. scheduler. was 0xFFFFFFFFFFFFFFEF.
+    // Therefore, each time of calling this getScheduler() return the system call getScheduler() function result
+<span style = "background-color:#dfd">    return sys::Call::get().getScheduler();
+}</span>
 
 } // namespace lib
 } // namespace eoos

@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.ResourceMemory.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.ResourceMemory.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2023-2024, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_RESOURCEMEMORY_HPP_
+#define LIB_RESOURCEMEMORY_HPP_
+
+#include "lib.NonCopyable.hpp"
+#include "api.Heap.hpp"
+#include "lib.NoAllocator.hpp"
+#include "lib.Guard.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+ 
+/**
+ * @class ResourceMemory&lt;T,N&gt;
+ * @brief Pool resource memory allocator.
+ *
+ * Primary template implements the pool allocation of resource. 
+ * 
+ * @tparam T Resource type
+ * @tparam N Number of resources
+ */
+template &lt;typename T, int32_t N&gt;
+class ResourceMemory : public NonCopyable&lt;NoAllocator&gt;, public api::Heap
+{
+    typedef NonCopyable&lt;NoAllocator&gt; Parent;
+
+public:
+
+    /**
+     * @brief Constructor.
+     *
+     * @param guard Atomic access to any resources.
+     */
+    ResourceMemory(api::Guard&amp; guard);
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ResourceMemory();
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const;
+
+    /**
+     * @copydoc eoos::api::Heap::allocate(size_t,void*)
+     */
+    virtual void* allocate(size_t size, void* ptr);
+
+    /**
+     * @copydoc eoos::api::Heap::free(void*)
+     */
+    virtual void free(void* ptr);
+
+protected:
+
+    using Parent::setConstructed;
+
+private:
+
+    /**
+     * @brief Constructs this object.
+     *
+     * @return True if object has been constructed successfully.
+     */
+    bool_t construct();
+
+    /**
+     * @brief Resource memory pool.
+     * 
+     * @note Memory is double array of uint64_t type to be align 8.  
+     */
+    uint64_t memory_[N][(sizeof(T) &gt;&gt; 3) + 1];
+
+    /**
+     * @brief Resource memory pool. 
+     */
+    bool_t isAllocated_[N];
+
+    /**
+     * @brief Resource allocation guard.
+     */
+    api::Guard&amp; guard_;
+
+};
+
+/**
+ * @class ResourceMemory&lt;T,0&gt;
+ * @brief Heap resource memory allocator.
+ *
+ * Partial specialization of the template implements the heap allocation of resource.
+ * 
+ * @tparam T Resource type
+ */
+template &lt;typename T&gt;
+class ResourceMemory&lt;T,0&gt; : public NonCopyable&lt;Allocator&gt;, public api::Heap
+{
+    typedef NonCopyable&lt;Allocator&gt; Parent;
+
+public:
+
+    /**
+     * @brief Constructor.
+     *
+     * @param guard Atomic access to any resources.
+     */
+    ResourceMemory(api::Guard&amp; guard);
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~ResourceMemory();
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const;
+
+    /**
+     * @copydoc eoos::api::Heap::allocate(size_t,void*)
+     */
+    virtual void* allocate(size_t size, void* ptr);
+
+    /**
+     * @copydoc eoos::api::Heap::free(void*)
+     */
+    virtual void free(void* ptr);
+
+protected:
+
+    using Parent::setConstructed;
+
+};
+
+template &lt;typename T, int32_t N&gt;
+ResourceMemory&lt;T,N&gt;::ResourceMemory(api::Guard&amp; guard)
+<span style = "background-color:#dfd">    : NonCopyable&lt;NoAllocator&gt;()
+    , api::Heap()
+    , guard_ (guard) {
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );
+}</span>
+
+template &lt;typename T, int32_t N&gt;
+ResourceMemory&lt;T,N&gt;::~ResourceMemory()
+<span style = "background-color:#dfd">{
+}</span>
+
+template &lt;typename T, int32_t N&gt;
+bool_t ResourceMemory&lt;T,N&gt;::isConstructed() const
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;typename T, int32_t N&gt;
+void* ResourceMemory&lt;T,N&gt;::allocate(size_t size, void* ptr)
+<span style = "background-color:#dfd">{</span>
+    static_cast&lt;void&gt;(ptr); // Avoid MISRA-C++:2008 Rule 0â1â3 and AUTOSAR C++14 Rule A0-1-4
+<span style = "background-color:#dfd">    void* addr( NULLPTR );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        lib::Guard&lt;NoAllocator&gt; const guard( guard_ );
+        if( size == sizeof(T) )</span>
+        {
+<span style = "background-color:#dfd">            for(int32_t i(0); i&lt;N; i++)</span>
+            {
+<span style = "background-color:#dfd">                if( isAllocated_[i] == false )</span>
+                {
+<span style = "background-color:#dfd">                    uint64_t* const memory( memory_[i] );
+                    uintptr_t const address( reinterpret_cast&lt;uintptr_t&gt;(memory) );
+                    if( ( address &amp; 0x7 ) == 0 )</span>
+                    {
+<span style = "background-color:#dfd">                        isAllocated_[i] = true;
+                        addr = memory;
+                        break;</span>
+                    }
+                }
+<span style = "background-color:#dfd">            }</span>
+        }
+<span style = "background-color:#dfd">    }
+    return addr;
+}</span>
+
+template &lt;typename T, int32_t N&gt;
+void ResourceMemory&lt;T,N&gt;::free(void* ptr)
+<span style = "background-color:#dfd">{
+    if( isConstructed() &amp;&amp; (ptr != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        lib::Guard&lt;NoAllocator&gt; const guard( guard_ );
+        for(int32_t i(0); i&lt;N; i++)</span>
+        {
+<span style = "background-color:#dfd">            if( (memory_[i] == ptr) &amp;&amp; (isAllocated_[i] == true) )</span>
+            {
+<span style = "background-color:#dfd">                isAllocated_[i] = false;
+                break;</span>
+            }
+<span style = "background-color:#dfd">        }
+    }
+}</span>
+
+template &lt;typename T, int32_t N&gt;
+bool_t ResourceMemory&lt;T,N&gt;::construct()
+<span style = "background-color:#dfd">{
+    bool_t res( false );</span>
+    if( ( isConstructed() )
+<span style = "background-color:#dfd">     &amp;&amp; ( guard_.isConstructed() ) ) </span>
+    {    
+<span style = "background-color:#dfd">        for(int32_t i(0); i&lt;N; i++)</span>
+        {
+<span style = "background-color:#dfd">            isAllocated_[i] = false;
+        }
+        res = true;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T&gt;
+ResourceMemory&lt;T,0&gt;::ResourceMemory(api::Guard&amp;)
+    : NonCopyable&lt;Allocator&gt;()
+    , api::Heap() {
+}
+
+template &lt;typename T&gt;
+ResourceMemory&lt;T,0&gt;::~ResourceMemory()
+{
+}
+
+template &lt;typename T&gt;
+bool_t ResourceMemory&lt;T,0&gt;::isConstructed() const
+{
+    return Parent::isConstructed();
+}
+
+template &lt;typename T&gt;
+void* ResourceMemory&lt;T,0&gt;::allocate(size_t size, void* ptr)
+{
+    return Allocator::allocate(size);
+}
+
+template &lt;typename T&gt;
+void ResourceMemory&lt;T,0&gt;::free(void* ptr)
+{
+    return Allocator::free(ptr);
+}
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_RESOURCEMEMORY_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

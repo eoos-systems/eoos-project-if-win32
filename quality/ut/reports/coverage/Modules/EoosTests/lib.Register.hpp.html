@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.Register.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.Register.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2024, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_REGISTER_HPP_
+#define LIB_REGISTER_HPP_
+
+#include "lib.Types.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+    
+/**
+ * @class Register&lt;R&gt;
+ * @brief Alignment of fundamental types to byte boundary of memory.
+ * 
+ * @tparam R User-defined union type of register.
+ *
+ * @note There is R type declaration requarements:
+ * ```
+ * union YourRegister
+ * {
+ *     typedef uint32_t Value;
+ *     YourRegister(){}
+ *     YourRegister(Value v){value = v;}
+ *    ~YourRegister(){}    
+ *   
+ *     Value value;
+ *     struct Bit
+ *     {
+ *         Value inrq  : 1;
+ *         Value sleep : 1;
+ *         Value txfp  : 1;
+ *         Value rflm  : 1;
+ *         Value nart  : 1;
+ *         Value awum  : 1;
+ *         Value abom  : 1;
+ *         Value ttcm  : 1;
+ *         Value       : 7;
+ *         Value reset : 1;
+ *         Value       : 15;
+ *         Value dbf   : 1;
+ *     } bit;
+ * };
+ * ```
+ */
+template &lt;class R&gt;
+class Register
+{
+
+public:
+
+    /**
+     * @brief Constructor.
+     */
+    Register(R&amp; reg);
+
+    /**
+     * @brief Register.
+     */
+    ~Register(); 
+
+    /**
+     * @brief Returns bit-field of the register.
+     *
+     * @return Bit-field structure of the register.
+     */
+    typename R::Bit&amp; bit();
+
+    /**
+     * @brief Returns bit-field of the register.
+     *
+     * @return Bit-field structure of the register.
+     */
+    const typename R::Bit&amp; bit() const;
+
+    /**
+     * @brief Returns value of the register.
+     *
+     * @return Value of the register.
+     */
+    typename R::Value&amp; value();
+
+    /**
+     * @brief Returns value of the register.
+     *
+     * @return Value of the register.
+     */
+    const typename R::Value&amp; value() const;
+
+    /**
+     * @brief Sets a bit value.
+     *
+     * @param digit Digit of a setting bit.
+     */
+    void setBit(uint32_t digit);
+
+    /**
+     * @brief Cleans a bit value.
+     *
+     * @param digit Digit of a cleaning bit.
+     */
+    void clearBit(uint32_t digit);
+    
+    /**
+     * @brief Saves the work copy to the register.
+     */
+    void commit();
+
+    /**
+     * @brief Saves the register to the work copy.
+     *
+     * @return This register object.
+     */
+    Register&lt;R&gt;&amp; fetch();
+    
+private:
+
+    /**
+     * @brief The register.
+     */
+    R&amp; origin_;
+    
+    /**
+     * @brief Work copy.
+     */    
+    R copy_;
+
+};
+
+template &lt;class R&gt;
+Register&lt;R&gt;::Register(R&amp; reg)
+<span style = "background-color:#dfd">    : origin_( reg )
+    , copy_( reg.value ){
+}</span>
+
+template &lt;class R&gt;
+Register&lt;R&gt;::~Register() 
+<span style = "background-color:#dfd">{
+}    </span>
+
+template &lt;class R&gt;
+typename R::Bit&amp; Register&lt;R&gt;::bit()
+<span style = "background-color:#dfd">{
+   return copy_.bit;
+}</span>
+
+template &lt;class R&gt;
+const typename R::Bit&amp; Register&lt;R&gt;::bit() const
+<span style = "background-color:#dfd">{
+   return copy_.bit;
+}</span>
+
+template &lt;class R&gt;
+typename R::Value&amp; Register&lt;R&gt;::value()
+<span style = "background-color:#dfd">{
+   return copy_.value; 
+}</span>
+
+template &lt;class R&gt;
+const typename R::Value&amp; Register&lt;R&gt;::value() const
+<span style = "background-color:#dfd">{
+   return copy_.value; 
+}</span>
+
+template &lt;class R&gt;
+void Register&lt;R&gt;::setBit(uint32_t digit)
+<span style = "background-color:#dfd">{
+    typename R::Value mask( 0x00000001 &lt;&lt; digit );
+    copy_.value |= mask;        
+}</span>
+
+template &lt;class R&gt;
+void Register&lt;R&gt;::clearBit(uint32_t digit)
+<span style = "background-color:#dfd">{
+    typename R::Value mask( 0x00000001 &lt;&lt; digit );
+    copy_.value &amp;= ~mask;        
+}    </span>
+
+template &lt;class R&gt;
+void Register&lt;R&gt;::commit()
+<span style = "background-color:#dfd">{
+    origin_.value = copy_.value;
+}</span>
+
+template &lt;class R&gt;
+Register&lt;R&gt;&amp; Register&lt;R&gt;::fetch()
+<span style = "background-color:#dfd">{
+    copy_.value = origin_.value;
+    return *this;
+}</span>
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_REGISTER_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

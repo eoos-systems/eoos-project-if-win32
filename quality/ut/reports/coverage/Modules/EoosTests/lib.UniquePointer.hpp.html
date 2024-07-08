@@ -12,7 +12,7 @@
 /**
  * @file      lib.UniquePointer.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2022-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_UNIQUEPOINTER_HPP_
 #define LIB_UNIQUEPOINTER_HPP_
@@ -45,13 +45,7 @@ public:
     /**
      * @brief Constructor of an empty unique object.
      */
-    UniquePointer() 
-<span style = "background-color:#dfd">        : Object&lt;A&gt;()
-        , api::SmartPointer&lt;T&gt;()
-        , pointer_ (NULLPTR) {
-        bool_t const isConstructed( construct() );
-        setConstructed(isConstructed);    
-    }</span>
+    UniquePointer();
 
     /**
      * @brief Constructor.
@@ -60,89 +54,52 @@ public:
      *
      * @param pointer A pointer to get ownership.
      */
-    explicit UniquePointer(T* const pointer) 
-<span style = "background-color:#dfd">        : Object&lt;A&gt;()
-        , api::SmartPointer&lt;T&gt;()
-        , pointer_ (NULLPTR) {
-        bool_t const isConstructed( construct(pointer) );
-        setConstructed(isConstructed);    
-    }</span>
+    explicit UniquePointer(T* const pointer);
 
     /**
      * @brief Destructor.
      */
-    virtual ~UniquePointer()
-<span style = "background-color:#dfd">    {
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            releasePointer();</span>
-        }
-<span style = "background-color:#dfd">    }</span>
+    virtual ~UniquePointer();
 
     #if EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
      */       
-    UniquePointer(UniquePointer&amp;&amp; obj) noexcept 
-<span style = "background-color:#dfd">        : Object&lt;A&gt;( move(obj) )
-        , api::SmartPointer&lt;T&gt;()
-        , pointer_ (obj.pointer_) {
-    }   </span>
+    UniquePointer(UniquePointer&amp;&amp; obj) noexcept;
 
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */
-    UniquePointer&amp; operator=(UniquePointer&amp;&amp; obj) &amp; noexcept
-<span style = "background-color:#dfd">    {
-        if( this != &amp;obj &amp;&amp; isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            releasePointer();
-            pointer_ = obj.pointer_;
-            Parent::operator=( move(obj) );            </span>
-        }        
-<span style = "background-color:#dfd">        return *this;
-    }        </span>
+    UniquePointer&amp; operator=(UniquePointer&amp;&amp; obj) &amp; noexcept;
 
     #endif // EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    virtual bool_t isConstructed() const ///&lt; SCA MISRA-C++:2008 Justified Rule 10-3-1 and Defected Rule 9-3-3
-<span style = "background-color:#dfd">    {
-        return Parent::isConstructed();
-    }</span>
+    virtual bool_t isConstructed() const;
 
     /**
      * @brief Casts to boolean data type comparing if the stored pointer does not equal to null.
      *
      * @return Comparation the stored pointer does not equal to null.
      */    
-    operator bool_t() const 
-<span style = "background-color:#dfd">    {
-        return get() != NULLPTR;
-    }</span>
+    operator bool_t() const;
 
     /**
      * @brief Returns the result of dereferencing the stored pointer.
      *
      * @return The dereferenced stored pointer.
      */
-    T&amp; operator*() const
-<span style = "background-color:#dfd">    {
-        return *get();
-    }</span>
+    T&amp; operator*() const;
 
     /**
      * @brief Returns the stored pointer.
      *
      * @return The stored pointer or NULLPTR if no pointer stored.
      */
-    T* operator-&gt;() const
-<span style = "background-color:#dfd">    {
-        return get();
-    }</span>
+    T* operator-&gt;() const;
 
     /**
      * @brief Returns an element of the stored array.
@@ -150,106 +107,51 @@ public:
      * @param index An element index.
      * @return An element.
      */    
-    T&amp; operator[](uint32_t const index) const
-<span style = "background-color:#dfd">    {
-        T* const pointer( get() );
-        return pointer[index];
-    }</span>
+    T&amp; operator[](uint32_t const index) const;
 
     /**
      * @copydoc eoos::api::SmartPointer::get()
      */
-    virtual T* get() const
-<span style = "background-color:#dfd">    {
-        T* pointer( NULLPTR );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            pointer = pointer_;</span>
-        }
-<span style = "background-color:#dfd">        return pointer;
-    }</span>
+    virtual T* get() const;
 
     /**
      * @copydoc eoos::api::SmartPointer::reset()
      */   
-    virtual void reset()
-<span style = "background-color:#dfd">    {
-        reset(NULLPTR);
-    }</span>
+    virtual void reset();
 
     /**
      * @copydoc eoos::api::SmartPointer::reset(T*)
      */
-    virtual void reset(T* ptr)
-<span style = "background-color:#dfd">    {
-        if (get() != ptr)</span>
-        {
-<span style = "background-color:#dfd">            Self temp(ptr);
-            swap(temp);
-        }
-    }</span>
+    virtual void reset(T* ptr);
 
     /**
      * @copydoc eoos::api::SmartPointer::getCount()
      */
-    virtual int32_t getCount() const
-<span style = "background-color:#dfd">    {
-        int32_t counter( 0 );
-        if( isConstructed() &amp;&amp; (pointer_ != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            counter = 1;</span>
-        }
-<span style = "background-color:#dfd">        return counter;
-    }</span>
+    virtual int32_t getCount() const;
     
     /**
      * @copydoc eoos::api::SmartPointer::isNull()
      */       
-    virtual bool_t isNull() const
-<span style = "background-color:#dfd">    {
-        return get() == NULLPTR;        
-    }</span>
+    virtual bool_t isNull() const;
     
     /**
      * @copydoc eoos::api::SmartPointer::isUnique()
      */   
-    virtual bool_t isUnique() const
-<span style = "background-color:#dfd">    {
-        return getCount() == 1;
-    }</span>
+    virtual bool_t isUnique() const;
     
     /**
      * @brief Swaps this managed object with an object managed by given smart object.
      *
      * @param obj A smart object to swap managed objects.
      */
-    void swap(UniquePointer&amp; obj)
-<span style = "background-color:#dfd">    {
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            if( obj.isConstructed() )</span>
-            {
-<span style = "background-color:#dfd">                T* const pointer( pointer_ );
-                pointer_ = obj.pointer_;
-                obj.pointer_ = pointer;</span>
-            }
-        }
-<span style = "background-color:#dfd">    }</span>
+    void swap(UniquePointer&amp; obj);
     
     /**
      * @brief Releases ownership of the managed object.
      *
      * @return Released raw pointer.
      */    
-    T* release()
-<span style = "background-color:#dfd">    {
-        T* pointer( pointer_ );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            pointer_ = NULLPTR;</span>
-        }
-<span style = "background-color:#dfd">        return pointer;
-    }</span>
+    T* release();
     
 protected:
 
@@ -263,29 +165,12 @@ private:
      * @param pointer A pointer to get ownership.
      * @return True if this object has been constructed successfully.
      */     
-    bool_t construct(T* const pointer = NULLPTR)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            pointer_ = pointer;
-            res = true;
-        }</span>
-        else
-        {   ///&lt; UT Justified Branch: HW dependency
-<span style = "background-color:#fdd">            D::free(pointer);</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t construct(T* const pointer = NULLPTR);
     
     /**
      * @brief Releases the managed object by control block.
      */       
-    void releasePointer()
-<span style = "background-color:#dfd">    {
-        D::free(pointer_);
-        pointer_ = NULLPTR;
-    }       </span>
+    void releasePointer();
     
     #if EOOS_CPP_STANDARD &lt; 2011
     
@@ -332,6 +217,185 @@ template &lt;typename T, class D, class A&gt;
 inline bool_t operator!=(UniquePointer&lt;T,D,A&gt; const&amp; obj1, UniquePointer&lt;T,D,A&gt; const&amp; obj2)
 <span style = "background-color:#dfd">{
     return obj1.get() != obj2.get();
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+UniquePointer&lt;T,D,A&gt;::UniquePointer() 
+<span style = "background-color:#dfd">    : Object&lt;A&gt;()
+    , api::SmartPointer&lt;T&gt;()
+    , pointer_ (NULLPTR) {
+    bool_t const isConstructed( construct() );
+    setConstructed(isConstructed);    
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+UniquePointer&lt;T,D,A&gt;::UniquePointer(T* const pointer) 
+<span style = "background-color:#dfd">    : Object&lt;A&gt;()
+    , api::SmartPointer&lt;T&gt;()
+    , pointer_ (NULLPTR) {
+    bool_t const isConstructed( construct(pointer) );
+    setConstructed(isConstructed);    
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+UniquePointer&lt;T,D,A&gt;::~UniquePointer()
+<span style = "background-color:#dfd">{
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        releasePointer();</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+#if EOOS_CPP_STANDARD &gt;= 2011
+
+template &lt;typename T, class D, class A&gt;
+UniquePointer&lt;T,D,A&gt;::UniquePointer(UniquePointer&amp;&amp; obj) noexcept 
+<span style = "background-color:#dfd">    : Object&lt;A&gt;( move(obj) )
+    , api::SmartPointer&lt;T&gt;()
+    , pointer_ (obj.pointer_) {
+}   </span>
+
+template &lt;typename T, class D, class A&gt;
+UniquePointer&lt;T,D,A&gt;&amp; UniquePointer&lt;T,D,A&gt;::operator=(UniquePointer&amp;&amp; obj) &amp; noexcept
+<span style = "background-color:#dfd">{
+    if( this != &amp;obj &amp;&amp; isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        releasePointer();
+        pointer_ = obj.pointer_;
+        Parent::operator=( move(obj) );            </span>
+    }        
+<span style = "background-color:#dfd">    return *this;
+}        </span>
+
+#endif // EOOS_CPP_STANDARD &gt;= 2011
+
+template &lt;typename T, class D, class A&gt;
+bool_t UniquePointer&lt;T,D,A&gt;::isConstructed() const ///&lt; SCA MISRA-C++:2008 Justified Rule 10-3-1 and Defected Rule 9-3-3
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+UniquePointer&lt;T,D,A&gt;::operator bool_t() const 
+<span style = "background-color:#dfd">{
+    return get() != NULLPTR;
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+T&amp; UniquePointer&lt;T,D,A&gt;::operator*() const
+<span style = "background-color:#dfd">{
+    return *get();
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+T* UniquePointer&lt;T,D,A&gt;::operator-&gt;() const
+<span style = "background-color:#dfd">{
+    return get();
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+T&amp; UniquePointer&lt;T,D,A&gt;::operator[](uint32_t const index) const
+<span style = "background-color:#dfd">{
+    T* const pointer( get() );
+    return pointer[index];
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+T* UniquePointer&lt;T,D,A&gt;::get() const
+<span style = "background-color:#dfd">{
+    T* pointer( NULLPTR );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        pointer = pointer_;</span>
+    }
+<span style = "background-color:#dfd">    return pointer;
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+void UniquePointer&lt;T,D,A&gt;::reset()
+<span style = "background-color:#dfd">{
+    reset(NULLPTR);
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+void UniquePointer&lt;T,D,A&gt;::reset(T* ptr)
+<span style = "background-color:#dfd">{
+    if (get() != ptr)</span>
+    {
+<span style = "background-color:#dfd">        Self temp(ptr);
+        swap(temp);
+    }
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+int32_t UniquePointer&lt;T,D,A&gt;::getCount() const
+<span style = "background-color:#dfd">{
+    int32_t counter( 0 );
+    if( isConstructed() &amp;&amp; (pointer_ != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        counter = 1;</span>
+    }
+<span style = "background-color:#dfd">    return counter;
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+bool_t UniquePointer&lt;T,D,A&gt;::isNull() const
+<span style = "background-color:#dfd">{
+    return get() == NULLPTR;        
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+bool_t UniquePointer&lt;T,D,A&gt;::isUnique() const
+<span style = "background-color:#dfd">{
+    return getCount() == 1;
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+void UniquePointer&lt;T,D,A&gt;::swap(UniquePointer&amp; obj)
+<span style = "background-color:#dfd">{
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        if( obj.isConstructed() )</span>
+        {
+<span style = "background-color:#dfd">            T* const pointer( pointer_ );
+            pointer_ = obj.pointer_;
+            obj.pointer_ = pointer;</span>
+        }
+    }
+<span style = "background-color:#dfd">}</span>
+
+template &lt;typename T, class D, class A&gt;
+T* UniquePointer&lt;T,D,A&gt;::release()
+<span style = "background-color:#dfd">{
+    T* pointer( pointer_ );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        pointer_ = NULLPTR;</span>
+    }
+<span style = "background-color:#dfd">    return pointer;
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+bool_t UniquePointer&lt;T,D,A&gt;::construct(T* const pointer)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        pointer_ = pointer;
+        res = true;
+    }</span>
+    else
+    {   ///&lt; UT Justified Branch: HW dependency
+<span style = "background-color:#fdd">        D::free(pointer);</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, class D, class A&gt;
+void UniquePointer&lt;T,D,A&gt;::releasePointer()
+<span style = "background-color:#dfd">{
+    D::free(pointer_);
+    pointer_ = NULLPTR;
 }</span>
 
 } // namespace lib

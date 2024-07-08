@@ -12,7 +12,7 @@
 /**
  * @file      lib.LinkedNode.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2016-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2016-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_LINKEDNODE_HPP_
 #define LIB_LINKEDNODE_HPP_
@@ -47,30 +47,12 @@ public:
      *
      * @param element An user element of this node.
      */
-    LinkedNode(T const&amp; element) 
-<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
-        , prev_(this)
-        , next_(this)
-        , index_(0)
-        , element_(element) {
-    }</span>
+    LinkedNode(T const&amp; element);
 
     /**
      * @brief Destructor.
      */
-    virtual ~LinkedNode()
-<span style = "background-color:#dfd">    {
-        LinkedNode* node( this-&gt;next_ );
-        while(node-&gt;index_ != 0)</span>
-        {
-<span style = "background-color:#dfd">            node-&gt;index_--; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
-            node = node-&gt;next_;
-        }
-        next_-&gt;prev_ = prev_;
-        prev_-&gt;next_ = next_;
-        prev_ = this;
-        next_ = this;
-    }</span>
+    virtual ~LinkedNode();
 
     /**
      * @brief Inserts a new element after this.
@@ -80,17 +62,7 @@ public:
      *
      * @param node Pointer to inserted node.
      */
-    void insertAfter(LinkedNode&lt;T,A&gt;* node)
-<span style = "background-color:#dfd">    {
-        link(node);
-        node-&gt;index_ = index_;</span>
-        do
-        {
-<span style = "background-color:#dfd">            node-&gt;index_++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
-            node = node-&gt;next_;</span>
-        }
-<span style = "background-color:#dfd">        while(node-&gt;index_ != 0);
-    }</span>
+    void insertAfter(LinkedNode&lt;T,A&gt;* node);
 
     /**
      * @brief Inserts a new element before this.
@@ -100,88 +72,56 @@ public:
      *
      * @param node Pointer to inserted node.
      */
-    void insertBefore(LinkedNode&lt;T,A&gt;* node)
-<span style = "background-color:#dfd">    {
-        prev_-&gt;link(node);
-        node-&gt;index_ = index_;
-        node = this;</span>
-        do
-        {
-<span style = "background-color:#dfd">            node-&gt;index_++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
-            node = node-&gt;next_;</span>
-        }
-<span style = "background-color:#dfd">        while(node-&gt;index_ != 0);
-    }</span>
+    void insertBefore(LinkedNode&lt;T,A&gt;* node);
 
     /**
      * @brief Returns previous element.
      *
      * @return Previous element.
      */
-    LinkedNode&lt;T,A&gt;* getPrevious() ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-3
-<span style = "background-color:#dfd">    {
-        return prev_;
-    }</span>
+    LinkedNode&lt;T,A&gt;* getPrevious();
 
     /**
      * @brief Returns previous element.
      *
      * @return Previous element.
      */
-    LinkedNode&lt;T,A&gt; const* getPrevious() const
-    {
-        return prev_;
-    }
+    LinkedNode&lt;T,A&gt; const* getPrevious() const;
 
     /**
      * @brief Returns next element.
      *
      * @return The next element.
      */
-    LinkedNode&lt;T,A&gt;* getNext() ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-3
-<span style = "background-color:#dfd">    {
-        return next_;
-    }</span>
+    LinkedNode&lt;T,A&gt;* getNext();
 
     /**
      * @brief Returns next element.
      *
      * @return The next element.
      */
-    LinkedNode&lt;T,A&gt; const* getNext() const
-    {
-        return next_;
-    }
+    LinkedNode&lt;T,A&gt; const* getNext() const;
 
     /**
      * @brief Returns the element.
      *
      * @return The next element.
      */
-    T&amp; getElement()
-<span style = "background-color:#dfd">    {
-        return element_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2
-    }</span>
+    T&amp; getElement();
 
     /**
      * @brief Returns the element.
      *
      * @return The next element.
      */
-    T const&amp; getElement() const
-    {
-        return element_;
-    }
+    T const&amp; getElement() const;
 
     /**
      * @brief Returns the element index.
      *
      * @return An element index.
      */
-    int32_t getIndex() const
-<span style = "background-color:#dfd">    {
-        return index_;
-    }</span>
+    int32_t getIndex() const;
 
 private:
 
@@ -190,13 +130,7 @@ private:
      *
      * @param node Pointer to linking node.
      */
-    void link(LinkedNode&lt;T,A&gt;* node)
-<span style = "background-color:#dfd">    {
-        next_-&gt;prev_ = node;
-        node-&gt;next_ = next_;
-        next_ = node;
-        node-&gt;prev_ = this;
-    }   </span>
+    void link(LinkedNode&lt;T,A&gt;* node);
 
     /**
      * @brief Previous node.
@@ -219,6 +153,108 @@ private:
     T element_;
 
 };
+
+template &lt;typename T, class A&gt;
+LinkedNode&lt;T,A&gt;::LinkedNode(T const&amp; element) 
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , prev_(this)
+    , next_(this)
+    , index_(0)
+    , element_(element) {
+}</span>
+
+template &lt;typename T, class A&gt;
+LinkedNode&lt;T,A&gt;::~LinkedNode()
+<span style = "background-color:#dfd">{
+    LinkedNode* node( this-&gt;next_ );
+    while(node-&gt;index_ != 0)</span>
+    {
+<span style = "background-color:#dfd">        node-&gt;index_--; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
+        node = node-&gt;next_;
+    }
+    next_-&gt;prev_ = prev_;
+    prev_-&gt;next_ = next_;
+    prev_ = this;
+    next_ = this;
+}</span>
+
+template &lt;typename T, class A&gt;
+void LinkedNode&lt;T,A&gt;::insertAfter(LinkedNode&lt;T,A&gt;* node)
+<span style = "background-color:#dfd">{
+    link(node);
+    node-&gt;index_ = index_;</span>
+    do
+    {
+<span style = "background-color:#dfd">        node-&gt;index_++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
+        node = node-&gt;next_;</span>
+    }
+<span style = "background-color:#dfd">    while(node-&gt;index_ != 0);
+}</span>
+
+template &lt;typename T, class A&gt;
+void LinkedNode&lt;T,A&gt;::insertBefore(LinkedNode&lt;T,A&gt;* node)
+<span style = "background-color:#dfd">{
+    prev_-&gt;link(node);
+    node-&gt;index_ = index_;
+    node = this;</span>
+    do
+    {
+<span style = "background-color:#dfd">        node-&gt;index_++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
+        node = node-&gt;next_;</span>
+    }
+<span style = "background-color:#dfd">    while(node-&gt;index_ != 0);
+}</span>
+
+template &lt;typename T, class A&gt;
+LinkedNode&lt;T,A&gt;* LinkedNode&lt;T,A&gt;::getPrevious() ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-3
+<span style = "background-color:#dfd">{
+    return prev_;
+}</span>
+
+template &lt;typename T, class A&gt;
+LinkedNode&lt;T,A&gt; const* LinkedNode&lt;T,A&gt;::getPrevious() const
+{
+    return prev_;
+}
+
+template &lt;typename T, class A&gt;
+LinkedNode&lt;T,A&gt;* LinkedNode&lt;T,A&gt;::getNext() ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-3
+<span style = "background-color:#dfd">{
+    return next_;
+}</span>
+
+template &lt;typename T, class A&gt;
+LinkedNode&lt;T,A&gt; const* LinkedNode&lt;T,A&gt;::getNext() const
+{
+    return next_;
+}
+
+template &lt;typename T, class A&gt;
+T&amp; LinkedNode&lt;T,A&gt;::getElement()
+<span style = "background-color:#dfd">{
+    return element_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2
+}</span>
+
+template &lt;typename T, class A&gt;
+T const&amp; LinkedNode&lt;T,A&gt;::getElement() const
+{
+    return element_;
+}
+
+template &lt;typename T, class A&gt;
+int32_t LinkedNode&lt;T,A&gt;::getIndex() const
+<span style = "background-color:#dfd">{
+    return index_;
+}</span>
+
+template &lt;typename T, class A&gt;
+void LinkedNode&lt;T,A&gt;::link(LinkedNode&lt;T,A&gt;* node)
+<span style = "background-color:#dfd">{
+    next_-&gt;prev_ = node;
+    node-&gt;next_ = next_;
+    next_ = node;
+    node-&gt;prev_ = this;
+}</span>
 
 } // namespace lib
 } // namespace eoos

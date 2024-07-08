@@ -202,4 +202,3 @@ To build the project with Unit Tests and run them, you have to execute the comma
 C:\REPOSITORY\EOOS> cd scripts\python
 C:\REPOSITORY\EOOS\scripts\python> python Make.py --clean --build ALL --run --config RelWithDebInfo
 ```
-

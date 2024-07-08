@@ -39,7 +39,7 @@ void* Heap::allocate(size_t const size, void* ptr) noexcept try
     static_cast&lt;void&gt;(size); // Avoid MISRA-C++:2008 Rule 0â1â3 and AUTOSAR C++14 Rule A0-1-4
     return NULLPTR;
     #endif // EOOS_GLOBAL_ENABLE_NO_HEAP
-<span style = "background-color:#dfd">} catch (...) {</span>
+<span style = "background-color:#dfd">} catch (...) { ///&lt; UT Justified Branch: OS dependency</span>
 <span style = "background-color:#fdd">    return NULLPTR;
 }</span>
 

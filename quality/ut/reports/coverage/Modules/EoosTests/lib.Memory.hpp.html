@@ -12,7 +12,7 @@
 /**
  * @file      lib.Memory.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2016-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2016-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_MEMORY_HPP_
 #define LIB_MEMORY_HPP_
@@ -41,21 +41,7 @@ public:
      * @param len A number of bytes to copy.
      * @return A pointer to the destination array, or NULLPTR if an error has been occurred.
      */
-    static void* memcpy(void* const dst, void const* const src, size_t len)
-<span style = "background-color:#dfd">    {
-        void* res( NULLPTR );
-        if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            ucell_t const* sp( static_cast&lt;ucell_t const*&gt;(src) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
-            ucell_t* dp( static_cast&lt;ucell_t*&gt;(dst) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
-            while(len-- != 0U) ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-10</span>
-            {
-<span style = "background-color:#dfd">                *dp++ = *sp++; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
-            }
-            res = dst;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    static void* memcpy(void* const dst, void const* const src, size_t len);
 
     /**
      * @brief Fills a block of memory.
@@ -65,21 +51,7 @@ public:
      * @param len A number of bytes to be set to the value.
      * @return A pointer to the destination memory, or NULLPTR if an error has been occurred.
      */
-    static void* memset(void* const dst, int32_t const val, size_t len)
-<span style = "background-color:#dfd">    {
-        void* res( NULLPTR );
-        if(dst != NULLPTR)</span>
-        {
-<span style = "background-color:#dfd">            ucell_t* dp( static_cast&lt;ucell_t*&gt;(dst) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
-            ucell_t const uc( static_cast&lt;ucell_t&gt;(val) );
-            while(len-- != 0U) ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-10</span>
-            {
-<span style = "background-color:#dfd">                *dp++ = uc; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
-            }
-            res = dst;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    static void* memset(void* const dst, int32_t const val, size_t len);
 
     /**
      * @brief Returns the length of a passed string .
@@ -87,19 +59,7 @@ public:
      * @param str A character string would be measured.
      * @return The length of the passed string, and zero if NULLPTR given.
      */
-    static size_t strlen(char_t const* str)
-<span style = "background-color:#dfd">    {
-        size_t len( 0U );        
-        if(str != NULLPTR)</span>
-        {
-<span style = "background-color:#dfd">            while( *str != '\0' )</span>
-            {
-<span style = "background-color:#dfd">                len++;
-                str++; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
-            }</span>
-        }
-<span style = "background-color:#dfd">        return len;
-    }</span>
+    static size_t strlen(char_t const* str);
 
     /**
      * @brief Copies one string to another .
@@ -108,20 +68,7 @@ public:
      * @param src A character string to be copied.
      * @return A pointer to the destination string, or NULLPTR if an error has been occurred.
      */
-    static char_t* strcpy(char_t* const dst, char_t const* src)
-<span style = "background-color:#dfd">    {
-        char_t* res( NULLPTR );
-        if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
-        {
-<span style = "background-color:#dfd">            char_t* d( dst - 1 );             ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
-            char_t const* s( src  - 1 );      ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
-            while( (*++d = *++s) != '\0' ) {} ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15, Rule 5-2-10 and Rule 6-2-1
-            res = dst;</span>
-            
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
-
+    static char_t* strcpy(char_t* const dst, char_t const* src);
 
     /**
      * @brief Concatenates two strings.
@@ -130,20 +77,7 @@ public:
      * @param src A character string to be appended.
      * @return A pointer to the destination string, or NULLPTR if an error has been occurred.
      */
-    static char_t* strcat(char_t* const dst, char_t const* src)
-<span style = "background-color:#dfd">    {
-        char_t* res( NULLPTR );
-        if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
-        {       
-<span style = "background-color:#dfd">            char_t* d( dst - 1 );             ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
-            while( *++d != '\0' ) {}          ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
-            d--;                              ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
-            char_t const* s( src - 1 );       ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15       
-            while( (*++d = *++s) != '\0' ) {} ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15, Rule 5-2-10 and Rule 6-2-1
-            res = dst;</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    static char_t* strcat(char_t* const dst, char_t const* src);
 
     /**
      * @brief Compares two strings.
@@ -155,24 +89,7 @@ public:
      *         a value greater than 0 if the first not match character of string 1 has greater value than in string 2;     
      *         or the minimum possible value if an error has been occurred.
      */
-    static int32_t strcmp(char_t const* str1, char_t const* str2)
-<span style = "background-color:#dfd">    {
-        int32_t res( static_cast&lt;int32_t&gt;( 0x80000000U ) );
-        if( (str1 != NULLPTR) &amp;&amp; (str2 != NULLPTR) )</span>
-        {        
-<span style = "background-color:#dfd">            while(true)</span>
-            {
-<span style = "background-color:#dfd">                int32_t ch1( static_cast&lt;int32_t&gt;(*str1++) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
-                int32_t ch2( static_cast&lt;int32_t&gt;(*str2++) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
-                res = ch1 - ch2;
-                if( (ch1 == 0) || (res != 0) )</span>
-                {
-<span style = "background-color:#dfd">                    break;</span>
-                }
-<span style = "background-color:#dfd">            }</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    static int32_t strcmp(char_t const* str1, char_t const* str2);
 
     /**
      * @brief Converts an integer number to a string.
@@ -198,90 +115,7 @@ public:
      * @return True if the conversion has been completed successfully.
      */
     template &lt;typename T&gt;
-    static bool_t itoa(T const val, char_t* str, Number::Base const base = Number::BASE_10)
-<span style = "background-color:#dfd">    {
-        const int32_t LENGTH( ( static_cast&lt;int32_t&gt;( sizeof(T) ) * 8) + 1 );
-        bool_t res( false );
-        if(str != NULLPTR)
-        {</span>
-            char_t temp[LENGTH];
-            bool_t isNegative;
-<span style = "background-color:#dfd">            int32_t index( LENGTH - 1 );
-            res = true;            
-            temp[index--] = '\0'; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-11 and Rule 5-2-10</span>
-            do
-            {
-                // Test for available base
-<span style = "background-color:#dfd">                switch(base)</span>
-                {
-                    case Number::BASE_2:
-                    case Number::BASE_8:
-                    case Number::BASE_16:
-                    {
-<span style = "background-color:#dfd">                        isNegative = false;
-                        break;</span>
-                    }
-                    case Number::BASE_10:
-                    {
-<span style = "background-color:#dfd">                        isNegative = ( !isPositive(val) ) ? true : false;
-                        break;</span>
-                    }
-                    default:
-                    {
-<span style = "background-color:#dfd">                        res = false;</span>
-                        break;
-                    }
-                }
-                // If the base is not available
-<span style = "background-color:#dfd">                if(res == false)</span>
-                {
-<span style = "background-color:#dfd">                    break;</span>
-                }
-                // Prepare absolute value
-<span style = "background-color:#dfd">                T module( isNegative ? (0 - val) : val );
-                if( !isPositive(module) )</span>
-                {
-<span style = "background-color:#dfd">                    res = false;
-                    break;</span>
-                }
-                // Do the conversion
-                // @todo Revise possibility to declare index of size_t underlying type.
-                //       But in the case index will always more than or equal zero.
-                //       Thus, algorithm shall be re-worked.
-<span style = "background-color:#dfd">                while(index &gt;= 0)</span>
-                {
-                    char_t ch;
-<span style = "background-color:#dfd">                    T digit( module % static_cast&lt;T&gt;(base) );
-                    if( (base == Number::BASE_16) &amp;&amp; (digit &gt; 9) )</span>
-                    {
-<span style = "background-color:#dfd">                        ch = 'a';
-                        digit -= 10;
-                    }</span>
-                    else
-                    {
-<span style = "background-color:#dfd">                        ch = '0';</span>
-                    }
-<span style = "background-color:#dfd">                    temp[index--] = static_cast&lt;char_t&gt;(digit + ch); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-9-2, Rule 5-0-11 and Rule 5-2-10
-                    module = module / static_cast&lt;T&gt;(base);
-                    if(module == 0)</span>
-                    {
-<span style = "background-color:#dfd">                        break;</span>
-                    }
-<span style = "background-color:#dfd">                }</span>
-                // Add minus
-<span style = "background-color:#dfd">                if( isNegative &amp;&amp; (index &gt;= 0) )</span>
-                {
-<span style = "background-color:#dfd">                    temp[index--] = '-'; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-11 and Rule 5-2-10</span>
-                }
-<span style = "background-color:#dfd">                res = true;</span>
-            }
-<span style = "background-color:#dfd">            while(false);</span>
-            // Copy the temp string to the destination string
-            // @todo Replace this with strncpy
-<span style = "background-color:#dfd">            strcpy(str, &amp;temp[++index]); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-10</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    static bool_t itoa(T const val, char_t* str, Number::Base const base = Number::BASE_10);
 
     /**
      * @brief Converts a string to an integer number.
@@ -291,79 +125,7 @@ public:
      * @return The resulting number, 0 if an error is occurred.
      */
     template &lt;typename T&gt;
-    static T atoi(char_t const* str, Number::Base const base = Number::BASE_10)
-<span style = "background-color:#dfd">    {
-        bool_t isBase( false );
-        switch(base)</span>
-        {
-            case Number::BASE_2:
-            case Number::BASE_8:
-            case Number::BASE_10:
-            case Number::BASE_16:
-            {
-<span style = "background-color:#dfd">                isBase = true;
-                break;</span>
-            }
-            default:
-            {
-<span style = "background-color:#dfd">                isBase = false;</span>
-                break;
-            }
-        }
-<span style = "background-color:#dfd">        T result( 0 );        
-        if( isBase )</span>
-        {
-<span style = "background-color:#dfd">            T const multiplier( static_cast&lt;T&gt;(base) );
-            int32_t index( 0 );
-            bool_t isNegative( false );</span>
-            // Look for whitespaces
-<span style = "background-color:#dfd">            while( isSpace(str[index]) )</span>
-            {
-<span style = "background-color:#dfd">                index++;
-            }</span>
-            // Test a character if the number is negative for decimal base
-<span style = "background-color:#dfd">            if(base == Number::BASE_10)</span>
-            {
-<span style = "background-color:#dfd">                if( str[index] == '-' )</span>
-                {
-<span style = "background-color:#dfd">                    isNegative = true;
-                    index++;
-                }
-                else if( str[index] == '+' )</span>
-                {
-<span style = "background-color:#dfd">                    isNegative = false;
-                    index++;
-                }</span>
-                else
-                {
-<span style = "background-color:#dfd">                    isNegative = false;</span>
-                }
-            }
-            // Do fast calculation for no hexadecimal base
-<span style = "background-color:#dfd">            if(base != Number::BASE_16)</span>
-            {
-<span style = "background-color:#dfd">                while( isDigit(str[index], base) )</span>
-                {
-<span style = "background-color:#dfd">                    result *= multiplier;
-                    result += static_cast&lt;T&gt;( str[index++] - '0' ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-10
-                }
-            }</span>
-            else
-            {
-                char_t subtrahend;
-                int32_t addend;
-<span style = "background-color:#dfd">                while( isDigit(str[index], base) )</span>
-                {
-<span style = "background-color:#dfd">                    detectMathOperands(str[index], subtrahend, addend);
-                    result *= static_cast&lt;T&gt;( base );
-                    result += static_cast&lt;T&gt;( str[index++] - subtrahend ); ///&lt; SCA MISRA-C++:2008 Justified Rule 4-5-3, Rule 5-0-11 and Rule 5-2-10
-                    result += static_cast&lt;T&gt;( addend );
-                }</span>
-            }
-<span style = "background-color:#dfd">            result = isNegative ? (0 - result) : result;</span>
-        }
-<span style = "background-color:#dfd">        return result;
-    }</span>
+    static T atoi(char_t const* str, Number::Base const base = Number::BASE_10);
 
 private:
 
@@ -378,10 +140,7 @@ private:
      *       Partial specialization of the template function for int64_t also doesn't help.
      */
     template &lt;typename T&gt;
-    static bool_t isPositive(volatile T value)
-<span style = "background-color:#dfd">    {
-        return ( (value &gt; 0) || (value == 0) ) ? true : false;
-    }</span>
+    static bool_t isPositive(volatile T value);
 
     /**
      * @brief Tests if a character is a whitespace character.
@@ -389,28 +148,7 @@ private:
      * @param character A character code.
      * @return True if the character is whitespace.
      */
-    static bool_t isSpace(char_t const character)
-<span style = "background-color:#dfd">    {
-        bool_t result( true );
-        switch(character)</span>
-        {
-            case ' ':
-            case '\t':
-            case '\n':
-            case '\v':
-            case '\f':
-            case '\r':
-            {
-<span style = "background-color:#dfd">                break;</span>
-            }
-            default:
-            {
-<span style = "background-color:#dfd">                result = false;</span>
-                break;
-            }
-        }
-<span style = "background-color:#dfd">        return result;
-    }</span>
+    static bool_t isSpace(char_t const character);
 
     /**
      * @brief Tests if a character is a decimal number.
@@ -419,39 +157,7 @@ private:
      * @param base      A numerical base used to parse the character.
      * @return True if the character is a decimal number.
      */
-    static bool_t isDigit(char_t const character, Number::Base const base = Number::BASE_10)
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        int32_t const ch( static_cast&lt;int32_t&gt;(character) );
-        switch(base)</span>
-        {
-            case Number::BASE_2:
-            {
-<span style = "background-color:#dfd">                res = ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x31) ) ? true : false;
-                break;</span>
-            }
-            case Number::BASE_8:
-            {
-<span style = "background-color:#dfd">                res = ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x37) ) ? true : false;
-                break;</span>
-            }
-            case Number::BASE_16:
-            {
-<span style = "background-color:#dfd">                res = ( </span>
-                    ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x39) )
-                 || ( (ch &gt;= 0x41) &amp;&amp; (ch &lt;= 0x46) )
-                 || ( (ch &gt;= 0x61) &amp;&amp; (ch &lt;= 0x66) )
-                ) ? true : false;
-<span style = "background-color:#dfd">                break;</span>
-            }
-            case Number::BASE_10:
-            {
-<span style = "background-color:#dfd">                res = ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x39) ) ? true : false;</span>
-                break;
-            }
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    static bool_t isDigit(char_t const character, Number::Base const base = Number::BASE_10);
 
     /**
      * @brief Detects subtrahend and addend for hex numbers.
@@ -460,29 +166,348 @@ private:
      * @param subtrahend  A resulting subtrahend.
      * @param addend      A resulting addend.
      */
-    static void detectMathOperands(char_t const character, char_t&amp; subtrahend, int32_t&amp; addend)
-<span style = "background-color:#dfd">    {
-        int32_t const ch( static_cast&lt;int32_t&gt;(character) );</span>
-        // Test for uppercase letter
-<span style = "background-color:#dfd">        if( (ch &gt;= 0x41) &amp;&amp; (ch &lt;= 0x46) )</span>
+    static void detectMathOperands(char_t const character, char_t&amp; subtrahend, int32_t&amp; addend);
+    
+};
+
+inline void* Memory::memcpy(void* const dst, void const* const src, size_t len)
+<span style = "background-color:#dfd">{
+    void* res( NULLPTR );
+    if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        ucell_t const* sp( static_cast&lt;ucell_t const*&gt;(src) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+        ucell_t* dp( static_cast&lt;ucell_t*&gt;(dst) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+        while(len-- != 0U) ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-10</span>
         {
-<span style = "background-color:#dfd">            subtrahend = 'A';
-            addend = 10;
+<span style = "background-color:#dfd">            *dp++ = *sp++; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
+        }
+        res = dst;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+inline void* Memory::memset(void* const dst, int32_t const val, size_t len)
+<span style = "background-color:#dfd">{
+    void* res( NULLPTR );
+    if(dst != NULLPTR)</span>
+    {
+<span style = "background-color:#dfd">        ucell_t* dp( static_cast&lt;ucell_t*&gt;(dst) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-8
+        ucell_t const uc( static_cast&lt;ucell_t&gt;(val) );
+        while(len-- != 0U) ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-10</span>
+        {
+<span style = "background-color:#dfd">            *dp++ = uc; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
+        }
+        res = dst;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+inline size_t Memory::strlen(char_t const* str)
+<span style = "background-color:#dfd">{
+    size_t len( 0U );        
+    if(str != NULLPTR)</span>
+    {
+<span style = "background-color:#dfd">        while( *str != '\0' )</span>
+        {
+<span style = "background-color:#dfd">            len++;
+            str++; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
         }</span>
-        // Test for lowercase letter
-<span style = "background-color:#dfd">        else if( (ch &gt;= 0x61) &amp;&amp; (ch &lt;= 0x66) )</span>
+    }
+<span style = "background-color:#dfd">    return len;
+}</span>
+
+inline char_t* Memory::strcpy(char_t* const dst, char_t const* src)
+<span style = "background-color:#dfd">{
+    char_t* res( NULLPTR );
+    if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
+    {
+<span style = "background-color:#dfd">        char_t* d( dst - 1 );             ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
+        char_t const* s( src  - 1 );      ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
+        while( (*++d = *++s) != '\0' ) {} ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15, Rule 5-2-10 and Rule 6-2-1
+        res = dst;</span>
+        
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+inline char_t* Memory::strcat(char_t* const dst, char_t const* src)
+<span style = "background-color:#dfd">{
+    char_t* res( NULLPTR );
+    if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
+    {       
+<span style = "background-color:#dfd">        char_t* d( dst - 1 );             ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
+        while( *++d != '\0' ) {}          ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
+        d--;                              ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
+        char_t const* s( src - 1 );       ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15       
+        while( (*++d = *++s) != '\0' ) {} ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15, Rule 5-2-10 and Rule 6-2-1
+        res = dst;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+inline int32_t Memory::strcmp(char_t const* str1, char_t const* str2)
+<span style = "background-color:#dfd">{
+    int32_t res( static_cast&lt;int32_t&gt;( 0x80000000U ) );
+    if( (str1 != NULLPTR) &amp;&amp; (str2 != NULLPTR) )</span>
+    {        
+<span style = "background-color:#dfd">        while(true)</span>
         {
-<span style = "background-color:#dfd">            subtrahend = 'a';
-            addend = 10;
+<span style = "background-color:#dfd">            int32_t ch1( static_cast&lt;int32_t&gt;(*str1++) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
+            int32_t ch2( static_cast&lt;int32_t&gt;(*str2++) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
+            res = ch1 - ch2;
+            if( (ch1 == 0) || (res != 0) )</span>
+            {
+<span style = "background-color:#dfd">                break;</span>
+            }
+<span style = "background-color:#dfd">        }</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T&gt;
+bool_t Memory::itoa(T const val, char_t* str, Number::Base const base)
+<span style = "background-color:#dfd">{
+    const int32_t LENGTH( ( static_cast&lt;int32_t&gt;( sizeof(T) ) * 8) + 1 );
+    bool_t res( false );
+    if(str != NULLPTR)
+    {</span>
+        char_t temp[LENGTH];
+        bool_t isNegative;
+<span style = "background-color:#dfd">        int32_t index( LENGTH - 1 );
+        res = true;            
+        temp[index--] = '\0'; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-11 and Rule 5-2-10</span>
+        do
+        {
+            // Test for available base
+<span style = "background-color:#dfd">            switch(base)</span>
+            {
+                case Number::BASE_2:
+                case Number::BASE_8:
+                case Number::BASE_16:
+                {
+<span style = "background-color:#dfd">                    isNegative = false;
+                    break;</span>
+                }
+                case Number::BASE_10:
+                {
+<span style = "background-color:#dfd">                    isNegative = ( !isPositive(val) ) ? true : false;
+                    break;</span>
+                }
+                default:
+                {
+<span style = "background-color:#dfd">                    res = false;</span>
+                    break;
+                }
+            }
+            // If the base is not available
+<span style = "background-color:#dfd">            if(res == false)</span>
+            {
+<span style = "background-color:#dfd">                break;</span>
+            }
+            // Prepare absolute value
+<span style = "background-color:#dfd">            T module( isNegative ? (0 - val) : val );
+            if( !isPositive(module) )</span>
+            {
+<span style = "background-color:#dfd">                res = false;
+                break;</span>
+            }
+            // Do the conversion
+            // @todo Revise possibility to declare index of size_t underlying type.
+            //       But in the case index will always more than or equal zero.
+            //       Thus, algorithm shall be re-worked.
+<span style = "background-color:#dfd">            while(index &gt;= 0)</span>
+            {
+                char_t ch;
+<span style = "background-color:#dfd">                T digit( module % static_cast&lt;T&gt;(base) );
+                if( (base == Number::BASE_16) &amp;&amp; (digit &gt; 9) )</span>
+                {
+<span style = "background-color:#dfd">                    ch = 'a';
+                    digit -= 10;
+                }</span>
+                else
+                {
+<span style = "background-color:#dfd">                    ch = '0';</span>
+                }
+<span style = "background-color:#dfd">                temp[index--] = static_cast&lt;char_t&gt;(digit + ch); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-9-2, Rule 5-0-11 and Rule 5-2-10
+                module = module / static_cast&lt;T&gt;(base);
+                if(module == 0)</span>
+                {
+<span style = "background-color:#dfd">                    break;</span>
+                }
+<span style = "background-color:#dfd">            }</span>
+            // Add minus
+<span style = "background-color:#dfd">            if( isNegative &amp;&amp; (index &gt;= 0) )</span>
+            {
+<span style = "background-color:#dfd">                temp[index--] = '-'; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-11 and Rule 5-2-10</span>
+            }
+<span style = "background-color:#dfd">            res = true;
+        } while(false);</span>
+        // Copy the temp string to the destination string
+        // @todo Replace this with strncpy
+<span style = "background-color:#dfd">        strcpy(str, &amp;temp[++index]); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-10</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T&gt;
+T Memory::atoi(char_t const* str, Number::Base const base)
+<span style = "background-color:#dfd">{
+    bool_t isBase( false );
+    switch(base)</span>
+    {
+        case Number::BASE_2:
+        case Number::BASE_8:
+        case Number::BASE_10:
+        case Number::BASE_16:
+        {
+<span style = "background-color:#dfd">            isBase = true;
+            break;</span>
+        }
+        default:
+        {
+<span style = "background-color:#dfd">            isBase = false;</span>
+            break;
+        }
+    }
+<span style = "background-color:#dfd">    T result( 0 );        
+    if( isBase )</span>
+    {
+<span style = "background-color:#dfd">        T const multiplier( static_cast&lt;T&gt;(base) );
+        int32_t index( 0 );
+        bool_t isNegative( false );</span>
+        // Look for whitespaces
+<span style = "background-color:#dfd">        while( isSpace(str[index]) )</span>
+        {
+<span style = "background-color:#dfd">            index++;
+        }</span>
+        // Test a character if the number is negative for decimal base
+<span style = "background-color:#dfd">        if(base == Number::BASE_10)</span>
+        {
+<span style = "background-color:#dfd">            if( str[index] == '-' )</span>
+            {
+<span style = "background-color:#dfd">                isNegative = true;
+                index++;
+            }
+            else if( str[index] == '+' )</span>
+            {
+<span style = "background-color:#dfd">                isNegative = false;
+                index++;
+            }</span>
+            else
+            {
+<span style = "background-color:#dfd">                isNegative = false;</span>
+            }
+        }
+        // Do fast calculation for no hexadecimal base
+<span style = "background-color:#dfd">        if(base != Number::BASE_16)</span>
+        {
+<span style = "background-color:#dfd">            while( isDigit(str[index], base) )</span>
+            {
+<span style = "background-color:#dfd">                result *= multiplier;
+                result += static_cast&lt;T&gt;( str[index++] - '0' ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-2-10
+            }
         }</span>
         else
         {
-<span style = "background-color:#dfd">            subtrahend = '0';
-            addend = 0;</span>
+            char_t subtrahend;
+            int32_t addend;
+<span style = "background-color:#dfd">            while( isDigit(str[index], base) )</span>
+            {
+<span style = "background-color:#dfd">                detectMathOperands(str[index], subtrahend, addend);
+                result *= static_cast&lt;T&gt;( base );
+                result += static_cast&lt;T&gt;( str[index++] - subtrahend ); ///&lt; SCA MISRA-C++:2008 Justified Rule 4-5-3, Rule 5-0-11 and Rule 5-2-10
+                result += static_cast&lt;T&gt;( addend );
+            }</span>
         }
-<span style = "background-color:#dfd">    }</span>
+<span style = "background-color:#dfd">        result = isNegative ? (0 - result) : result;</span>
+    }
+<span style = "background-color:#dfd">    return result;
+}</span>
 
-};
+template &lt;typename T&gt;
+bool_t Memory::isPositive(volatile T value)
+<span style = "background-color:#dfd">{
+    return ( (value &gt; 0) || (value == 0) ) ? true : false;
+}</span>
+
+inline bool_t Memory::isSpace(char_t const character)
+<span style = "background-color:#dfd">{
+    bool_t result( true );
+    switch(character)</span>
+    {
+        case ' ':
+        case '\t':
+        case '\n':
+        case '\v':
+        case '\f':
+        case '\r':
+        {
+<span style = "background-color:#dfd">            break;</span>
+        }
+        default:
+        {
+<span style = "background-color:#dfd">            result = false;</span>
+            break;
+        }
+    }
+<span style = "background-color:#dfd">    return result;
+}</span>
+
+inline bool_t Memory::isDigit(char_t const character, Number::Base const base)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    int32_t const ch( static_cast&lt;int32_t&gt;(character) );
+    switch(base)</span>
+    {
+        case Number::BASE_2:
+        {
+<span style = "background-color:#dfd">            res = ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x31) ) ? true : false;
+            break;</span>
+        }
+        case Number::BASE_8:
+        {
+<span style = "background-color:#dfd">            res = ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x37) ) ? true : false;
+            break;</span>
+        }
+        case Number::BASE_16:
+        {
+<span style = "background-color:#dfd">            res = ( </span>
+                ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x39) )
+             || ( (ch &gt;= 0x41) &amp;&amp; (ch &lt;= 0x46) )
+             || ( (ch &gt;= 0x61) &amp;&amp; (ch &lt;= 0x66) )
+            ) ? true : false;
+<span style = "background-color:#dfd">            break;</span>
+        }
+        case Number::BASE_10:
+        {
+<span style = "background-color:#dfd">            res = ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x39) ) ? true : false;</span>
+            break;
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+inline void Memory::detectMathOperands(char_t const character, char_t&amp; subtrahend, int32_t&amp; addend)
+<span style = "background-color:#dfd">{
+    int32_t const ch( static_cast&lt;int32_t&gt;(character) );</span>
+    // Test for uppercase letter
+<span style = "background-color:#dfd">    if( (ch &gt;= 0x41) &amp;&amp; (ch &lt;= 0x46) )</span>
+    {
+<span style = "background-color:#dfd">        subtrahend = 'A';
+        addend = 10;
+    }</span>
+    // Test for lowercase letter
+<span style = "background-color:#dfd">    else if( (ch &gt;= 0x61) &amp;&amp; (ch &lt;= 0x66) )</span>
+    {
+<span style = "background-color:#dfd">        subtrahend = 'a';
+        addend = 10;
+    }</span>
+    else
+    {
+<span style = "background-color:#dfd">        subtrahend = '0';
+        addend = 0;</span>
+    }
+<span style = "background-color:#dfd">}</span>
 
 } // namespace lib
 } // namespace eoos

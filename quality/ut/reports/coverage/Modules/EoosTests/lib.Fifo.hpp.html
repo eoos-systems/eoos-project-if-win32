@@ -1,0 +1,427 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>lib.Fifo.hpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+/**
+ * @file      lib.Fifo.hpp
+ * @author    Sergey Baigudin, sergey@baigudin.software
+ * @copyright 2024, Sergey Baigudin, Baigudin Software
+ */
+#ifndef LIB_FIFO_HPP_
+#define LIB_FIFO_HPP_
+
+#include "lib.NonCopyable.hpp"
+#include "api.Queue.hpp"
+
+namespace eoos
+{
+namespace lib
+{
+    
+/**
+ * @class Fifo&lt;T,L,A&gt;
+ * @brief Abstract list class.
+ *
+ * @tparam T Data type of container element.
+ * @tparam L Maximum number of FIFO elements. 
+ * @tparam A Heap memory allocator class.
+ */
+template &lt;typename T, int32_t L, class A = Allocator&gt;
+class Fifo : public NonCopyable&lt;A&gt;, public api::Queue&lt;T&gt; {
+
+    typedef NonCopyable&lt;A&gt; Parent;
+
+public:
+
+    /**
+     * @brief Constructor.
+     *
+     * [Default mode]
+     * FIFO is not locked on overrun. Once the FIFO is full the next incoming
+     * message will overwrite the previous one.          
+     */
+    Fifo();
+
+    /**
+     * @brief Constructor.
+     *
+     * [Default mode]
+     * FIFO is not locked on overrun. Once the FIFO is full the next incoming
+     * message will overwrite the previous one.
+     *
+     * FIFO is locked against overrun. Once the FIFO is full the next incoming
+     * message will be discarded.     
+     *
+     * @param isLocked FIFO locked mode flag.
+     */    
+    Fifo(bool_t isLocked);
+    
+    /**
+     * @brief Constructor.
+     *
+     * [Default mode]
+     * FIFO is not locked on overrun. Once the FIFO is full the next incoming
+     * message will overwrite the previous one.
+     *
+     * FIFO is locked against overrun. Once the FIFO is full the next incoming
+     * message will be discarded.     
+     *
+     * @param isLocked FIFO locked mode flag.
+     * @param illegal An illegal value.     
+     */    
+    Fifo(bool_t isLocked, T const&amp; illegal);
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~Fifo();
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    virtual bool_t isConstructed() const;
+
+    /**
+     * @copydoc eoos::api::Queue::add(T const&amp;)
+     */
+    virtual bool_t add(T const&amp; element);
+
+    /**
+     * @copydoc eoos::api::Queue::remove()
+     */
+    virtual bool_t remove();
+
+    /**
+     * @copydoc eoos::api::Queue::peek(T const&amp;)
+     */
+    virtual T&amp; peek();
+
+    /**
+     * @copydoc eoos::api::Collection::getLength()
+     */
+    virtual size_t getLength() const;
+
+    /**
+     * @copydoc eoos::api::Collection::isEmpty()
+     */
+    virtual bool_t isEmpty() const;
+    
+    /**
+     * @copydoc eoos::api::IllegalValue::getIllegal()
+     */
+    virtual T const&amp; getIllegal() const;
+
+    /**
+     * @copydoc eoos::api::IllegalValue::setIllegal(T const&amp;)
+     */
+    virtual void setIllegal(T const&amp; value);
+
+    /**
+     * @copydoc eoos::api::IllegalValue::isIllegal(T const&amp;)
+     */
+    virtual bool_t isIllegal(T const&amp; value) const;    
+    
+    /**
+     * @brief Tests if this FIFO is full.
+     *
+     * @return True if this FIFO is full.
+     */
+    bool_t isFull() const;
+    
+    /**
+     * @brief Tests if this FIFO is overrun.
+     *
+     * @return True if this FIFO is overrun.
+     */
+    bool_t isOverrun() const;
+
+    /**
+     * @brief Tests if this FIFO is locked.
+     *
+     * @return True if this FIFO is locked.
+     */
+    bool_t isLocked() const;
+
+protected:
+
+    using Parent::setConstructed;    
+
+private:
+    
+    /**
+     * @brief Constructs this object.
+     *
+     * @return true if object has been constructed successfully.
+     */
+    bool_t construct();
+
+    /**
+     * @brief FIFO elements.
+     */
+    T elements_[L];
+
+    /**
+     * @brief Illegal value.
+     */    
+    T illegal_;
+        
+    /**
+     * @brief FIFO locked mode.
+     */    
+    bool_t isLocked_;
+
+    /**
+     * @brief Head element index.
+     */    
+    int32_t head_;
+    
+    /**
+     * @brief Tail element index is fist free.
+     */    
+    int32_t tail_;
+
+    /**
+     * @brief FIFO message pending.
+     *
+     * Indicate how many messages are pending in the FIFO.
+     */    
+    int32_t length_;
+
+    /**
+     * @brief FIFO overrun.
+     *
+     * Set when a new message has been added while the FIFO was full.
+     */    
+    bool_t isOverrun_;
+
+    /**
+     * @brief FIFO full.
+     * 
+     * Set when L messages are stored in the FIFO.
+     */    
+    bool_t isFull_;
+};
+
+template &lt;typename T, int32_t L, class A&gt;
+Fifo&lt;T,L,A&gt;::Fifo()
+<span style = "background-color:#dfd">    : lib::NonCopyable&lt;A&gt;()
+    , api::Queue&lt;T&gt;()
+    , illegal_()
+    , isLocked_( false )
+    , head_( 0 )
+    , tail_( 0 )
+    , length_( 0 )
+    , isOverrun_( false )
+    , isFull_( false ){
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );        
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+Fifo&lt;T,L,A&gt;::Fifo(bool_t isLocked)
+<span style = "background-color:#dfd">    : lib::NonCopyable&lt;A&gt;()
+    , api::Queue&lt;T&gt;()
+    , illegal_()
+    , isLocked_( isLocked )
+    , head_( 0 )
+    , tail_( 0 )
+    , length_( 0 )
+    , isOverrun_( false )
+    , isFull_( false ){
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );        
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+Fifo&lt;T,L,A&gt;::Fifo(bool_t isLocked, T const&amp; illegal)
+<span style = "background-color:#dfd">    : lib::NonCopyable&lt;A&gt;()
+    , api::Queue&lt;T&gt;()
+    , illegal_( illegal )
+    , isLocked_( isLocked )
+    , head_( 0 )
+    , tail_( 0 )
+    , length_( 0 )
+    , isOverrun_( false )
+    , isFull_( false ){
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );        
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+Fifo&lt;T,L,A&gt;::~Fifo()
+<span style = "background-color:#dfd">{
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::isConstructed() const
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::add(T const&amp; element)
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        if( !isFull_ )</span>
+        {
+<span style = "background-color:#dfd">            elements_[tail_] = element;
+            tail_ += 1;
+            if( tail_ == L )</span>
+            {
+<span style = "background-color:#dfd">                tail_ = 0;</span>
+            }
+<span style = "background-color:#dfd">            if( tail_ == head_ )</span>
+            {
+<span style = "background-color:#dfd">                isFull_ = true; </span>
+            }
+<span style = "background-color:#dfd">            length_ += 1;
+            res = true;
+        }</span>
+        else
+        {
+<span style = "background-color:#dfd">            if( !isLocked_ )</span>
+            {
+<span style = "background-color:#dfd">                int32_t last = tail_ - 1;
+                if( last &lt; 0 )</span>
+                {
+<span style = "background-color:#dfd">                    last = L - 1;</span>
+                }
+<span style = "background-color:#dfd">                elements_[last] = element;
+                res = true;                </span>
+            }
+<span style = "background-color:#dfd">            isOverrun_ = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::remove()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        if( length_ != 0 )</span>
+        {
+<span style = "background-color:#dfd">            head_ += 1;
+            if( head_ == L )</span>
+            {
+<span style = "background-color:#dfd">                head_ = 0;</span>
+            }
+<span style = "background-color:#dfd">            isFull_ = false;
+            isOverrun_ = false;            
+            length_ -= 1;
+            res = true;</span>
+        }
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+T&amp; Fifo&lt;T,L,A&gt;::peek()
+<span style = "background-color:#dfd">{
+    T* element = &amp;illegal_;
+    if( isConstructed() ) </span>
+    {
+<span style = "background-color:#dfd">        if( length_ != 0 )</span>
+        {
+<span style = "background-color:#dfd">            element = &amp;elements_[head_];</span>
+        }
+    }
+<span style = "background-color:#dfd">    return *element;
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+size_t Fifo&lt;T,L,A&gt;::getLength() const
+<span style = "background-color:#dfd">{
+    return static_cast&lt;size_t&gt;(length_);
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::isEmpty() const
+<span style = "background-color:#dfd">{
+    return (length_ == 0);
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::isFull() const
+<span style = "background-color:#dfd">{
+    return isFull_;
+}</span>
+    
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::isOverrun() const
+<span style = "background-color:#dfd">{
+    return isOverrun_;
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::isLocked() const
+<span style = "background-color:#dfd">{
+    return isLocked_;
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+T const&amp; Fifo&lt;T,L,A&gt;::getIllegal() const
+<span style = "background-color:#dfd">{
+    return illegal_;
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+void Fifo&lt;T,L,A&gt;::setIllegal(T const&amp; value)
+<span style = "background-color:#dfd">{
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        illegal_ = value;</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::isIllegal(T const&amp; value) const
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = illegal_ == value;</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
+
+template &lt;typename T, int32_t L, class A&gt;
+bool_t Fifo&lt;T,L,A&gt;::construct()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = true;</span>
+    }
+<span style = "background-color:#dfd">    return res;    
+}</span>
+
+} // namespace lib
+} // namespace eoos
+#endif // LIB_FIFO_HPP_</pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

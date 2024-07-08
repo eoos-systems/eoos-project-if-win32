@@ -12,7 +12,7 @@
 /**
  * @file      lib.Align.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2016-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2016-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_ALIGN_HPP_
 #define LIB_ALIGN_HPP_
@@ -44,9 +44,7 @@ public:
     /**
      * @brief Constructor.
      */
-<span style = "background-color:#dfd">    Align() </span>
-        : ObjectAllocator&lt;A&gt;() {
-<span style = "background-color:#dfd">    }</span>
+    Align();
 
     /**
      * @brief Constructor.
@@ -56,25 +54,19 @@ public:
      *
      * @param value A data value.
      */
-<span style = "background-color:#dfd">    Align(T const&amp; value) </span>
-        : ObjectAllocator&lt;A&gt;() {
-<span style = "background-color:#dfd">        assignment(value);
-    }</span>
+    Align(T const&amp; value);
 
     /**
      * @brief Copy constructor.
      *
      * @param obj A source object.
      */
-<span style = "background-color:#dfd">    Align(Align const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justified Rule 12-8-1</span>
-        : ObjectAllocator&lt;A&gt;(obj) {
-<span style = "background-color:#dfd">        copy(obj);
-    }</span>
+    Align(Align const&amp; obj);
     
     /**
      * @brief Destructor.
      */
-<span style = "background-color:#dfd">    ~Align() {}    </span>
+    ~Align();
 
     /**
      * @brief Assignment operator.
@@ -85,11 +77,7 @@ public:
      * @param value A source data value.
      * @return Reference to this object.
      */
-    Align&amp; operator=(T const&amp; value)
-<span style = "background-color:#dfd">    {
-        assignment(value);
-        return *this;
-    }</span>
+    Align&amp; operator=(T const&amp; value);
 
     /**
      * @brief Assignment operator.
@@ -97,11 +85,7 @@ public:
      * @param obj A source object.
      * @return Reference to this object.
      */
-    Align&amp; operator=(Align const&amp; obj)
-<span style = "background-color:#dfd">    {
-        copy(obj);
-        return *this;
-    }</span>
+    Align&amp; operator=(Align const&amp; obj);
 
     /**
      * @brief Pre-increment operator.
@@ -109,13 +93,7 @@ public:
      * @param obj A source object.
      * @return Reference to this object.
      */
-    Align&amp; operator++()
-<span style = "background-color:#dfd">    {
-        T val( typecast() );
-        val += 1;
-        assignment(val);
-        return *this;
-    }</span>
+    Align&amp; operator++();
 
     /**
      * @brief Pre-decrement operator.
@@ -123,49 +101,28 @@ public:
      * @param obj A source object.
      * @return Reference to this object.
      */
-    Align&amp; operator--()
-<span style = "background-color:#dfd">    {
-        T val( typecast() );
-        val -= 1;
-        assignment(val);
-        return *this;
-    }</span>
+    Align&amp; operator--();
 
     /**
      * @brief Post-increment operator.
      *
      * @return This object.
      */
-    Align operator++(int) ///&lt; SCA MISRA-C++:2008 Justified Rule 3-9-2
-<span style = "background-color:#dfd">    {
-        T val( typecast() );
-        val += 1;
-        assignment(val);
-        return *this;
-    }</span>
+    Align operator++(int);
 
     /**
      * @brief Post-decrement operator.
      *
      * @return This object.
      */
-    Align operator--(int) ///&lt; SCA MISRA-C++:2008 Justified Rule 3-9-2
-<span style = "background-color:#dfd">    {
-        T val( typecast() );
-        val -= 1;
-        assignment(val);
-        return *this;
-    }</span>
+    Align operator--(int);
 
     /**
      * @brief Casts to the template data type.
      *
      * @return A data value.
      */
-    operator T() const
-<span style = "background-color:#dfd">    {
-        return typecast();
-    }</span>
+    operator T() const;
 
 private:
 
@@ -175,11 +132,7 @@ private:
      * @param val A source value.
      * @return True if this object value equals to a passed value.
      */
-    bool_t equal(T const&amp; value) const
-    {
-        Align&lt;T,S,A&gt; obj(value);
-        return equal(obj);
-    }
+    bool_t equal(T const&amp; value) const;
 
     /**
      * @brief Compares an object of this class type with this class.
@@ -187,71 +140,37 @@ private:
      * @param obj A source object.
      * @return True if this object value equals to a passed object value.
      */
-    bool_t equal(Align const&amp; obj) const
-<span style = "background-color:#dfd">    {
-        bool_t res( true );
-        for(size_t i(0U); i&lt;S; i++)</span>
-        {
-<span style = "background-color:#dfd">            if( val_[i] != obj.val_[i] )</span>
-            {
-<span style = "background-color:#dfd">                res = false;
-                break;</span>
-            }
-<span style = "background-color:#dfd">        }
-        return res;
-    }</span>
+    bool_t equal(Align const&amp; obj) const;
 
     /**
      * @brief Assigns given value to self data.
      *
      * @param value Source data value.
      */
-    void assignment(T const&amp; value) ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
-<span style = "background-color:#dfd">    {
-        for(size_t i(0U); i&lt;S; i++)</span>
-        {
-<span style = "background-color:#dfd">            T const v( value &gt;&gt; (8U * i) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-21
-            val_[i] = static_cast&lt;ucell_t&gt;(v);
-        }
-    }</span>
+    void assignment(T const&amp; value);
 
     /**
      * @brief Copies given object to self data.
      *
      * @param obj Reference to source object.
      */
-    void copy(Align const&amp; obj) ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
-<span style = "background-color:#dfd">    {
-        for(size_t i(0U); i&lt;S; i++)</span>
-        {
-<span style = "background-color:#dfd">            val_[i] = obj.val_[i];
-        }
-    }</span>
+    void copy(Align const&amp; obj);
 
     /**
      * @brief Returns conversed data to type of aligning data.
      *
      * @return Conversed data.
      */
-    T typecast() const
-<span style = "background-color:#dfd">    {
-        int32_t const max( static_cast&lt;int32_t&gt;(S) - 1 );
-        T r( static_cast&lt;T&gt;(0) );
-        for(int32_t i(max); i&gt;=0; i--)</span>
-        {
-<span style = "background-color:#dfd">            r = r &lt;&lt; 8U;                     ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-21
-            r = r | static_cast&lt;T&gt;(val_[i]); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-21
-        }
-        return r;
-    }</span>
+    T typecast() const;
 
     /**
      * @brief Array of data bytes.
      */
     ucell_t val_[S];
-
+    
     template &lt;typename T0, size_t S0, class A0&gt; friend bool_t operator==(Align&lt;T0,S0,A0&gt; const&amp;, Align&lt;T0,S0,A0&gt; const&amp;);
     template &lt;typename T0, size_t S0, class A0&gt; friend bool_t operator!=(Align&lt;T0,S0,A0&gt; const&amp;, Align&lt;T0,S0,A0&gt; const&amp;);
+
 };
 
 /**
@@ -260,7 +179,7 @@ private:
  * @param obj1 Reference to object.
  * @param obj2 Reference to object.
  * @return True if objects are equal.
- */
+ */ 
 template &lt;typename T, size_t S, class A&gt;
 inline bool_t operator==(Align&lt;T,S,A&gt; const&amp; obj1, Align&lt;T,S,A&gt; const&amp; obj2)
 <span style = "background-color:#dfd">{
@@ -274,12 +193,144 @@ inline bool_t operator==(Align&lt;T,S,A&gt; const&amp; obj1, Align&lt;T,S,A&gt; 
  * @param obj1 Reference to object.
  * @param obj2 Reference to object.
  * @return True if objects are not equal.
- */
+ */    
 template &lt;typename T, size_t S, class A&gt;
 inline bool_t operator!=(Align&lt;T,S,A&gt; const&amp; obj1, Align&lt;T,S,A&gt; const&amp; obj2)
 <span style = "background-color:#dfd">{
     bool_t const res( obj1.equal(obj2) );
     return !res;
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;::Align() 
+<span style = "background-color:#dfd">    : ObjectAllocator&lt;A&gt;() {
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;::Align(T const&amp; value) 
+<span style = "background-color:#dfd">    : ObjectAllocator&lt;A&gt;() {
+    assignment(value);
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;::Align(Align const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justified Rule 12-8-1
+<span style = "background-color:#dfd">    : ObjectAllocator&lt;A&gt;(obj) {
+    copy(obj);
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;::~Align()
+<span style = "background-color:#dfd">{
+}    </span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;&amp; Align&lt;T,S,A&gt;::operator=(T const&amp; value)
+<span style = "background-color:#dfd">{
+    assignment(value);
+    return *this;
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;&amp; Align&lt;T,S,A&gt;::operator=(Align const&amp; obj)
+<span style = "background-color:#dfd">{
+    copy(obj);
+    return *this;
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;&amp; Align&lt;T,S,A&gt;::operator++()
+<span style = "background-color:#dfd">{
+    T val( typecast() );
+    val += 1;
+    assignment(val);
+    return *this;
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;&amp; Align&lt;T,S,A&gt;::operator--()
+<span style = "background-color:#dfd">{
+    T val( typecast() );
+    val -= 1;
+    assignment(val);
+    return *this;
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt; Align&lt;T,S,A&gt;::operator++(int) ///&lt; SCA MISRA-C++:2008 Justified Rule 3-9-2
+<span style = "background-color:#dfd">{
+    T val( typecast() );
+    val += 1;
+    assignment(val);
+    return *this;
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt; Align&lt;T,S,A&gt;::operator--(int) ///&lt; SCA MISRA-C++:2008 Justified Rule 3-9-2
+<span style = "background-color:#dfd">{
+    T val( typecast() );
+    val -= 1;
+    assignment(val);
+    return *this;
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+Align&lt;T,S,A&gt;::operator T() const
+<span style = "background-color:#dfd">{
+    return typecast();
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+bool_t Align&lt;T,S,A&gt;::equal(T const&amp; value) const
+{
+    Align&lt;T,S,A&gt; obj(value);
+    return equal(obj);
+}
+
+template &lt;typename T, size_t S, class A&gt;
+bool_t Align&lt;T,S,A&gt;::equal(Align const&amp; obj) const
+<span style = "background-color:#dfd">{
+    bool_t res( true );
+    for(size_t i(0U); i&lt;S; i++)</span>
+    {
+<span style = "background-color:#dfd">        if( val_[i] != obj.val_[i] )</span>
+        {
+<span style = "background-color:#dfd">            res = false;
+            break;</span>
+        }
+<span style = "background-color:#dfd">    }
+    return res;
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+void Align&lt;T,S,A&gt;::assignment(T const&amp; value) ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
+<span style = "background-color:#dfd">{
+    for(size_t i(0U); i&lt;S; i++)</span>
+    {
+<span style = "background-color:#dfd">        T const v( value &gt;&gt; (8U * i) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-21
+        val_[i] = static_cast&lt;ucell_t&gt;(v);
+    }
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+void Align&lt;T,S,A&gt;::copy(Align const&amp; obj) ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
+<span style = "background-color:#dfd">{
+    for(size_t i(0U); i&lt;S; i++)</span>
+    {
+<span style = "background-color:#dfd">        val_[i] = obj.val_[i];
+    }
+}</span>
+
+template &lt;typename T, size_t S, class A&gt;
+T Align&lt;T,S,A&gt;::typecast() const
+<span style = "background-color:#dfd">{
+    int32_t const maximum( static_cast&lt;int32_t&gt;(S) - 1 );
+    T r( static_cast&lt;T&gt;(0) );
+    for(int32_t i(maximum); i&gt;=0; i--)</span>
+    {
+<span style = "background-color:#dfd">        r = r &lt;&lt; 8U;                     ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-21
+        r = r | static_cast&lt;T&gt;(val_[i]); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-21
+    }
+    return r;
 }</span>
 
 } // namespace lib

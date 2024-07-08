@@ -12,7 +12,7 @@
 /**
  * @file      ObjectAllocator.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2021-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2021-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_OBJECTALLOCATOR_HPP_
 #define LIB_OBJECTALLOCATOR_HPP_
@@ -42,20 +42,14 @@ public:
      * @param size A number of bytes to allocate.
      * @return Allocated memory address or a null pointer.
      */
-    static void* operator new(size_t const size) EOOS_KEYWORD_NOEXCEPT 
-<span style = "background-color:#dfd">    {
-        return A::allocate(size);
-    }</span>
+    static void* operator new(size_t const size) EOOS_KEYWORD_NOEXCEPT;
 
     /**
      * @brief Operator delete.
      *
      * @param ptr An address of allocated memory block or a null pointer.
      */
-    static void operator delete(void* const ptr)
-<span style = "background-color:#dfd">    {
-        A::free(ptr);
-    }</span>
+    static void operator delete(void* const ptr);
 
     /**
      * @brief Operator new.
@@ -63,17 +57,12 @@ public:
      * @param ptr A pointer to reserved memory area.
      * @return The given pointer.
      */
-    static void* operator new(size_t, void* const ptr) EOOS_KEYWORD_NOEXCEPT
-<span style = "background-color:#dfd">    {
-        return ptr;
-    }</span>
+    static void* operator new(size_t, void* const ptr) EOOS_KEYWORD_NOEXCEPT;
     
     /**
      * @brief Operator delete.
      */
-    static void operator delete(void*, void*)
-<span style = "background-color:#dfd">    {   ///&lt; UT Justified Branch: Language dependency
-    }</span>
+    static void operator delete(void*, void*);
     
 protected:
 
@@ -82,11 +71,37 @@ protected:
      *
      * @note It's prohibited to cast to this class to delete any child classes.
      */
-    ~ObjectAllocator()
-<span style = "background-color:#dfd">    {
-    }    </span>
+    ~ObjectAllocator();
 
 };
+
+template &lt;class A&gt;
+void* ObjectAllocator&lt;A&gt;::operator new(size_t const size) EOOS_KEYWORD_NOEXCEPT 
+<span style = "background-color:#dfd">{
+    return A::allocate(size);
+}</span>
+
+template &lt;class A&gt;
+void ObjectAllocator&lt;A&gt;::operator delete(void* const ptr)
+<span style = "background-color:#dfd">{
+    A::free(ptr);
+}</span>
+
+template &lt;class A&gt;
+void* ObjectAllocator&lt;A&gt;::operator new(size_t, void* const ptr) EOOS_KEYWORD_NOEXCEPT
+<span style = "background-color:#dfd">{
+    return ptr;
+}</span>
+
+template &lt;class A&gt;
+void ObjectAllocator&lt;A&gt;::operator delete(void*, void*)
+<span style = "background-color:#dfd">{   ///&lt; UT Justified Branch: Language dependency
+}</span>
+
+template &lt;class A&gt;
+ObjectAllocator&lt;A&gt;::~ObjectAllocator()
+<span style = "background-color:#dfd">{
+}</span>
 
 } // namespace lib
 } // namespace eoos

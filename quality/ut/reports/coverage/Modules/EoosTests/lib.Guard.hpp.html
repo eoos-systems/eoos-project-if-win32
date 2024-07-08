@@ -12,7 +12,7 @@
 /**
  * @file      lib.Guard.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2020-2023, Sergey Baigudin, Baigudin Software
+ * @copyright 2020-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_GUARD_HPP_
 #define LIB_GUARD_HPP_
@@ -45,23 +45,12 @@ public:
      *
      * @param guard A guard for guarding.
      */
-    Guard(api::Guard&amp; guard) 
-<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
-        , guard_( guard ){
-        bool_t const isConstructed( construct() );
-        setConstructed( isConstructed );                    
-    }</span>
+    Guard(api::Guard&amp; guard);
     
     /**        
      * @brief Destructor.
      */
-    virtual ~Guard()
-<span style = "background-color:#dfd">    {
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            static_cast&lt;void&gt;( guard_.unlock() );</span>
-        }
-<span style = "background-color:#dfd">    }</span>
+    virtual ~Guard();
     
 protected:
 
@@ -74,21 +63,42 @@ private:
      *
      * @return True if this object has been constructed successfully.
      */
-    bool_t construct()
-<span style = "background-color:#dfd">    {
-        bool_t res( false );
-        if( isConstructed() )</span>
-        {
-<span style = "background-color:#dfd">            res = guard_.lock();</span>
-        }
-<span style = "background-color:#dfd">        return res;
-    }</span>
+    bool_t construct();
     
     /**
      * @brief Guard resource identifier.
      */
     api::Guard&amp; guard_;
+
 };
+
+template &lt;class A&gt;
+Guard&lt;A&gt;::Guard(api::Guard&amp; guard) 
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , guard_( guard ){
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );                    
+}</span>
+
+template &lt;class A&gt;
+Guard&lt;A&gt;::~Guard()
+<span style = "background-color:#dfd">{
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        static_cast&lt;void&gt;( guard_.unlock() );</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+template &lt;class A&gt;
+bool_t Guard&lt;A&gt;::construct()
+<span style = "background-color:#dfd">{
+    bool_t res( false );
+    if( isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        res = guard_.lock();</span>
+    }
+<span style = "background-color:#dfd">    return res;
+}</span>
 
 } // namespace lib
 } // namespace eoos

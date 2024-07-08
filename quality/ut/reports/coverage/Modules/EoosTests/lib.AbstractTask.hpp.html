@@ -12,7 +12,7 @@
 /**
  * @file      lib.AbstractTask.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2022-2024, Sergey Baigudin, Baigudin Software
  */
 #ifndef LIB_ABSTRACTTASK_HPP_
 #define LIB_ABSTRACTTASK_HPP_
@@ -41,15 +41,12 @@ public:
     /**
      * @brief Constructor.
      */
-    AbstractTask() 
-<span style = "background-color:#dfd">        : NonCopyable&lt;A&gt;()
-        , api::Task() {
-    }</span>
+    AbstractTask();
 
     /**
      * @brief Destructor.
      */
-<span style = "background-color:#dfd">    virtual ~AbstractTask() {}</span>
+    virtual ~AbstractTask();
 
     /**
      * @copydoc eoos::api::Task::start()
@@ -59,20 +56,37 @@ public:
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
-    virtual bool_t isConstructed() const
-<span style = "background-color:#dfd">    {
-        return Parent::isConstructed();
-    }</span>
+    virtual bool_t isConstructed() const;
 
     /**
      * @copydoc eoos::api::Task::getStackSize()
      */
-    virtual size_t getStackSize() const
-<span style = "background-color:#dfd">    {
-        return 0U;
-    }</span>
+    virtual size_t getStackSize() const;
 
 };
+
+template &lt;class A&gt;
+AbstractTask&lt;A&gt;::AbstractTask() 
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , api::Task() {
+}</span>
+
+template &lt;class A&gt;
+AbstractTask&lt;A&gt;::~AbstractTask() 
+<span style = "background-color:#dfd">{
+}</span>
+
+template &lt;class A&gt;
+bool_t AbstractTask&lt;A&gt;::isConstructed() const
+<span style = "background-color:#dfd">{
+    return Parent::isConstructed();
+}</span>
+
+template &lt;class A&gt;
+size_t AbstractTask&lt;A&gt;::getStackSize() const
+<span style = "background-color:#dfd">{
+    return 0U;
+}</span>
 
 } // namespace lib
 } // namespace eoos
