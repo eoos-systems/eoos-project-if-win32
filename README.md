@@ -121,7 +121,7 @@ C:\REPOSITORY>
 For instance we will clone it to *EOOS* directory by SSH.
 
 ```
-C:\REPOSITORY\> git clone --branch master git@gitflic.ru:baigudin-software/eoos-project-if-win32.git EOOS
+C:\REPOSITORY\> git clone --branch master git@gitflic.ru:eoos-systems/eoos-project-if-win32.git EOOS
 ```
 
 ###### 1.2.3. Go the EOOS directory
@@ -190,7 +190,7 @@ set_target_properties(application PROPERTIES
 Thus, you will build *EoosApplication.exe* executable file.
 
 > For more examples and fast start please see 
-> the [EOOS Safe Sample Applications](https://gitflic.ru/project/baigudin-software/eoos-project-sample-applications) repository
+> the [EOOS Safe Sample Applications](https://gitflic.ru/project/eoos-systems/eoos-project-sample-applications) repository
 
 ###### 1.3.2. Build for Testing EOOS
 
