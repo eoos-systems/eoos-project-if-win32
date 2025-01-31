@@ -3,14 +3,14 @@
 
 **EOOS copyrights reserved in [Rospatent Federal Service for Intellectual Property]( https://www1.fips.ru/registers-doc-view/fips_servlet?DB=EVM&DocNumber=2017664105&TypeFile=html), Russian Federation**
 
-EOOS Safe for WIN32 API based operating systems is a **C++ library for cross-platform development** of 
-applications in automotive sphere. The library is developed in **C++98** programming language and supports 
-features of **C++11** programming language depending on compiler options that 
-**allows to consider wide criteria when selecting a suitable programming language** on initiation step 
+EOOS Safe for WIN32 API based operating systems is a **C++ library for cross-platform development** of
+safety-critical software. The library is developed in **C++98** programming language and supports
+features of **C++11** programming language depending on compiler options that
+**allows to consider wide criteria when selecting a suitable programming language** on initiation step
 of product development.
 
-EOOS Safe WIN32 is developed within **ISO C++ standards**, complied with **MISRA C++:2008** and 
-**AUTOSAR C++14 Coding Guidelines**, and relies on **ISO 26262** that means applications based on EOOS 
+EOOS Safe WIN32 is developed within **ISO C++ standards**, complied with **MISRA C++:2008** and
+**AUTOSAR C++14 Coding Guidelines**, and relies on **ISO 26262** that means applications based on EOOS
 **can be used in critical and safety-related systems**.
 
 Quality of EOOS Safe WIN32:
@@ -22,14 +22,14 @@ Quality of EOOS Safe WIN32:
 
 ## 1. How-to Build Project
 
-EOOS is a static library for linkage with other Windows applications. This EOOS project based on CMake that builds 
+EOOS is a static library for linkage with other Windows applications. This EOOS project based on CMake that builds
 the static library and installs it on Windows for being found by CMake projects of the Windows applications.
 
 
 
 #### 1.1. Prerequisites on Windows
 
-The process described below is passed on 
+The process described below is passed on
 
 - Windows 7 (64-bit)
 - Windows 10 (64-bit)
@@ -40,27 +40,18 @@ and requires the next tool to be installed on it:
 ###### 1.1.1. Install [Git for Windows](https://git-scm.com/downloads)
 
 The installer automatically sets the *Path* system environment variable.
-But you have to set manually *C:\Program Files\Git\binpath* to the *Path* user environment variable to execute Bash if it needs. 
 After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
 C:\> git --version
 git version 2.26.0.windows.1
- 
-C:\> bash --version
-GNU bash, version 4.4.23(1)-release (x86_64-pc-msys)
-Copyright (C) 2016 Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
- 
-This is free software; you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
 ```
 
 ###### 1.1.2. Install [CMake 3.20 or higher](https://cmake.org/download/)
 
 CMake minimum required version 3.20 for EOOS project.
 
-The installer automatically sets the *Path* system environment variable if you chose this way during installation. 
+The installer automatically sets the *Path* system environment variable if you chose this way during installation.
 After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
@@ -82,7 +73,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
 ###### 1.1.4. Install [Python 3.7 or higher](https://www.python.org/downloads/) for automation
 
-Allow the installer to set *Path*. 
+Allow the installer to set *Path*.
 After the installation, check in CMD that tool is executed properly by executing the following commands.
 
 ```
@@ -140,7 +131,7 @@ C:\REPOSITORY\EOOS> git submodule update --init
 
 #### 1.3. Source Code Build and Installation
 
-EOOS can be executed on various systems. To standardize the building process, we put most common steps 
+EOOS can be executed on various systems. To standardize the building process, we put most common steps
 under the hood of the `Make.py` cross-platform script that is located in `scripts/python` directory.
 
 ###### 1.3.1. Build and Installation for Developing on EOOS
@@ -149,13 +140,13 @@ Run CMD in *Run as administrator* mode to be able to install EOOS on Windows and
 
 ```
 C:\REPOSITORY\EOOS> cd scripts\python
-C:\REPOSITORY\EOOS\scripts\python> python Make.py --clean --build EOOS --install --config RelWithDebInfo
+C:\REPOSITORY\EOOS\scripts\python> python Make.py --eoos WIN32 --clean --build EOOS --install --config RelWithDebInfo
 ```
 
 None that the *--config* parameter can be one of *Release*, *Debug*, *RelWithDebInfo*, *MinSizeRel*, but for developing
 purpose we recommend to pass *RelWithDebInfo*.
 
-Having done all the steps, EOOS will be installed to the *C:\Program Files (x86)* directory, and you will be able 
+Having done all the steps, EOOS will be installed to the *C:\Program Files (x86)* directory, and you will be able
 to find EOOS in by using `find_package()` command in your CMake project.
 
 An example of your root *CMakeLists.txt* may be the next:
@@ -168,7 +159,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(EOOS 0.11.0 REQUIRED)
+find_package(EOOS 0.13.0 REQUIRED)
 
 add_executable(application)
 
@@ -189,7 +180,7 @@ set_target_properties(application PROPERTIES
 
 Thus, you will build *EoosApplication.exe* executable file.
 
-> For more examples and fast start please see 
+> For more examples and fast start please see
 > the [EOOS Safe Sample Applications](https://gitflic.ru/project/eoos-systems/eoos-project-sample-applications) repository
 
 ###### 1.3.2. Build for Testing EOOS
@@ -200,5 +191,5 @@ To build the project with Unit Tests and run them, you have to execute the comma
 
 ```
 C:\REPOSITORY\EOOS> cd scripts\python
-C:\REPOSITORY\EOOS\scripts\python> python Make.py --clean --build ALL --run --config RelWithDebInfo
+C:\REPOSITORY\EOOS\scripts\python> python Make.py --eoos WIN32 --clean --build ALL --run --config RelWithDebInfo
 ```
