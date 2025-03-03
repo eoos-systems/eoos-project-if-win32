@@ -23,7 +23,7 @@ namespace eoos
 {
 namespace api
 {
-    
+
 /**
  * @class Thread
  * @brief Thread interface.
@@ -32,11 +32,11 @@ class Thread : public Object
 {
 
 public:
-    
+
     /**
      * @brief Wrong thead priority.
      */
-    static const int32_t PRIORITY_WRONG = -1;     
+    static const int32_t PRIORITY_WRONG = -1;
 
     /**
      * @brief Maximum thead priority.
@@ -68,7 +68,7 @@ public:
      *           |&lt;-(SLEEPING)&lt;-|
      *           |&lt;-(BLOCKED) &lt;-|
      *
-     * @todo Currently there is no function to get a thread status for OS, as statuses 
+     * @todo Currently there is no function to get a thread status for OS, as statuses
      *       of different OSs are different, and we need to align them to this.
      */
     enum Status
@@ -79,7 +79,7 @@ public:
         STATUS_BLOCKED  = 4, //&lt; Thread is blocked on a resource
         STATUS_SLEEPING = 5, //&lt; Thread is sleeping on a resource
         STATUS_DEAD     = 6  //&lt; Thread is dead because it finished execution
-    };  
+    };
 
     /**
      * @brief Destructor.
@@ -89,7 +89,7 @@ public:
     /**
      * @brief Causes this thread to begin execution.
      *
-     * @return True if execution of the thread initiated successfully.     
+     * @return True if execution of the thread initiated successfully.
      */
     virtual bool_t execute() = 0;
 
@@ -114,11 +114,11 @@ public:
      * @return True if priority is set.
      */
     virtual bool_t setPriority(int32_t priority) = 0;
-    
+
 };
 
 <span style = "background-color:#dfd">inline Thread::~Thread() {}</span>
-        
+
 } // namespace api
 } // namespace eoos
 #endif // API_THREAD_HPP_</pre>

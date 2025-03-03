@@ -23,7 +23,7 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class Buffer&lt;T,L,A&gt;
  * @brief Buffer class static.
@@ -62,7 +62,7 @@ public:
      * @brief Destructor.
      */
     virtual ~Buffer();
-    
+
     /**
      * @copydoc eoos::api::SequenceContainer::getData()
      */
@@ -78,7 +78,7 @@ public:
      * @return Reference to this object.
      */
     Buffer&amp; operator=(api::SequenceContainer&lt;T&gt; const&amp; buf);
-    
+
 protected:
 
     using Parent::setConstructed;
@@ -104,7 +104,7 @@ private:
  * @class Buffer&lt;T,0,A&gt;
  * @brief Buffer class dynamic.
  *
- * This is a partial specialization of the template allocates necessary 
+ * This is a partial specialization of the template allocates necessary
  * memory size for containing the buffer in a heap memory.
  *
  * @tparam T Data type of buffer element.
@@ -162,7 +162,7 @@ public:
      * @brief Destructor.
      */
     virtual ~Buffer();
-    
+
     /**
      * @copydoc eoos::api::SequenceContainer::getData()
      */
@@ -178,10 +178,10 @@ public:
      * @return Reference to this object.
      */
     Buffer&amp; operator=(api::SequenceContainer&lt;T&gt; const&amp; buf);
-    
+
 protected:
 
-    using Parent::setConstructed;    
+    using Parent::setConstructed;
     using Parent::copy;
 
 private:
@@ -210,13 +210,13 @@ private:
 };
 
 template &lt;typename T, int32_t L, class A&gt;
-Buffer&lt;T,L,A&gt;::Buffer() 
+Buffer&lt;T,L,A&gt;::Buffer()
 <span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(L)
     , buf_(arr_){
 }</span>
 
 template &lt;typename T, int32_t L, class A&gt;
-Buffer&lt;T,L,A&gt;::Buffer(T const&amp; illegal) 
+Buffer&lt;T,L,A&gt;::Buffer(T const&amp; illegal)
 <span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(L, illegal)
     , buf_ (arr_){
 }</span>
@@ -241,14 +241,14 @@ template &lt;typename T, int32_t L, class A&gt;
 Buffer&lt;T,L,A&gt;&amp; Buffer&lt;T,L,A&gt;::operator=(api::SequenceContainer&lt;T&gt; const&amp; buf)
 <span style = "background-color:#dfd">{
     if( isConstructed() &amp;&amp; buf.isConstructed() )</span>
-    {        
+    {
 <span style = "background-color:#dfd">        copy(buf);</span>
     }
 <span style = "background-color:#dfd">    return *this;
 }</span>
 
 template &lt;typename T, class A&gt;
-Buffer&lt;T,0,A&gt;::Buffer(size_t const length) 
+Buffer&lt;T,0,A&gt;::Buffer(size_t const length)
 <span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(length)
     , buf_(NULLPTR)
     , isDeleted_(true) {
@@ -257,7 +257,7 @@ Buffer&lt;T,0,A&gt;::Buffer(size_t const length)
 }</span>
 
 template &lt;typename T, class A&gt;
-Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T const&amp; illegal) 
+Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T const&amp; illegal)
 <span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(length, illegal)
     , buf_(NULLPTR)
     , isDeleted_(true) {
@@ -266,7 +266,7 @@ Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T const&amp; illegal)
 }</span>
 
 template &lt;typename T, class A&gt;
-Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T* const buf) 
+Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T* const buf)
 <span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(length)
     , buf_(buf)
     , isDeleted_(false) {
@@ -275,7 +275,7 @@ Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T* const buf)
 }</span>
 
 template &lt;typename T, class A&gt;
-Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T* const buf, T const&amp; illegal) 
+Buffer&lt;T,0,A&gt;::Buffer(size_t const length, T* const buf, T const&amp; illegal)
 <span style = "background-color:#dfd">    : AbstractBuffer&lt;T,A&gt;(length, illegal)
     , buf_(buf)
     , isDeleted_(false) {
@@ -301,13 +301,13 @@ T* Buffer&lt;T,0,A&gt;::getData() const
 <span style = "background-color:#dfd">        buf = buf_;</span>
     }
 <span style = "background-color:#dfd">    return buf;
-}    </span>
+}</span>
 
 template &lt;typename T, class A&gt;
 Buffer&lt;T,0,A&gt;&amp; Buffer&lt;T,0,A&gt;::operator=(api::SequenceContainer&lt;T&gt; const&amp; buf)
 <span style = "background-color:#dfd">{
     if( isConstructed() &amp;&amp; buf.isConstructed() )</span>
-    {        
+    {
 <span style = "background-color:#dfd">        copy(buf);</span>
     }
 <span style = "background-color:#dfd">    return *this;

@@ -155,7 +155,7 @@ private:
 };
 
 template &lt;typename T, class A&gt;
-LinkedNode&lt;T,A&gt;::LinkedNode(T const&amp; element) 
+LinkedNode&lt;T,A&gt;::LinkedNode(T const&amp; element)
 <span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
     , prev_(this)
     , next_(this)

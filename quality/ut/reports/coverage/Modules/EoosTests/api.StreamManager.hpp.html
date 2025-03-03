@@ -28,7 +28,7 @@ namespace api
 /**
  * @class StreamManager
  * @brief Stream sub-system manager interface.
- */    
+ */
 class StreamManager : public Object
 {
 
@@ -38,7 +38,7 @@ public:
      * @brief Destructor.
      */
     virtual ~StreamManager() = 0;
-    
+
     /**
      * @brief Returns system output character stream.
      *
@@ -51,11 +51,11 @@ public:
      *
      * @return The system error output character stream.
      */
-    virtual OutStream&lt;char_t&gt;&amp; getCerr() = 0;    
+    virtual OutStream&lt;char_t&gt;&amp; getCerr() = 0;
 
     /**
      * @brief Sets a new system output character stream.
-     * 
+     *
      * @param cout A new stream to set.
      * @return True if the system output character stream is set.
      */
@@ -65,7 +65,7 @@ public:
      * @brief Sets a new system error output character stream.
      *
      * @param cerr A new stream to set.
-     * @return True if the system error output character stream is set.     
+     * @return True if the system error output character stream is set.
      */
     virtual bool_t setCerr(OutStream&lt;char_t&gt;&amp; cerr) = 0;
 

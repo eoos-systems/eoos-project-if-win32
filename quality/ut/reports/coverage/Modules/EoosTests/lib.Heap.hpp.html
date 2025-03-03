@@ -25,12 +25,12 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class Heap
  * @brief Heap memory.
  *
- * Hardware address for system heap memory has to be aligned to eight. 
+ * Hardware address for system heap memory has to be aligned to eight.
  */
 class Heap : public api::Heap
 {
@@ -78,7 +78,7 @@ public:
      * @return Address of memory or NULLPTR.
      */
     static void* operator new(size_t, uintptr_t const ptr) EOOS_KEYWORD_NOEXCEPT;
-    
+
     /**
      * @brief Operator delete.
      */
@@ -130,7 +130,7 @@ private:
      * @return Address of memory or NULLPTR.
      */
     static void* create(void* ptr);
-    
+
     /**
      * @brief Tests memory.
      *
@@ -144,7 +144,7 @@ private:
 
     /**
      * @brief Tests memory for value.
-     * 
+     *
      * @todo normal type casts should be done.
      *
      * @param addr Memory address pointer.
@@ -195,20 +195,20 @@ private:
      * @copydoc eoos::Object::operator=(Object const&amp;)
      */
     Heap&amp; operator=(Heap const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
-    
+
     #if EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
-     */       
-    Heap(Heap&amp;&amp;) noexcept = delete; 
-    
+     */
+    Heap(Heap&amp;&amp;) noexcept = delete;
+
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */
     Heap&amp; operator=(Heap&amp;&amp;) &amp; noexcept = delete;
-    
-    #endif // EOOS_CPP_STANDARD &gt;= 2011   
+
+    #endif // EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @struct Aligner&lt;S&gt;
@@ -267,9 +267,9 @@ private:
      */
     class VirtualTable : public api::Heap
     {
-        
-    private:
-    
+
+    protected:
+
         uint64_t temp;
     };
 
@@ -291,7 +291,7 @@ private:
          * @param size Size of byte given to this new block.
          */
         HeapBlock(api::Heap* heap, size_t size);
-        
+
         /**
          * @brief Destructor.
          */
@@ -325,7 +325,7 @@ private:
          * @return Address of memory.
          */
         static void* operator new(size_t, void* const ptr);
-        
+
         /**
          * @brief Operator delete.
          */
@@ -365,25 +365,25 @@ private:
          * @copydoc eoos::Object::Object(Object const&amp;)
          */
         HeapBlock(HeapBlock const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
-    
+
         /**
          * @copydoc eoos::Object::operator=(Object const&amp;)
          */
         HeapBlock&amp; operator=(HeapBlock const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
-        
+
         #if EOOS_CPP_STANDARD &gt;= 2011
-    
+
         /**
          * @copydoc eoos::Object::Object(Object&amp;&amp;)
-         */       
-        HeapBlock(HeapBlock&amp;&amp;) noexcept = delete; 
-        
+         */
+        HeapBlock(HeapBlock&amp;&amp;) noexcept = delete;
+
         /**
          * @copydoc eoos::Object::operator=(Object&amp;&amp;)
          */
         HeapBlock&amp; operator=(HeapBlock&amp;&amp;) &amp; noexcept = delete;
-        
-        #endif // EOOS_CPP_STANDARD &gt;= 2011    
+
+        #endif // EOOS_CPP_STANDARD &gt;= 2011
 
         /**
          * @brief Heap block definition key.
@@ -455,7 +455,7 @@ private:
          * @brief Constructor.
          *
          * @param isize Total heap size.
-         * @param mutex A mutex to protect memory allocation.         
+         * @param mutex A mutex to protect memory allocation.
          */
         HeapData(size_t isize, api::Mutex&amp; imutex);
 
@@ -485,25 +485,25 @@ private:
          * @copydoc eoos::Object::Object(Object const&amp;)
          */
         HeapData(HeapData const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
-    
+
         /**
          * @copydoc eoos::Object::operator=(Object const&amp;)
          */
         HeapData&amp; operator=(HeapData const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
-        
+
         #if EOOS_CPP_STANDARD &gt;= 2011
-    
+
         /**
          * @copydoc eoos::Object::Object(Object&amp;&amp;)
-         */       
-        HeapData(HeapData&amp;&amp;) noexcept = delete; 
-        
+         */
+        HeapData(HeapData&amp;&amp;) noexcept = delete;
+
         /**
          * @copydoc eoos::Object::operator=(Object&amp;&amp;)
          */
         HeapData&amp; operator=(HeapData&amp;&amp;) &amp; noexcept = delete;
-        
-        #endif // EOOS_CPP_STANDARD &gt;= 2011    
+
+        #endif // EOOS_CPP_STANDARD &gt;= 2011
 
     };
 
@@ -529,10 +529,10 @@ private:
 
 };
 
-/// @todo Evaluate necessarity to define all these and such functions 
+/// @todo Evaluate necessarity to define all these and such functions
 ///       of non template classes in .cpp files for the library.
 
-inline Heap::Heap(size_t size, api::Mutex&amp; mutex) 
+inline Heap::Heap(size_t size, api::Mutex&amp; mutex)
 <span style = "background-color:#dfd">    : api::Heap()
     , data_( size, mutex )
     , aligner_() {
@@ -602,7 +602,7 @@ inline void* Heap::operator new(size_t, uintptr_t const ptr) EOOS_KEYWORD_NOEXCE
 <span style = "background-color:#dfd">    return memory;
 }</span>
 
-inline void Heap::operator delete(void*, uintptr_t) 
+inline void Heap::operator delete(void*, uintptr_t)
 <span style = "background-color:#dfd">{
 }</span>
 
@@ -621,8 +621,8 @@ inline void Heap::setConstructed(bool_t const flag)
 inline bool_t Heap::construct()
 <span style = "background-color:#dfd">{
     bool_t res( true );</span>
-    
-    if( // Crop a size to multiple of eight 
+
+    if( // Crop a size to multiple of eight
         ( (sizeof(HeapBlock) + 16UL) &lt;= data_.size )
         // Test Heap and HeapBlock structures sizes witch has to be multipled to eight
      &amp;&amp; ( (sizeof(Heap) &amp; 0x7UL) == 0UL )
@@ -768,14 +768,14 @@ template &lt;size_t S&gt;
 Heap::Aligner&lt;S&gt;::Aligner()
 <span style = "background-color:#dfd">{</span>
     #ifdef EOOS_DEBUG
-    for(size_t i(0U); i&lt;SIZE; i++) 
+    for(size_t i(0U); i&lt;SIZE; i++)
     {
         val_[i] = 0x0AUL;
     }
     #endif
 <span style = "background-color:#dfd">}</span>
 
-inline Heap::HeapBlock::HeapBlock(api::Heap* heap, size_t size) 
+inline Heap::HeapBlock::HeapBlock(api::Heap* heap, size_t size)
 <span style = "background-color:#dfd">    : heap_(heap)
     , prev_(NULLPTR)
     , next_(NULLPTR)

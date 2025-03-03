@@ -24,17 +24,17 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class Guard&lt;A&gt;
  * @brief Guard of RAII implementation.
  *
  * @tparam A heap memory allocator class.
- */    
+ */
 template &lt;class A = Allocator&gt;
 class Guard : public NonCopyable&lt;A&gt;
 {
-    typedef NonCopyable&lt;A&gt; Parent;            
+    typedef NonCopyable&lt;A&gt; Parent;
 
 public:
 
@@ -46,25 +46,25 @@ public:
      * @param guard A guard for guarding.
      */
     Guard(api::Guard&amp; guard);
-    
-    /**        
+
+    /**
      * @brief Destructor.
      */
     virtual ~Guard();
-    
+
 protected:
 
-    using Parent::setConstructed;    
-        
+    using Parent::setConstructed;
+
 private:
 
-    /**        
+    /**
      * @brief Constructs this object.
      *
      * @return True if this object has been constructed successfully.
      */
     bool_t construct();
-    
+
     /**
      * @brief Guard resource identifier.
      */
@@ -73,11 +73,11 @@ private:
 };
 
 template &lt;class A&gt;
-Guard&lt;A&gt;::Guard(api::Guard&amp; guard) 
+Guard&lt;A&gt;::Guard(api::Guard&amp; guard)
 <span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
     , guard_( guard ){
     bool_t const isConstructed( construct() );
-    setConstructed( isConstructed );                    
+    setConstructed( isConstructed );
 }</span>
 
 template &lt;class A&gt;

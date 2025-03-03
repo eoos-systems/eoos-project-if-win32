@@ -25,7 +25,7 @@ namespace eoos
 {
 namespace api
 {
-    
+
 /**
  * @class Scheduler
  * @brief Threads scheduler interface.
@@ -47,7 +47,7 @@ public:
      * @return A new thread.
      */
     virtual Thread* createThread(Task&amp; task) = 0;
-    
+
     /**
      * @brief Causes current thread to sleep.
      *
@@ -58,7 +58,7 @@ public:
 
     /**
      * @brief Yields to next thread.
-     * 
+     *
      * @return True if thread is yielded.
      */
     virtual bool_t yield() = 0;

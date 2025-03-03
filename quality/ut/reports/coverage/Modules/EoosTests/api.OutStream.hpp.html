@@ -24,7 +24,7 @@ namespace eoos
 {
 namespace api
 {
-        
+
 /**
  * @class OutStream&lt;T&gt;
  * @brief Output stream interface.
@@ -62,14 +62,14 @@ public:
      * @brief Flushes buffered data to a storage device.
      *
      * @return This interface.
-     */    
+     */
     virtual OutStream&lt;T&gt;&amp; flush() = 0;
 
 };
 
 template &lt;typename T&gt; ///&lt; SCA MISRA-C++:2008 Defected Rule 7-3-1
 <span style = "background-color:#dfd">OutStream&lt;T&gt;::~OutStream() {}</span>
-        
+
 } // namespace api
 } // namespace eoos
 #endif // API_OUT_STREAM_HPP_</pre>

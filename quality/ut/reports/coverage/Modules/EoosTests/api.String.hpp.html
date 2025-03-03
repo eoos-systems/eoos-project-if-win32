@@ -45,13 +45,13 @@ public:
      * @brief Copies a passed string into this string.
      *
      * @note A passed string must be copied to an internal containing string of
-     * a implemented class so that the passed string might be invalidated after 
+     * a implemented class so that the passed string might be invalidated after
      * the function called.
      *
-     * @note If implementation of the interface is static, which means it has 
-     * certain number of elements to contain a string of characters, and a passed 
-     * string more than the implementation can physically contain, the passed string 
-     * will be cropped to max available length of such implementation. Return value 
+     * @note If implementation of the interface is static, which means it has
+     * certain number of elements to contain a string of characters, and a passed
+     * string more than the implementation can physically contain, the passed string
+     * will be cropped to max available length of such implementation. Return value
      * will be also true.
      *
      * @param string A string object interface to be copied.
@@ -93,7 +93,7 @@ public:
 
 template &lt;typename T&gt; ///&lt; SCA MISRA-C++:2008 Defected Rule 7-3-1
 <span style = "background-color:#dfd">String&lt;T&gt;::~String() {}</span>
-        
+
 } // namespace api
 } // namespace eoos
 #endif // API_STRING_HPP_</pre>

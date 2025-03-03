@@ -30,7 +30,7 @@ namespace lib
  * @class Thread&lt;A&gt;
  * @brief Thread class.
  *
- * @tparam A Heap memory allocator class. 
+ * @tparam A Heap memory allocator class.
  */
 template &lt;class A = Allocator&gt;
 class Thread : public NonCopyable&lt;A&gt;, public api::Thread
@@ -75,7 +75,7 @@ public:
      * @copydoc eoos::api::Thread::setPriority(int32_t)
      */
     virtual bool_t setPriority(int32_t const priority);
-    
+
     /**
      * @copydoc eoos::api::Scheduler::sleep(int32_t)
      */
@@ -89,14 +89,14 @@ public:
 protected:
 
     using Parent::setConstructed;
-    
+
     /**
      * @brief Constructor.
      *
      * @param task A task interface whose start function is invoked when this thread is started.
      */
     Thread();
-    
+
     /**
      * @brief Sets a task.
      *
@@ -114,12 +114,12 @@ private:
      * @return True if object has been constructed successfully.
      */
     bool_t construct(api::Task* const task);
-    
+
     /**
      * @brief Returns the OS scheduler.
      *
      * @return The OS scheduler.
-     */    
+     */
     static api::Scheduler&amp; getScheduler();
 
     /**
@@ -205,13 +205,13 @@ bool_t Thread&lt;A&gt;::yield()
 }</span>
 
 template &lt;class A&gt;
-Thread&lt;A&gt;::Thread() 
+Thread&lt;A&gt;::Thread()
 <span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
     , api::Thread()
     , thread_(NULLPTR){
     bool_t const isConstructed( construct(NULLPTR) );
     setConstructed( isConstructed );
-}    </span>
+}</span>
 
 template &lt;class A&gt;
 bool_t Thread&lt;A&gt;::setTask(api::Task&amp; task)

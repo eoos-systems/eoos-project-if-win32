@@ -28,7 +28,7 @@ namespace api
 /**
  * @class MutexManager
  * @brief Mutex sub-system manager interface.
- */    
+ */
 class MutexManager : public Object
 {
 
@@ -45,7 +45,7 @@ public:
      * @return A new mutex resource, or NULLPTR if an error has been occurred.
      */
     virtual Mutex* create() = 0;
-    
+
 };
 
 <span style = "background-color:#dfd">inline MutexManager::~MutexManager() {}</span>

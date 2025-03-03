@@ -72,7 +72,7 @@ public:
      * @copydoc eoos::api::String::isEqualTo(const api::String&lt;T&gt;&amp;)
      */
     virtual bool_t isEqualTo(api::String&lt;T&gt; const&amp; string) const;
-    
+
     /**
      * @brief Converts an integer number to this string.
      *
@@ -124,14 +124,14 @@ protected:
 
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
-     */       
+     */
     AbstractBaseString&amp; operator=(AbstractBaseString const&amp; obj);
 
     #if EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
-     */       
+     */
     AbstractBaseString(AbstractBaseString&amp;&amp; obj) noexcept;
 
     /**
@@ -154,7 +154,7 @@ protected:
      *
      * @param dst A destination array where the content would be copied.
      * @param src A character string to be copied.
-     * @param cnt Destination character string size.     
+     * @param cnt Destination character string size.
      */
     static void copyRaw3(T* dst, T const* src, size_t cnt);
 
@@ -163,10 +163,10 @@ protected:
      *
      * @param dst A destination character string where the content would be appended.
      * @param src An appended character string.
-     * @param cnt Destination character string length that cannot be less than dst string length.     
+     * @param cnt Destination character string length that cannot be less than dst string length.
      */
     static void concatenateRaw3(T* dst, T const* src, size_t cnt);
-    
+
     /**
      * @brief Compares two strings.
      *
@@ -200,7 +200,7 @@ private:
      * @return true if this string equals to a given string.
      */
     virtual bool_t isEqualToRaw(T const* str) const = 0;
-    
+
     /**
      * @brief Converts an integer number to a string.
      *
@@ -212,9 +212,9 @@ private:
      *       Exception 1: Minimum negative value can be `T_MIN + 1` or greater.
      *
      *       Exception 2: Only if the base is decimal, a passed number is available to be negative value,
-     *       and the resulting string of these values is preceded with a minus sign. 
-     *       
-     *       Exception 3: A hexadecimal number includes lower case characters, and any resulting strings 
+     *       and the resulting string of these values is preceded with a minus sign.
+     *
+     *       Exception 3: A hexadecimal number includes lower case characters, and any resulting strings
      *       do not contain any suffixes or prefixes for identifying a numeral system.
      *
      * @todo Rework the implementation to avoid the exceptions.
@@ -238,7 +238,7 @@ private:
      */
     template &lt;typename I&gt;
     static bool_t isPositive(volatile I value);
-        
+
     template &lt;typename T0&gt; friend bool_t operator==(api::String&lt;T0&gt; const&amp;, T0 const* const);
     template &lt;typename T0&gt; friend bool_t operator==(T0 const* const, api::String&lt;T0&gt; const&amp;);
     template &lt;typename T0&gt; friend bool_t operator!=(api::String&lt;T0&gt; const&amp;, T0 const* const);
@@ -374,11 +374,11 @@ bool_t AbstractBaseString&lt;T,R,A&gt;::concatenate(api::String&lt;T&gt; const&a
 <span style = "background-color:#dfd">    if( isConstructed() &amp;&amp; string.isConstructed() )</span>
     {
 <span style = "background-color:#dfd">        T const* const str( string.getChar() );
-        res = concatenateRaw(str);            
+        res = concatenateRaw(str);
     }</span>
     else
     {
-<span style = "background-color:#dfd">        res = false;            </span>
+<span style = "background-color:#dfd">        res = false;</span>
     }
 <span style = "background-color:#dfd">    return res;
 }</span>
@@ -390,11 +390,11 @@ bool_t AbstractBaseString&lt;T,R,A&gt;::isEqualTo(api::String&lt;T&gt; const&amp
 <span style = "background-color:#dfd">    if( isConstructed() &amp;&amp; string.isConstructed() )</span>
     {
 <span style = "background-color:#dfd">        T const* const str( string.getChar() );
-        res = isEqualToRaw(str);   
+        res = isEqualToRaw(str);
     }</span>
     else
     {
-<span style = "background-color:#dfd">        res = false;            </span>
+<span style = "background-color:#dfd">        res = false;</span>
     }
 <span style = "background-color:#dfd">    return res;
 }</span>
@@ -404,7 +404,7 @@ template &lt;typename I&gt;
 bool_t AbstractBaseString&lt;T,R,A&gt;::convert(I const value, Number::Base const base) ///&lt; SCA MISRA-C++:2008 Defected Rule 9-3-3
 <span style = "background-color:#dfd">{
     return convertToString(value, base);
-} </span>
+}</span>
 
 template &lt;typename T, class R, class A&gt;
 AbstractBaseString&lt;T,R,A&gt;&amp; AbstractBaseString&lt;T,R,A&gt;::operator+=(api::String&lt;T&gt; const&amp; source)
@@ -418,7 +418,7 @@ AbstractBaseString&lt;T,R,A&gt;&amp; AbstractBaseString&lt;T,R,A&gt;::operator+=
 <span style = "background-color:#dfd">{
     static_cast&lt;void&gt;( concatenateRaw(source) );
     return *this;
-}    </span>
+}</span>
 
 template &lt;typename T, class R, class A&gt;
 AbstractBaseString&lt;T,R,A&gt;::AbstractBaseString()
@@ -440,32 +440,32 @@ AbstractBaseString&lt;T,R,A&gt;&amp; AbstractBaseString&lt;T,R,A&gt;::operator=(
 <span style = "background-color:#dfd">        Parent::operator=(obj);</span>
     }
 <span style = "background-color:#dfd">    return *this;
-}    </span>
+}</span>
 
 #if EOOS_CPP_STANDARD &gt;= 2011
 
 template &lt;typename T, class R, class A&gt;
-AbstractBaseString&lt;T,R,A&gt;::AbstractBaseString(AbstractBaseString&amp;&amp; obj) noexcept 
+AbstractBaseString&lt;T,R,A&gt;::AbstractBaseString(AbstractBaseString&amp;&amp; obj) noexcept
 <span style = "background-color:#dfd">    : Object&lt;A&gt;( move(obj) )
     , api::String&lt;T&gt;(){
-}   </span>
+}</span>
 
 template &lt;typename T, class R, class A&gt;
 AbstractBaseString&lt;T,R,A&gt;&amp; AbstractBaseString&lt;T,R,A&gt;::operator=(AbstractBaseString&amp;&amp; obj) &amp; noexcept
 <span style = "background-color:#dfd">{
     if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
     {
-<span style = "background-color:#dfd">        Parent::operator=( move(obj) );            </span>
-    }        
+<span style = "background-color:#dfd">        Parent::operator=( move(obj) );</span>
+    }
 <span style = "background-color:#dfd">    return *this;
-}        </span>
+}</span>
 
 #endif // EOOS_CPP_STANDARD &gt;= 2011
 
 template &lt;typename T, class R, class A&gt;
 size_t AbstractBaseString&lt;T,R,A&gt;::getLengthRaw(T const* str)
 <span style = "background-color:#dfd">{
-    size_t len( 0U ); 
+    size_t len( 0U );
     T const null( R::getTerminator() );
     while( *str != null )</span>
     {
@@ -487,7 +487,7 @@ void AbstractBaseString&lt;T,R,A&gt;::copyRaw3(T* dst, T const* src, size_t cnt)
             {
 <span style = "background-color:#dfd">                *dst = null;
                 break;</span>
-            }     
+            }
 <span style = "background-color:#dfd">            *dst = *src;
             --cnt;
             if( *dst == null )</span>
@@ -524,7 +524,7 @@ bool_t AbstractBaseString&lt;T,R,A&gt;::isEqualRaw2(T const* str1, T const* str2
 <span style = "background-color:#dfd">{
     bool_t res( false );
     if( (str1 != NULLPTR) &amp;&amp; (str2 != NULLPTR) )</span>
-    {        
+    {
 <span style = "background-color:#dfd">        T const null( R::getTerminator() );
         while(true)</span>
         {
@@ -537,7 +537,7 @@ bool_t AbstractBaseString&lt;T,R,A&gt;::isEqualRaw2(T const* str1, T const* str2
             ++str2; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
         }</span>
     }
-<span style = "background-color:#dfd">    return res;    
+<span style = "background-color:#dfd">    return res;
 }</span>
 
 template &lt;typename T, class R, class A&gt;
@@ -621,7 +621,7 @@ template &lt;typename T, class R, class A&gt;
 template &lt;typename I&gt;
 bool_t AbstractBaseString&lt;T,R,A&gt;::isPositive(volatile I value)
 <span style = "background-color:#dfd">{
-    return ( (value &gt; 0) || (value == 0) ) ? true : false;
+    return ( value &gt;=0 ) ? true : false;
 }</span>
 
 } // namespace lib

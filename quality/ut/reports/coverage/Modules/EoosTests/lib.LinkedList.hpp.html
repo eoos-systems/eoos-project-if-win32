@@ -164,7 +164,7 @@ private:
          * @copydoc eoos::api::IllegalValue::isIllegal(T const&amp;)
          */
         virtual bool_t isIllegal(TT const&amp; value) const;
-        
+
     protected:
 
         using Parent::setConstructed;
@@ -178,7 +178,7 @@ private:
          * @return True if constructed.
          */
         bool_t construct(int32_t const index);
-        
+
         /**
          * @brief Tests if list was modified by list object.
          *
@@ -253,12 +253,12 @@ private:
 };
 
 template &lt;typename T, class A&gt;
-LinkedList&lt;T,A&gt;::LinkedList() 
+LinkedList&lt;T,A&gt;::LinkedList()
 <span style = "background-color:#dfd">    : AbstractList&lt;T,A&gt;() {
 }</span>
 
 template &lt;typename T, class A&gt;
-LinkedList&lt;T,A&gt;::LinkedList(T const&amp; illegal) 
+LinkedList&lt;T,A&gt;::LinkedList(T const&amp; illegal)
 <span style = "background-color:#dfd">    : AbstractList&lt;T,A&gt;(illegal) {
 }</span>
 
@@ -283,12 +283,12 @@ api::ListIterator&lt;T&gt;* LinkedList&lt;T,A&gt;::getListIterator(int32_t const
             }
         }
     }
-<span style = "background-color:#dfd">    return it;        
+<span style = "background-color:#dfd">    return it;
 }</span>
 
 template &lt;typename T, class A&gt;
 template &lt;typename TT, class AA&gt;
-LinkedList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::Iterator(int32_t const index, List&amp; list) 
+LinkedList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::Iterator(int32_t const index, List&amp; list)
 <span style = "background-color:#dfd">    : NonCopyable&lt;AA&gt;()
     , api::ListIterator&lt;TT&gt;()
     , list_(list)
@@ -344,7 +344,7 @@ bool_t LinkedList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::remove()
         {
 <span style = "background-color:#dfd">            if(curs_-&gt;getIndex() == rindex_)</span>
             {
-<span style = "background-color:#dfd">                curs = (curs_ == last_) ? NULLPTR : curs_-&gt;getNext();                </span>
+<span style = "background-color:#dfd">                curs = (curs_ == last_) ? NULLPTR : curs_-&gt;getNext();</span>
             }
         }
 <span style = "background-color:#dfd">        res = list_.remove(rindex_);
@@ -374,7 +374,7 @@ TT&amp; LinkedList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::getPrevious()
 <span style = "background-color:#dfd">        rindex_ = ILLEGAL_INDEX;
         res = false;</span>
     }
-<span style = "background-color:#dfd">    return (res == true ) ? curs_-&gt;getElement() : illegal_;            
+<span style = "background-color:#dfd">    return (res == true ) ? curs_-&gt;getElement() : illegal_;
 }</span>
 
 template &lt;typename T, class A&gt;
@@ -451,7 +451,7 @@ int32_t LinkedList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::getNextIndex() const
     if( !isModifiedByList() )</span>
     {
 <span style = "background-color:#dfd">        index = hasNext() ? curs_-&gt;getIndex() : static_cast&lt;int32_t&gt;( list_.getLength() );</span>
-    }      
+    }
 <span style = "background-color:#dfd">    return index;
 }</span>
 
@@ -510,9 +510,9 @@ bool_t LinkedList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::construct(int32_t const ind
 template &lt;typename T, class A&gt;
 template &lt;typename TT, class AA&gt;
 bool_t LinkedList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::isModifiedByList() const
-<span style = "background-color:#dfd">{        
+<span style = "background-color:#dfd">{
     return count_.list != count_.self;
-}        </span>
+}</span>
 
 template &lt;typename T, class A&gt;
 template &lt;typename TT, class AA&gt;

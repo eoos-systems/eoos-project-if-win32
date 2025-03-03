@@ -24,13 +24,13 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class Fifo&lt;T,L,A&gt;
  * @brief Abstract list class.
  *
  * @tparam T Data type of container element.
- * @tparam L Maximum number of FIFO elements. 
+ * @tparam L Maximum number of FIFO elements.
  * @tparam A Heap memory allocator class.
  */
 template &lt;typename T, int32_t L, class A = Allocator&gt;
@@ -45,7 +45,7 @@ public:
      *
      * [Default mode]
      * FIFO is not locked on overrun. Once the FIFO is full the next incoming
-     * message will overwrite the previous one.          
+     * message will overwrite the previous one.
      */
     Fifo();
 
@@ -57,12 +57,12 @@ public:
      * message will overwrite the previous one.
      *
      * FIFO is locked against overrun. Once the FIFO is full the next incoming
-     * message will be discarded.     
+     * message will be discarded.
      *
      * @param isLocked FIFO locked mode flag.
-     */    
+     */
     Fifo(bool_t isLocked);
-    
+
     /**
      * @brief Constructor.
      *
@@ -71,11 +71,11 @@ public:
      * message will overwrite the previous one.
      *
      * FIFO is locked against overrun. Once the FIFO is full the next incoming
-     * message will be discarded.     
+     * message will be discarded.
      *
      * @param isLocked FIFO locked mode flag.
-     * @param illegal An illegal value.     
-     */    
+     * @param illegal An illegal value.
+     */
     Fifo(bool_t isLocked, T const&amp; illegal);
 
     /**
@@ -112,7 +112,7 @@ public:
      * @copydoc eoos::api::Collection::isEmpty()
      */
     virtual bool_t isEmpty() const;
-    
+
     /**
      * @copydoc eoos::api::IllegalValue::getIllegal()
      */
@@ -126,15 +126,15 @@ public:
     /**
      * @copydoc eoos::api::IllegalValue::isIllegal(T const&amp;)
      */
-    virtual bool_t isIllegal(T const&amp; value) const;    
-    
+    virtual bool_t isIllegal(T const&amp; value) const;
+
     /**
      * @brief Tests if this FIFO is full.
      *
      * @return True if this FIFO is full.
      */
     bool_t isFull() const;
-    
+
     /**
      * @brief Tests if this FIFO is overrun.
      *
@@ -151,10 +151,10 @@ public:
 
 protected:
 
-    using Parent::setConstructed;    
+    using Parent::setConstructed;
 
 private:
-    
+
     /**
      * @brief Constructs this object.
      *
@@ -169,43 +169,43 @@ private:
 
     /**
      * @brief Illegal value.
-     */    
+     */
     T illegal_;
-        
+
     /**
      * @brief FIFO locked mode.
-     */    
+     */
     bool_t isLocked_;
 
     /**
      * @brief Head element index.
-     */    
+     */
     int32_t head_;
-    
+
     /**
      * @brief Tail element index is fist free.
-     */    
+     */
     int32_t tail_;
 
     /**
      * @brief FIFO message pending.
      *
      * Indicate how many messages are pending in the FIFO.
-     */    
+     */
     int32_t length_;
 
     /**
      * @brief FIFO overrun.
      *
      * Set when a new message has been added while the FIFO was full.
-     */    
+     */
     bool_t isOverrun_;
 
     /**
      * @brief FIFO full.
-     * 
+     *
      * Set when L messages are stored in the FIFO.
-     */    
+     */
     bool_t isFull_;
 };
 
@@ -221,7 +221,7 @@ Fifo&lt;T,L,A&gt;::Fifo()
     , isOverrun_( false )
     , isFull_( false ){
     bool_t const isConstructed( construct() );
-    setConstructed( isConstructed );        
+    setConstructed( isConstructed );
 }</span>
 
 template &lt;typename T, int32_t L, class A&gt;
@@ -236,7 +236,7 @@ Fifo&lt;T,L,A&gt;::Fifo(bool_t isLocked)
     , isOverrun_( false )
     , isFull_( false ){
     bool_t const isConstructed( construct() );
-    setConstructed( isConstructed );        
+    setConstructed( isConstructed );
 }</span>
 
 template &lt;typename T, int32_t L, class A&gt;
@@ -251,7 +251,7 @@ Fifo&lt;T,L,A&gt;::Fifo(bool_t isLocked, T const&amp; illegal)
     , isOverrun_( false )
     , isFull_( false ){
     bool_t const isConstructed( construct() );
-    setConstructed( isConstructed );        
+    setConstructed( isConstructed );
 }</span>
 
 template &lt;typename T, int32_t L, class A&gt;
@@ -281,7 +281,7 @@ bool_t Fifo&lt;T,L,A&gt;::add(T const&amp; element)
             }
 <span style = "background-color:#dfd">            if( tail_ == head_ )</span>
             {
-<span style = "background-color:#dfd">                isFull_ = true; </span>
+<span style = "background-color:#dfd">                isFull_ = true;</span>
             }
 <span style = "background-color:#dfd">            length_ += 1;
             res = true;
@@ -296,7 +296,7 @@ bool_t Fifo&lt;T,L,A&gt;::add(T const&amp; element)
 <span style = "background-color:#dfd">                    last = L - 1;</span>
                 }
 <span style = "background-color:#dfd">                elements_[last] = element;
-                res = true;                </span>
+                res = true;</span>
             }
 <span style = "background-color:#dfd">            isOverrun_ = true;</span>
         }
@@ -318,7 +318,7 @@ bool_t Fifo&lt;T,L,A&gt;::remove()
 <span style = "background-color:#dfd">                head_ = 0;</span>
             }
 <span style = "background-color:#dfd">            isFull_ = false;
-            isOverrun_ = false;            
+            isOverrun_ = false;
             length_ -= 1;
             res = true;</span>
         }
@@ -330,7 +330,7 @@ template &lt;typename T, int32_t L, class A&gt;
 T&amp; Fifo&lt;T,L,A&gt;::peek()
 <span style = "background-color:#dfd">{
     T* element = &amp;illegal_;
-    if( isConstructed() ) </span>
+    if( isConstructed() )</span>
     {
 <span style = "background-color:#dfd">        if( length_ != 0 )</span>
         {
@@ -357,7 +357,7 @@ bool_t Fifo&lt;T,L,A&gt;::isFull() const
 <span style = "background-color:#dfd">{
     return isFull_;
 }</span>
-    
+
 template &lt;typename T, int32_t L, class A&gt;
 bool_t Fifo&lt;T,L,A&gt;::isOverrun() const
 <span style = "background-color:#dfd">{
@@ -404,7 +404,7 @@ bool_t Fifo&lt;T,L,A&gt;::construct()
     {
 <span style = "background-color:#dfd">        res = true;</span>
     }
-<span style = "background-color:#dfd">    return res;    
+<span style = "background-color:#dfd">    return res;
 }</span>
 
 } // namespace lib

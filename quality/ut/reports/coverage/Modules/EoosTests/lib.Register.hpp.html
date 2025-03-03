@@ -23,11 +23,11 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class Register&lt;R&gt;
  * @brief Alignment of fundamental types to byte boundary of memory.
- * 
+ *
  * @tparam R User-defined union type of register.
  *
  * @note There is R type declaration requarements:
@@ -37,8 +37,8 @@ namespace lib
  *     typedef uint32_t Value;
  *     YourRegister(){}
  *     YourRegister(Value v){value = v;}
- *    ~YourRegister(){}    
- *   
+ *    ~YourRegister(){}
+ *
  *     Value value;
  *     struct Bit
  *     {
@@ -72,7 +72,7 @@ public:
     /**
      * @brief Register.
      */
-    ~Register(); 
+    ~Register();
 
     /**
      * @brief Returns bit-field of the register.
@@ -115,7 +115,7 @@ public:
      * @param digit Digit of a cleaning bit.
      */
     void clearBit(uint32_t digit);
-    
+
     /**
      * @brief Saves the work copy to the register.
      */
@@ -127,17 +127,17 @@ public:
      * @return This register object.
      */
     Register&lt;R&gt;&amp; fetch();
-    
+
 private:
 
     /**
      * @brief The register.
      */
     R&amp; origin_;
-    
+
     /**
      * @brief Work copy.
-     */    
+     */
     R copy_;
 
 };
@@ -149,9 +149,9 @@ Register&lt;R&gt;::Register(R&amp; reg)
 }</span>
 
 template &lt;class R&gt;
-Register&lt;R&gt;::~Register() 
+Register&lt;R&gt;::~Register()
 <span style = "background-color:#dfd">{
-}    </span>
+}</span>
 
 template &lt;class R&gt;
 typename R::Bit&amp; Register&lt;R&gt;::bit()
@@ -168,28 +168,28 @@ const typename R::Bit&amp; Register&lt;R&gt;::bit() const
 template &lt;class R&gt;
 typename R::Value&amp; Register&lt;R&gt;::value()
 <span style = "background-color:#dfd">{
-   return copy_.value; 
+   return copy_.value;
 }</span>
 
 template &lt;class R&gt;
 const typename R::Value&amp; Register&lt;R&gt;::value() const
 <span style = "background-color:#dfd">{
-   return copy_.value; 
+   return copy_.value;
 }</span>
 
 template &lt;class R&gt;
 void Register&lt;R&gt;::setBit(uint32_t digit)
 <span style = "background-color:#dfd">{
     typename R::Value mask( 0x00000001 &lt;&lt; digit );
-    copy_.value |= mask;        
+    copy_.value |= mask;
 }</span>
 
 template &lt;class R&gt;
 void Register&lt;R&gt;::clearBit(uint32_t digit)
 <span style = "background-color:#dfd">{
     typename R::Value mask( 0x00000001 &lt;&lt; digit );
-    copy_.value &amp;= ~mask;        
-}    </span>
+    copy_.value &amp;= ~mask;
+}</span>
 
 template &lt;class R&gt;
 void Register&lt;R&gt;::commit()

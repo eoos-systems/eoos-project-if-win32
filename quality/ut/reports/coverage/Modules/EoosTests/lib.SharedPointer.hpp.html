@@ -28,13 +28,13 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class SharedPointer&lt;T,D,A&gt;
  * @brief Shared pointer.
  *
  * @tparam T Data type of an owning object.
- * @tparam D Deleter type for an owning object. 
+ * @tparam D Deleter type for an owning object.
  * @tparam A Heap memory allocator class.
  */
 template &lt;typename T, class D = SmartPointerDeleter&lt;T&gt;, class A = Allocator&gt;
@@ -71,14 +71,14 @@ public:
 
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
-     */       
+     */
     SharedPointer&amp; operator=(SharedPointer const&amp; obj);
 
     #if EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
-     */       
+     */
     SharedPointer(SharedPointer&amp;&amp; obj) noexcept;
 
     /**
@@ -97,7 +97,7 @@ public:
      * @brief Casts to boolean data type comparing if the stored pointer does not equal to null.
      *
      * @return Comparation the stored pointer does not equal to null.
-     */    
+     */
     operator bool_t() const;
 
     /**
@@ -119,9 +119,9 @@ public:
      *
      * @param index An element index.
      * @return An element.
-     */    
+     */
     T&amp; operator[](uint32_t const index) const;
-    
+
     /**
      * @copydoc eoos::api::SmartPointer::get()
      */
@@ -129,7 +129,7 @@ public:
 
     /**
      * @copydoc eoos::api::SmartPointer::reset()
-     */   
+     */
     virtual void reset();
 
     /**
@@ -141,27 +141,27 @@ public:
      * @copydoc eoos::api::SmartPointer::getCount()
      */
     virtual int32_t getCount() const;
-    
+
     /**
      * @copydoc eoos::api::SmartPointer::isNull()
-     */       
+     */
     virtual bool_t isNull() const;
-    
+
     /**
      * @copydoc eoos::api::SmartPointer::isUnique()
-     */   
+     */
     virtual bool_t isUnique() const;
-    
+
     /**
      * @brief Swaps this managed object with an object managed by given smart object.
      *
      * @param obj A smart object to swap managed objects.
-     */    
+     */
     void swap(SharedPointer&amp; obj);
-    
+
 protected:
 
-    using Parent::setConstructed;     
+    using Parent::setConstructed;
 
 private:
 
@@ -175,7 +175,7 @@ private:
 
     /**
      * @brief Releases the managed object by control block.
-     */       
+     */
     void release();
 
     /**
@@ -195,17 +195,17 @@ private:
      * @brief Primary template implementation of shared pointer control block class.
      *
      * @tparam TT Data type of owning the object.
-     * @tparam DD Deleter type for owning the object.  
+     * @tparam DD Deleter type for owning the object.
      * @tparam AA Heap memory allocator class.
      *
      * @note This class is implemented as an auxiliry class for SharedPointer
      * and is tested for construction before usage. Therefore, some checks
-     * are skipped in public interface to speedup performence. 
+     * are skipped in public interface to speedup performence.
      */
-    template &lt;typename TT, class DD, class AA&gt; 
+    template &lt;typename TT, class DD, class AA&gt;
     class ControlBlock : public NonCopyable&lt;AA&gt;
     {
-        typedef NonCopyable&lt;AA&gt; Parent;    
+        typedef NonCopyable&lt;AA&gt; Parent;
 
     public:
 
@@ -235,43 +235,47 @@ private:
          * @brief Decreases the counter on one.
          *
          * @return A value of the counter after decreasing.
-         */        
+         */
         int32_t decrease();
 
         /**
          * @brief Returns the counter.
          *
          * @return A value of the counter.
-         */        
+         */
         int32_t getCounter() const;
 
         /**
          * @brief Returns the managed raw pointer.
          *
          * @return The managed raw pointer.
-         */        
+         */
         TT* getPointer() const;
 
+    protected:
+
+        using Parent::setConstructed;
+
     private:
-    
+
         /**
          * @brief Constructs this object.
-         */     
+         */
         bool_t construct();
-        
+
         /**
          * @brief An owned pointer.
          */
         TT* pointer_;
-        
+
         /**
          * @brief Counter of copies of the shared objects.
          */
         int32_t counter_;
-    
+
         /**
          * @brief Mutex to protect the counter.
-         */    
+         */
         Mutex&lt;AA&gt; mutex_;
     };
 
@@ -309,21 +313,21 @@ inline bool_t operator!=(SharedPointer&lt;T,D,A&gt; const&amp; obj1, SharedPoint
 }</span>
 
 template &lt;typename T, class D, class A&gt;
-SharedPointer&lt;T,D,A&gt;::SharedPointer() 
+SharedPointer&lt;T,D,A&gt;::SharedPointer()
 <span style = "background-color:#dfd">    : Object&lt;A&gt;()
     , api::SmartPointer&lt;T&gt;()
     , cb_(NULLPTR) {
     bool_t const isConstructed( construct() );
-    setConstructed(isConstructed);    
+    setConstructed(isConstructed);
 }</span>
 
 template &lt;typename T, class D, class A&gt;
-SharedPointer&lt;T,D,A&gt;::SharedPointer(T* const pointer) 
+SharedPointer&lt;T,D,A&gt;::SharedPointer(T* const pointer)
 <span style = "background-color:#dfd">    : Object&lt;A&gt;()
     , api::SmartPointer&lt;T&gt;()
     , cb_(NULLPTR) {
     bool_t const isConstructed( construct(pointer) );
-    setConstructed(isConstructed);    
+    setConstructed(isConstructed);
 }</span>
 
 template &lt;typename T, class D, class A&gt;
@@ -350,32 +354,32 @@ SharedPointer&lt;T,D,A&gt;&amp; SharedPointer&lt;T,D,A&gt;::operator=(SharedPoin
     {
 <span style = "background-color:#dfd">        release();
         cb_ = obj.cb_;
-        acquire();            
-        Parent::operator=(obj);            </span>
+        acquire();
+        Parent::operator=(obj);</span>
     }
 <span style = "background-color:#dfd">    return *this;
-}    </span>
+}</span>
 
 #if EOOS_CPP_STANDARD &gt;= 2011
 
 template &lt;typename T, class D, class A&gt;
-SharedPointer&lt;T,D,A&gt;::SharedPointer(SharedPointer&amp;&amp; obj) noexcept 
+SharedPointer&lt;T,D,A&gt;::SharedPointer(SharedPointer&amp;&amp; obj) noexcept
 <span style = "background-color:#dfd">    : Object&lt;A&gt;( move(obj) )
-    , api::SmartPointer&lt;T&gt;()        
+    , api::SmartPointer&lt;T&gt;()
     , cb_(obj.cb_) {
-}   </span>
+}</span>
 
 template &lt;typename T, class D, class A&gt;
 SharedPointer&lt;T,D,A&gt;&amp; SharedPointer&lt;T,D,A&gt;::operator=(SharedPointer&amp;&amp; obj) &amp; noexcept
 <span style = "background-color:#dfd">{
     if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
     {
-<span style = "background-color:#dfd">        release();            
+<span style = "background-color:#dfd">        release();
         cb_ = obj.cb_;
-        Parent::operator=( move(obj) );            </span>
-    }        
+        Parent::operator=( move(obj) );</span>
+    }
 <span style = "background-color:#dfd">    return *this;
-}        </span>
+}</span>
 
 #endif // EOOS_CPP_STANDARD &gt;= 2011
 
@@ -386,7 +390,7 @@ bool_t SharedPointer&lt;T,D,A&gt;::isConstructed() const ///&lt; SCA MISRA-C++:2
 }</span>
 
 template &lt;typename T, class D, class A&gt;
-SharedPointer&lt;T,D,A&gt;::operator bool_t() const 
+SharedPointer&lt;T,D,A&gt;::operator bool_t() const
 <span style = "background-color:#dfd">{
     return get() != NULLPTR;
 }</span>
@@ -454,7 +458,7 @@ int32_t SharedPointer&lt;T,D,A&gt;::getCount() const
 template &lt;typename T, class D, class A&gt;
 bool_t SharedPointer&lt;T,D,A&gt;::isNull() const
 <span style = "background-color:#dfd">{
-    return get() == NULLPTR;        
+    return get() == NULLPTR;
 }</span>
 
 template &lt;typename T, class D, class A&gt;
@@ -472,7 +476,7 @@ void SharedPointer&lt;T,D,A&gt;::swap(SharedPointer&amp; obj)
         cb_ = obj.cb_;
         obj.cb_ = cb;</span>
     }
-<span style = "background-color:#dfd">}    </span>
+<span style = "background-color:#dfd">}</span>
 
 template &lt;typename T, class D, class A&gt;
 bool_t SharedPointer&lt;T,D,A&gt;::construct(T* const pointer)
@@ -504,7 +508,7 @@ void SharedPointer&lt;T,D,A&gt;::release()
 <span style = "background-color:#dfd">            deleteControlBlock(cb_-&gt;getPointer());</span>
         }
     }
-<span style = "background-color:#dfd">}  </span>
+<span style = "background-color:#dfd">}</span>
 
 template &lt;typename T, class D, class A&gt;
 void SharedPointer&lt;T,D,A&gt;::acquire()
@@ -527,8 +531,8 @@ void SharedPointer&lt;T,D,A&gt;::deleteControlBlock(T* const pointer)
 <span style = "background-color:#dfd">}</span>
 
 template &lt;typename T, class D, class A&gt;
-template &lt;typename TT, class DD, class AA&gt; 
-SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::ControlBlock(T* const pointer) 
+template &lt;typename TT, class DD, class AA&gt;
+SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::ControlBlock(T* const pointer)
 <span style = "background-color:#dfd">    : NonCopyable&lt;AA&gt;()
     , pointer_(pointer)
     , counter_(1)
@@ -546,16 +550,16 @@ bool_t SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::isConstructed()
 
 template &lt;typename T, class D, class A&gt;
 template &lt;typename TT, class DD, class AA&gt;
-SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::~ControlBlock() 
+SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::~ControlBlock()
 <span style = "background-color:#dfd">{
-}    </span>
+}</span>
 
 template &lt;typename T, class D, class A&gt;
 template &lt;typename TT, class DD, class AA&gt;
 void SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::increase()
 <span style = "background-color:#dfd">{
     Guard&lt;AA&gt; const guard(mutex_);</span>
-    static_cast&lt;void&gt;(guard);            
+    static_cast&lt;void&gt;(guard);
 <span style = "background-color:#dfd">    ++counter_;
 }</span>
 
@@ -564,14 +568,14 @@ template &lt;typename TT, class DD, class AA&gt;
 int32_t SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::decrease()
 <span style = "background-color:#dfd">{
     Guard&lt;AA&gt; const guard(mutex_);</span>
-    static_cast&lt;void&gt;(guard);            
+    static_cast&lt;void&gt;(guard);
 <span style = "background-color:#dfd">    return --counter_;
 }</span>
 
 template &lt;typename T, class D, class A&gt;
 template &lt;typename TT, class DD, class AA&gt;
 int32_t SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::getCounter() const
-<span style = "background-color:#dfd">{    
+<span style = "background-color:#dfd">{
     return counter_;
 }</span>
 
@@ -580,7 +584,7 @@ template &lt;typename TT, class DD, class AA&gt;
 TT* SharedPointer&lt;T,D,A&gt;::ControlBlock&lt;TT,DD,AA&gt;::getPointer() const
 <span style = "background-color:#dfd">{
     return pointer_;
-}    </span>
+}</span>
 
 template &lt;typename T, class D, class A&gt;
 template &lt;typename TT, class DD, class AA&gt;

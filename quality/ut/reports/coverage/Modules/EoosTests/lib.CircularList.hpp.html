@@ -23,7 +23,7 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class CircularList&lt;T,A&gt;
  * @brief Circular doubly linked list.
@@ -67,7 +67,7 @@ protected:
     using Parent::setConstructed;
 
 private:
-    
+
     /**
      * @class Iterator&lt;TT,AA&gt;
      * @brief The list iterator.
@@ -84,7 +84,7 @@ private:
     {
         typedef NonCopyable&lt;AA&gt; Parent;
         typedef CircularList&lt;TT,AA&gt;  List;
-        typedef LinkedNode&lt;TT,AA&gt; Node;        
+        typedef LinkedNode&lt;TT,AA&gt; Node;
 
     public:
 
@@ -169,14 +169,14 @@ private:
          * @param index position in this list.
          */
         bool_t construct(int32_t index);
-        
+
         /**
          * @brief Tests if list was modified by list object.
          *
          * @param true if modified.
          */
         bool_t isModifiedByList() const;
-        
+
         /**
          * @brief List changing counter.
          */
@@ -243,12 +243,12 @@ private:
 };
 
 template &lt;typename T, class A&gt;
-CircularList&lt;T,A&gt;::CircularList() 
+CircularList&lt;T,A&gt;::CircularList()
 <span style = "background-color:#dfd">    : AbstractList&lt;T,A&gt;() {
 }</span>
 
 template &lt;typename T, class A&gt;
-CircularList&lt;T,A&gt;::CircularList(T const illegal) 
+CircularList&lt;T,A&gt;::CircularList(T const illegal)
 <span style = "background-color:#dfd">    : AbstractList&lt;T,A&gt;(illegal) {
 }</span>
 
@@ -273,12 +273,12 @@ api::ListIterator&lt;T&gt;* CircularList&lt;T,A&gt;::getListIterator(int32_t con
             }
         }
     }
-<span style = "background-color:#dfd">    return it;         
+<span style = "background-color:#dfd">    return it;
 }</span>
 
 template &lt;typename T, class A&gt;
 template &lt;typename TT, class AA&gt;
-CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::Iterator(int32_t const index, List&amp; list) 
+CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::Iterator(int32_t const index, List&amp; list)
 <span style = "background-color:#dfd">    : NonCopyable&lt;AA&gt;()
     , api::ListIterator&lt;TT&gt;()
     , list_    (list)
@@ -312,7 +312,7 @@ bool_t CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::add(TT const&amp; element
     if( !isModifiedByList() )</span>
     {
 <span style = "background-color:#dfd">        bool_t const wasEmpty( list_.isEmpty() );
-        int32_t const index = ( wasEmpty ) ? 0 : curs_-&gt;getIndex(); 
+        int32_t const index = ( wasEmpty ) ? 0 : curs_-&gt;getIndex();
         res = list_.add(index, element);
         if( res == true )</span>
         {
@@ -323,7 +323,7 @@ bool_t CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::add(TT const&amp; element
 <span style = "background-color:#dfd">                curs_ = last_;</span>
             }
         }
-    }            
+    }
 <span style = "background-color:#dfd">    return res;
 }</span>
 
@@ -334,12 +334,12 @@ bool_t CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::remove()
     bool_t res( false );
     if( !isModifiedByList() &amp;&amp; (rindex_ != ILLEGAL_INDEX) )</span>
     {
-<span style = "background-color:#dfd">        Node* curs( curs_ );            
+<span style = "background-color:#dfd">        Node* curs( curs_ );
         if(curs_-&gt;getIndex() == rindex_)</span>
         {
 <span style = "background-color:#dfd">            curs = curs_-&gt;getNext();</span>
         }
-<span style = "background-color:#dfd">        res = list_.remove(rindex_);            
+<span style = "background-color:#dfd">        res = list_.remove(rindex_);
         if(res == true)</span>
         {
 <span style = "background-color:#dfd">            count_.self++; ///&lt; SCA MISRA-C++:2008 Defected Rule 5-2-10
@@ -359,7 +359,7 @@ TT&amp; CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::getPrevious()
     {
 <span style = "background-color:#dfd">        curs_ = curs_-&gt;getPrevious();
         rindex_ = curs_-&gt;getIndex();
-        res = true;                
+        res = true;
     }</span>
     else
     {
@@ -377,7 +377,7 @@ int32_t CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::getPreviousIndex() const
     if( !isModifiedByList() )</span>
     {
 <span style = "background-color:#dfd">        index = hasPrevious() ? curs_-&gt;getPrevious()-&gt;getIndex() : -1;</span>
-    }                        
+    }
 <span style = "background-color:#dfd">    return index;
 }</span>
 
@@ -471,7 +471,7 @@ bool_t CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::construct(int32_t index)
     if( isConstructed() &amp;&amp; list_.isConstructed() )</span>
     {
 <span style = "background-color:#dfd">        if( !list_.isIndexOutOfBounds(index) )</span>
-        { 
+        {
 <span style = "background-color:#dfd">            if( !list_.isEmpty() )</span>
             {
 <span style = "background-color:#dfd">                if( static_cast&lt;size_t&gt;(index) != list_.getLength() )</span>
@@ -492,7 +492,7 @@ bool_t CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::construct(int32_t index)
 template &lt;typename T, class A&gt;
 template &lt;typename TT, class AA&gt;
 bool_t CircularList&lt;T,A&gt;::Iterator&lt;TT,AA&gt;::isModifiedByList() const
-<span style = "background-color:#dfd">{        
+<span style = "background-color:#dfd">{
     return count_.list != count_.self;
 }</span>
 

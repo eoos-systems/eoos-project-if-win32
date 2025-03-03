@@ -49,7 +49,7 @@ struct CharTrait
      * @return Converted character as integer.
      *
      * @tparam I An integer data type to be converted.
-     */    
+     */
     template &lt;typename I&gt;
     static T convertDigitToChar(I val);
 
@@ -76,7 +76,7 @@ struct CharTrait&lt;char_t&gt;
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
-     */    
+     */
     template &lt;typename I&gt;
     static char_t convertDigitToChar(I val);
 
@@ -101,7 +101,7 @@ struct CharTrait&lt;wchar_t&gt;
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
-     */    
+     */
     template &lt;typename I&gt;
     static wchar_t convertDigitToChar(I val);
 
@@ -128,10 +128,10 @@ struct CharTrait&lt;char16_t&gt;
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
-     */    
+     */
     template &lt;typename I&gt;
     static char16_t convertDigitToChar(I val);
-    
+
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::getMinusSign()
      */
@@ -153,7 +153,7 @@ struct CharTrait&lt;char32_t&gt;
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
-     */    
+     */
     template &lt;typename I&gt;
     static char32_t convertDigitToChar(I val);
 
@@ -182,7 +182,7 @@ struct CharTrait&lt;char8_t&gt;
 
     /**
      * @copydoc eoos::lib::CharTrait&lt;T&gt;::convertDigitToChar(I)
-     */    
+     */
     template &lt;typename I&gt;
     static char8_t convertDigitToChar(I val);
 
@@ -267,7 +267,7 @@ wchar_t CharTrait&lt;wchar_t&gt;::convertDigitToChar(I val)
 inline wchar_t CharTrait&lt;wchar_t&gt;::getMinusSign()
 <span style = "background-color:#dfd">{
     return L'-';
-}  </span>
+}</span>
 
 #if EOOS_CPP_STANDARD &gt;= 2011
 
@@ -306,7 +306,7 @@ char16_t CharTrait&lt;char16_t&gt;::convertDigitToChar(I val)
 inline char16_t CharTrait&lt;char16_t&gt;::getMinusSign()
 <span style = "background-color:#dfd">{
     return u'-';
-}    </span>
+}</span>
 
 inline char32_t CharTrait&lt;char32_t&gt;::getTerminator()
 <span style = "background-color:#dfd">{
@@ -343,7 +343,7 @@ char32_t CharTrait&lt;char32_t&gt;::convertDigitToChar(I val)
 inline char32_t CharTrait&lt;char32_t&gt;::getMinusSign()
 <span style = "background-color:#dfd">{
     return U'-';
-}    </span>
+}</span>
 
 #endif // EOOS_CPP_STANDARD &gt;= 2011
 
@@ -384,7 +384,7 @@ char8_t CharTrait&lt;char8_t&gt;::convertDigitToChar(I val)
 inline char8_t CharTrait&lt;char8_t&gt;::getMinusSign()
 {
     return u8'-';
-}    
+}
 
 #endif // EOOS_CPP_STANDARD &gt;= 2020
 

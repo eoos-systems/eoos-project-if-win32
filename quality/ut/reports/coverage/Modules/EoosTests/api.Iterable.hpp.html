@@ -24,7 +24,7 @@ namespace eoos
 {
 namespace api
 {
-    
+
 /**
  * @class Iterable&lt;T&gt;
  * @brief Iterable interface.
@@ -49,12 +49,12 @@ public:
      * the iterating of a collection has been completed, or returned raw pointer
      * assigned to a smart pointer.
      *
-     * @note Modification of the list by the list functions is not desirable 
+     * @note Modification of the list by the list functions is not desirable
      * if operability of the returned iterator has to be.
      *
      * @return Pointer to new iterator.
      *
-     * @todo Declare constant function to satisfy MISRA-C++:2008 Rule 9â3â1     
+     * @todo Declare constant function to satisfy MISRA-C++:2008 Rule 9â3â1
      */
     virtual Iterator&lt;T&gt;* getIterator() = 0;
 

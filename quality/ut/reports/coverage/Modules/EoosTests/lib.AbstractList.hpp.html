@@ -28,7 +28,7 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class AbstractList&lt;T,A&gt;
  * @brief Abstract list class.
@@ -47,7 +47,7 @@ class AbstractList :
     typedef LinkedNode&lt;T,A&gt; Node;
 
 public:
-        
+
     using api::List&lt;T&gt;::getListIterator;
 
     /**
@@ -159,7 +159,7 @@ public:
      * @copydoc eoos::api::List::isIndex(T const&amp;)
      */
     virtual bool_t isIndex(int32_t const index) const;
-    
+
     /**
      * @copydoc eoos::api::Iterable::getIterator()
      */
@@ -362,7 +362,7 @@ T&amp; AbstractList&lt;T,A&gt;::getLast()
 
 template &lt;typename T, class A&gt;
 T&amp; AbstractList&lt;T,A&gt;::get(int32_t index)
-<span style = "background-color:#dfd">{   
+<span style = "background-color:#dfd">{
     T* element( &amp;illegal_ );
     if( isConstructed() )</span>
     {
@@ -451,7 +451,7 @@ api::Iterator&lt;T&gt;* AbstractList&lt;T,A&gt;::getIterator() ///&lt; SCA MISRA
 }</span>
 
 template &lt;typename T, class A&gt;
-AbstractList&lt;T,A&gt;::AbstractList() 
+AbstractList&lt;T,A&gt;::AbstractList()
 <span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
     , api::List&lt;T&gt;()
     , api::Queue&lt;T&gt;()
@@ -462,7 +462,7 @@ AbstractList&lt;T,A&gt;::AbstractList()
 }</span>
 
 template &lt;typename T, class A&gt;
-AbstractList&lt;T,A&gt;::AbstractList(T const&amp; illegal) 
+AbstractList&lt;T,A&gt;::AbstractList(T const&amp; illegal)
 <span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
     , api::List&lt;T&gt;()
     , api::Queue&lt;T&gt;()
@@ -505,7 +505,7 @@ bool_t AbstractList&lt;T,A&gt;::addNode(int32_t const index, T const&amp; elemen
                 {
 <span style = "background-color:#dfd">                    Node* const before( getNodeByIndex(0) );
                     if(before != NULLPTR)</span>
-                    {                        
+                    {
 <span style = "background-color:#dfd">                        before-&gt;insertBefore(node.get());
                         res = true;</span>
                     }
@@ -593,7 +593,7 @@ bool_t AbstractList&lt;T,A&gt;::removeNode(Node* const node)
 template &lt;typename T, class A&gt;
 bool_t AbstractList&lt;T,A&gt;::isIndexOutOfBounds(int32_t const index) const
 <span style = "background-color:#dfd">{
-    bool_t res( false ); 
+    bool_t res( false );
     if( index &lt; 0 )</span>
     {
 <span style = "background-color:#dfd">        res = true;
@@ -626,7 +626,7 @@ T&amp; AbstractList&lt;T,A&gt;::getReferenceToIllegal()
 <span style = "background-color:#dfd">{
     return illegal_; ///&lt; SCA MISRA-C++:2008 Justified Rule 9-3-2
 }</span>
-        
+
 } // namespace lib
 } // namespace eoos
 #endif // LIB_ABSTRACTLIST_HPP_</pre>

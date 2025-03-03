@@ -86,7 +86,7 @@ public:
      * @param str2 Character string to be compared.
      * @return The value 0 if the string 1 is equal to the string 2;
      *         a value less than 0 if the first not match character of string 1 has lower value than in string 2;
-     *         a value greater than 0 if the first not match character of string 1 has greater value than in string 2;     
+     *         a value greater than 0 if the first not match character of string 1 has greater value than in string 2;
      *         or the minimum possible value if an error has been occurred.
      */
     static int32_t strcmp(char_t const* str1, char_t const* str2);
@@ -102,9 +102,9 @@ public:
      *       Exception 1: Minimum negative value can be `T_MIN + 1` or greater.
      *
      *       Exception 2: Only if the base is decimal, a passed number is available to be negative value,
-     *       and the resulting string of these values is preceded with a minus sign. 
-     *       
-     *       Exception 3: A hexadecimal number includes lower case characters, and any resulting strings 
+     *       and the resulting string of these values is preceded with a minus sign.
+     *
+     *       Exception 3: A hexadecimal number includes lower case characters, and any resulting strings
      *       do not contain any suffixes or prefixes for identifying a numeral system.
      *
      * @todo Rework the implementation to avoid the exceptions.
@@ -167,7 +167,7 @@ private:
      * @param addend      A resulting addend.
      */
     static void detectMathOperands(char_t const character, char_t&amp; subtrahend, int32_t&amp; addend);
-    
+
 };
 
 inline void* Memory::memcpy(void* const dst, void const* const src, size_t len)
@@ -204,7 +204,7 @@ inline void* Memory::memset(void* const dst, int32_t const val, size_t len)
 
 inline size_t Memory::strlen(char_t const* str)
 <span style = "background-color:#dfd">{
-    size_t len( 0U );        
+    size_t len( 0U );
     if(str != NULLPTR)</span>
     {
 <span style = "background-color:#dfd">        while( *str != '\0' )</span>
@@ -225,7 +225,7 @@ inline char_t* Memory::strcpy(char_t* const dst, char_t const* src)
         char_t const* s( src  - 1 );      ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
         while( (*++d = *++s) != '\0' ) {} ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15, Rule 5-2-10 and Rule 6-2-1
         res = dst;</span>
-        
+
     }
 <span style = "background-color:#dfd">    return res;
 }</span>
@@ -234,11 +234,11 @@ inline char_t* Memory::strcat(char_t* const dst, char_t const* src)
 <span style = "background-color:#dfd">{
     char_t* res( NULLPTR );
     if( (dst != NULLPTR) &amp;&amp; (src != NULLPTR) )</span>
-    {       
+    {
 <span style = "background-color:#dfd">        char_t* d( dst - 1 );             ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
         while( *++d != '\0' ) {}          ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
         d--;                              ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
-        char_t const* s( src - 1 );       ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15       
+        char_t const* s( src - 1 );       ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15
         while( (*++d = *++s) != '\0' ) {} ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15, Rule 5-2-10 and Rule 6-2-1
         res = dst;</span>
     }
@@ -249,7 +249,7 @@ inline int32_t Memory::strcmp(char_t const* str1, char_t const* str2)
 <span style = "background-color:#dfd">{
     int32_t res( static_cast&lt;int32_t&gt;( 0x80000000U ) );
     if( (str1 != NULLPTR) &amp;&amp; (str2 != NULLPTR) )</span>
-    {        
+    {
 <span style = "background-color:#dfd">        while(true)</span>
         {
 <span style = "background-color:#dfd">            int32_t ch1( static_cast&lt;int32_t&gt;(*str1++) ); ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-15 and Rule 5-2-10
@@ -266,15 +266,23 @@ inline int32_t Memory::strcmp(char_t const* str1, char_t const* str2)
 
 template &lt;typename T&gt;
 bool_t Memory::itoa(T const val, char_t* str, Number::Base const base)
-<span style = "background-color:#dfd">{
-    const int32_t LENGTH( ( static_cast&lt;int32_t&gt;( sizeof(T) ) * 8) + 1 );
+<span style = "background-color:#dfd">{</span>
+    // @todo
+    // For all the compilers for `uint8_t val = 255` value passed to
+    // the function `Memory::itoa(val, str, Number::BASE_2);` with
+    // adding `+1` for the LENGTH the test passes.
+    // For aarch64 cross-compiler Clang 17.0.6 the test is not passed.
+    // Therefore, we add `+2` for the LENGTH to pass the test.
+    // But this behavior must be debugged and fixed to change `+2` to `+1`,
+    // or justify if this does not need.
+<span style = "background-color:#dfd">    const int32_t LENGTH( ( static_cast&lt;int32_t&gt;( sizeof(T) ) * 8) + 2 );
     bool_t res( false );
     if(str != NULLPTR)
     {</span>
         char_t temp[LENGTH];
         bool_t isNegative;
 <span style = "background-color:#dfd">        int32_t index( LENGTH - 1 );
-        res = true;            
+        res = true;
         temp[index--] = '\0'; ///&lt; SCA MISRA-C++:2008 Justified Rule 5-0-11 and Rule 5-2-10</span>
         do
         {
@@ -369,7 +377,7 @@ T Memory::atoi(char_t const* str, Number::Base const base)
             break;
         }
     }
-<span style = "background-color:#dfd">    T result( 0 );        
+<span style = "background-color:#dfd">    T result( 0 );
     if( isBase )</span>
     {
 <span style = "background-color:#dfd">        T const multiplier( static_cast&lt;T&gt;(base) );
@@ -427,7 +435,7 @@ T Memory::atoi(char_t const* str, Number::Base const base)
 template &lt;typename T&gt;
 bool_t Memory::isPositive(volatile T value)
 <span style = "background-color:#dfd">{
-    return ( (value &gt; 0) || (value == 0) ) ? true : false;
+    return ( value &gt;= 0 ) ? true : false;
 }</span>
 
 inline bool_t Memory::isSpace(char_t const character)
@@ -471,7 +479,7 @@ inline bool_t Memory::isDigit(char_t const character, Number::Base const base)
         }
         case Number::BASE_16:
         {
-<span style = "background-color:#dfd">            res = ( </span>
+<span style = "background-color:#dfd">            res = (</span>
                 ( (ch &gt;= 0x30) &amp;&amp; (ch &lt;= 0x39) )
              || ( (ch &gt;= 0x41) &amp;&amp; (ch &lt;= 0x46) )
              || ( (ch &gt;= 0x61) &amp;&amp; (ch &lt;= 0x66) )

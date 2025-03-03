@@ -30,7 +30,7 @@ namespace lib
  * @class Mutex&lt;A&gt;
  * @brief Mutex class.
  *
- * @tparam A Heap memory allocator class. 
+ * @tparam A Heap memory allocator class.
  */
 template &lt;class A = Allocator&gt;
 class Mutex : public NonCopyable&lt;A&gt;, public api::Mutex
@@ -48,12 +48,12 @@ public:
      * @brief Destructor.
      */
     virtual ~Mutex();
-    
+
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
     virtual bool_t isConstructed() const;
-    
+
     /**
      * @copydoc eoos::api::Mutex::tryLock()
      */
@@ -90,7 +90,7 @@ private:
 };
 
 template &lt;class A&gt;
-Mutex&lt;A&gt;::Mutex() 
+Mutex&lt;A&gt;::Mutex()
 <span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
     , api::Mutex()
     , mutex_ (NULLPTR){
@@ -121,8 +121,8 @@ bool_t Mutex&lt;A&gt;::tryLock()
     {
 <span style = "background-color:#dfd">        res = mutex_-&gt;tryLock();</span>
     }
-<span style = "background-color:#dfd">    return res;        
-}        </span>
+<span style = "background-color:#dfd">    return res;
+}</span>
 
 template &lt;class A&gt;
 bool_t Mutex&lt;A&gt;::lock()
@@ -154,7 +154,7 @@ bool_t Mutex&lt;A&gt;::construct()
     {
 <span style = "background-color:#dfd">        mutex_ = sys::Call::get().getMutexManager().create();
         if( Parent::isConstructed(mutex_) )</span>
-        {   
+        {
 <span style = "background-color:#dfd">            res = true;</span>
         }
     }

@@ -28,7 +28,7 @@ namespace api
 /**
  * @class SemaphoreManager
  * @brief Semaphore sub-system manager interface.
- */    
+ */
 class SemaphoreManager : public Object
 {
 
@@ -46,7 +46,7 @@ public:
      * @return A new semaphore resource, or NULLPTR if an error has been occurred.
      */
     virtual Semaphore* create(int32_t permits) = 0;
-    
+
 };
 
 <span style = "background-color:#dfd">inline SemaphoreManager::~SemaphoreManager() {}</span>

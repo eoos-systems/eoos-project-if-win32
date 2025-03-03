@@ -23,7 +23,7 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class BaseString&lt;T,L,R,A&gt;
  * @brief Static base string class.
@@ -39,7 +39,7 @@ template &lt;typename T, int32_t L, class R = CharTrait&lt;T&gt;, class A = Allo
 class BaseString : public AbstractBaseString&lt;T,R,A&gt;
 {
     typedef AbstractBaseString&lt;T,R,A&gt; Parent;
-    
+
 public:
 
     using Parent::isConstructed;
@@ -49,7 +49,7 @@ public:
      * @brief Constructor.
      */
     BaseString();
-    
+
     /**
      * @brief Constructor.
      *
@@ -63,137 +63,11 @@ public:
      * @param source A source character string.
      */
     BaseString(T const* const source);
-    
+
     /**
      * @brief Constructor.
      *
      * @param value A source numerical value.
-     * @param base  A numerical base used to represent a value as this string.     
-     */
-    explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10);
-
-    /**
-     * @brief Destructor.
-     */
-    virtual ~BaseString();
-
-    /**
-     * @copydoc eoos::Object::Object(Object const&amp;)
-     */
-    BaseString(BaseString const&amp; obj);
-
-    /**
-     * @copydoc eoos::Object::operator=(Object const&amp;)
-     */       
-    BaseString&amp; operator=(BaseString const&amp; obj);
-
-    #if EOOS_CPP_STANDARD &gt;= 2011
-
-    /**
-     * @copydoc eoos::Object::Object(Object&amp;&amp;)
-     */       
-    BaseString(BaseString&amp;&amp; obj) noexcept;
-
-    /**
-     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
-     */
-    BaseString&amp; operator=(BaseString&amp;&amp; obj) &amp; noexcept;
-
-    #endif // EOOS_CPP_STANDARD &gt;= 2011    
-
-    /**
-     * @copydoc eoos::api::Collection::getLength()
-     */
-    virtual size_t getLength() const;
-
-    /**
-     * @copydoc eoos::api::String::getChar()
-     */
-    virtual T const* getChar() const;
-    
-protected:
-
-    using Parent::setConstructed;
-    using Parent::getLengthRaw;
-    using Parent::copyRaw3;
-    using Parent::concatenateRaw3;
-    using Parent::isEqualRaw2;    
-
-private:
-
-    /**
-     * @copydoc eoos::lib::AbstractBaseString::copyRaw(T const*)
-     */
-    virtual bool_t copyRaw(T const* const str);
-    
-    /**
-     * @copydoc eoos::lib::AbstractBaseString::concatenate(T const*)
-     */
-    virtual bool_t concatenateRaw(T const* const str);
-    
-    /**
-     * @copydoc eoos::lib::AbstractBaseString::isEqualToRaw(T const*)
-     */
-    virtual bool_t isEqualToRaw(T const* const str) const;
-    
-    /**
-     * @brief Constructs this object.
-     *
-     * @param str A string to be copied on construction.
-     * @return True if this object has been constructed successfully.
-     */     
-    bool_t construct(T const* const str = NULLPTR);
-
-    /**
-     * @brief The buffer of characters of this string.
-     */
-    T str_[L + 1];    
-
-};
-
-/**
- * @class BaseString&lt;T,0,R,A&gt;
- * @brief Dynamic base string class.
- *
- * Partial specialization of the template implements the dynamic string class.
- *
- * @tparam T Data type of string characters.
- * @tparam R A character traits. 
- * @tparam A Heap memory allocator class.
- */
-template &lt;typename T, class R, class A&gt;
-class BaseString&lt;T,0,R,A&gt; : public AbstractBaseString&lt;T,R,A&gt;
-{
-    typedef AbstractBaseString&lt;T,R,A&gt; Parent;
-
-public:
-
-    using Parent::isConstructed;
-    using Parent::convert;
-
-    /**
-     * @brief Constructor.
-     */
-    BaseString();
-    
-    /**
-     * @brief Constructor.
-     *
-     * @param source A source object interface.
-     */
-    BaseString(api::String&lt;T&gt; const&amp; source);
-
-    /**
-     * @brief Constructor.
-     *
-     * @param source A source character string.
-     */
-    BaseString(T const* const source);
-    
-    /**
-     * @brief Constructor.
-     *
-     * @param value A source numerical value.     
      * @param base  A numerical base used to represent a value as this string.
      */
     explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10);
@@ -210,14 +84,14 @@ public:
 
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
-     */       
+     */
     BaseString&amp; operator=(BaseString const&amp; obj);
 
     #if EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
-     */       
+     */
     BaseString(BaseString&amp;&amp; obj) noexcept;
 
     /**
@@ -251,12 +125,12 @@ private:
      * @copydoc eoos::lib::AbstractBaseString::copyRaw(T const*)
      */
     virtual bool_t copyRaw(T const* const str);
-    
+
     /**
      * @copydoc eoos::lib::AbstractBaseString::concatenate(T const*)
      */
     virtual bool_t concatenateRaw(T const* const str);
-    
+
     /**
      * @copydoc eoos::lib::AbstractBaseString::isEqualToRaw(T const*)
      */
@@ -267,9 +141,135 @@ private:
      *
      * @param str A string to be copied on construction.
      * @return True if this object has been constructed successfully.
-     */     
+     */
     bool_t construct(T const* const str = NULLPTR);
-    
+
+    /**
+     * @brief The buffer of characters of this string.
+     */
+    T str_[L + 1];
+
+};
+
+/**
+ * @class BaseString&lt;T,0,R,A&gt;
+ * @brief Dynamic base string class.
+ *
+ * Partial specialization of the template implements the dynamic string class.
+ *
+ * @tparam T Data type of string characters.
+ * @tparam R A character traits.
+ * @tparam A Heap memory allocator class.
+ */
+template &lt;typename T, class R, class A&gt;
+class BaseString&lt;T,0,R,A&gt; : public AbstractBaseString&lt;T,R,A&gt;
+{
+    typedef AbstractBaseString&lt;T,R,A&gt; Parent;
+
+public:
+
+    using Parent::isConstructed;
+    using Parent::convert;
+
+    /**
+     * @brief Constructor.
+     */
+    BaseString();
+
+    /**
+     * @brief Constructor.
+     *
+     * @param source A source object interface.
+     */
+    BaseString(api::String&lt;T&gt; const&amp; source);
+
+    /**
+     * @brief Constructor.
+     *
+     * @param source A source character string.
+     */
+    BaseString(T const* const source);
+
+    /**
+     * @brief Constructor.
+     *
+     * @param value A source numerical value.
+     * @param base  A numerical base used to represent a value as this string.
+     */
+    explicit BaseString(int32_t const value, Number::Base const base = Number::BASE_10);
+
+    /**
+     * @brief Destructor.
+     */
+    virtual ~BaseString();
+
+    /**
+     * @copydoc eoos::Object::Object(Object const&amp;)
+     */
+    BaseString(BaseString const&amp; obj);
+
+    /**
+     * @copydoc eoos::Object::operator=(Object const&amp;)
+     */
+    BaseString&amp; operator=(BaseString const&amp; obj);
+
+    #if EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::Object::Object(Object&amp;&amp;)
+     */
+    BaseString(BaseString&amp;&amp; obj) noexcept;
+
+    /**
+     * @copydoc eoos::Object::operator=(Object&amp;&amp;)
+     */
+    BaseString&amp; operator=(BaseString&amp;&amp; obj) &amp; noexcept;
+
+    #endif // EOOS_CPP_STANDARD &gt;= 2011
+
+    /**
+     * @copydoc eoos::api::Collection::getLength()
+     */
+    virtual size_t getLength() const;
+
+    /**
+     * @copydoc eoos::api::String::getChar()
+     */
+    virtual T const* getChar() const;
+
+protected:
+
+    using Parent::setConstructed;
+    using Parent::getLengthRaw;
+    using Parent::copyRaw3;
+    using Parent::concatenateRaw3;
+    using Parent::isEqualRaw2;
+
+private:
+
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::copyRaw(T const*)
+     */
+    virtual bool_t copyRaw(T const* const str);
+
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::concatenate(T const*)
+     */
+    virtual bool_t concatenateRaw(T const* const str);
+
+    /**
+     * @copydoc eoos::lib::AbstractBaseString::isEqualToRaw(T const*)
+     */
+    virtual bool_t isEqualToRaw(T const* const str) const;
+
+    /**
+     * @brief Constructs this object.
+     *
+     * @param str A string to be copied on construction.
+     * @return True if this object has been constructed successfully.
+     */
+    bool_t construct(T const* const str = NULLPTR);
+
     /**
      * @brief Prepare this string for a new length to copy.
      *
@@ -285,7 +285,7 @@ private:
      * @return True if the the string is prepared.
      */
     bool_t prepareConcatenate(size_t length);
-    
+
     /**
      * @brief Allocates memory for a string.
      *
@@ -293,17 +293,17 @@ private:
      * @return True if the context has been allocated successfully.
      */
     bool_t allocate(size_t const length);
-    
+
     /**
      * @brief Frees this contex.
      */
     void free();
-    
+
     /**
      * @brief Cleans this contex.
      */
     void clean();
-    
+
     /**
      * @brief Returns size in byte for a string length.
      *
@@ -311,7 +311,7 @@ private:
      * @return Size in byte for a passed string.
      */
     static size_t calculateSize(size_t len);
-    
+
     /**
      * @brief Tests if a passed length fits to allocated available length.
      *
@@ -319,14 +319,14 @@ private:
      * @return True if this length will be fit successfully.
      */
     bool_t isFit(size_t len) const;
-    
+
     /**
      * @brief Lenght of the buffer of characters on construction.
      *
      * @note Cannot be zero.
      */
     static const size_t LENGTH_ON_CONSTRUCTION = 7U;
-    
+
     /**
      * @brief Lenght of the buffer of characters of this string.
      */
@@ -335,7 +335,7 @@ private:
     /**
      * @brief The buffer of characters of this string.
      *
-     * @todo Refactor this to be array on construction, 
+     * @todo Refactor this to be array on construction,
      * and if new assigned string is more than LENGTH_ON_CONSTRUCTION,
      * allocate a new array dynamically. To implement this approach and
      * reduce size of the class object, revise using a `union` type.
@@ -420,29 +420,29 @@ inline BaseString&lt;T,L,R,A&gt; operator+(T const* const source1, BaseString&lt
 }</span>
 
 template &lt;typename T, int32_t L, class R, class A&gt;
-BaseString&lt;T,L,R,A&gt;::BaseString() 
+BaseString&lt;T,L,R,A&gt;::BaseString()
 <span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {
     bool_t const isConstructed( construct() );
     setConstructed( isConstructed );
 }</span>
 
 template &lt;typename T, int32_t L, class R, class A&gt;
-BaseString&lt;T,L,R,A&gt;::BaseString(api::String&lt;T&gt; const&amp; source) 
+BaseString&lt;T,L,R,A&gt;::BaseString(api::String&lt;T&gt; const&amp; source)
 <span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {
     bool_t const isConstructed( construct( source.getChar() ) );
-    setConstructed( isConstructed );            
+    setConstructed( isConstructed );
 }</span>
 
 template &lt;typename T, int32_t L, class R, class A&gt;
-BaseString&lt;T,L,R,A&gt;::BaseString(T const* const source) 
+BaseString&lt;T,L,R,A&gt;::BaseString(T const* const source)
 <span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {
     bool_t const isConstructed( construct( source ) );
-    setConstructed( isConstructed );            
+    setConstructed( isConstructed );
 }</span>
 
 template &lt;typename T, int32_t L, class R, class A&gt;
-BaseString&lt;T,L,R,A&gt;::BaseString(int32_t const value, Number::Base const base) 
-<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {    
+BaseString&lt;T,L,R,A&gt;::BaseString(int32_t const value, Number::Base const base)
+<span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;() {
     bool_t isConstructed( construct() );
     if( isConstructed )</span>
     {
@@ -469,10 +469,10 @@ BaseString&lt;T,L,R,A&gt;&amp; BaseString&lt;T,L,R,A&gt;::operator=(BaseString c
     if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
     {
 <span style = "background-color:#dfd">        copyRaw3(str_, obj.str_, L);
-        Parent::operator=(obj);            </span>
+        Parent::operator=(obj);</span>
     }
 <span style = "background-color:#dfd">    return *this;
-}    </span>
+}</span>
 
 #if EOOS_CPP_STANDARD &gt;= 2011
 
@@ -488,12 +488,12 @@ BaseString&lt;T,L,R,A&gt;&amp; BaseString&lt;T,L,R,A&gt;::operator=(BaseString&a
     if( isConstructed() &amp;&amp; (this != &amp;obj) )</span>
     {
 <span style = "background-color:#dfd">        copyRaw3(str_, obj.str_, L);
-        Parent::operator=( move(obj) );            </span>
+        Parent::operator=( move(obj) );</span>
     }
 <span style = "background-color:#dfd">    return *this;
-}        </span>
+}</span>
 
-#endif // EOOS_CPP_STANDARD &gt;= 2011    
+#endif // EOOS_CPP_STANDARD &gt;= 2011
 
 template &lt;typename T, int32_t L, class R, class A&gt;
 size_t BaseString&lt;T,L,R,A&gt;::getLength() const
@@ -568,7 +568,7 @@ bool_t BaseString&lt;T,L,R,A&gt;::construct(T const* const str)
 }</span>
 
 template &lt;typename T, class R, class A&gt;
-BaseString&lt;T,0,R,A&gt;::BaseString() 
+BaseString&lt;T,0,R,A&gt;::BaseString()
 <span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;()
     , len_(0)
     , str_(NULLPTR){
@@ -577,7 +577,7 @@ BaseString&lt;T,0,R,A&gt;::BaseString()
 }</span>
 
 template &lt;typename T, class R, class A&gt;
-BaseString&lt;T,0,R,A&gt;::BaseString(api::String&lt;T&gt; const&amp; source) 
+BaseString&lt;T,0,R,A&gt;::BaseString(api::String&lt;T&gt; const&amp; source)
 <span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;()
     , len_(0)
     , str_(NULLPTR){
@@ -586,7 +586,7 @@ BaseString&lt;T,0,R,A&gt;::BaseString(api::String&lt;T&gt; const&amp; source)
 }</span>
 
 template &lt;typename T, class R, class A&gt;
-BaseString&lt;T,0,R,A&gt;::BaseString(T const* const source) 
+BaseString&lt;T,0,R,A&gt;::BaseString(T const* const source)
 <span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;()
     , len_(0)
     , str_(NULLPTR){
@@ -605,7 +605,7 @@ BaseString&lt;T,0,R,A&gt;::BaseString(int32_t const value, Number::Base const ba
 <span style = "background-color:#dfd">        isConstructed = convert(value, base);</span>
     }
 <span style = "background-color:#dfd">    setConstructed( isConstructed );
-}    </span>
+}</span>
 
 template &lt;typename T, class R, class A&gt;
 BaseString&lt;T,0,R,A&gt;::~BaseString()
@@ -631,12 +631,12 @@ BaseString&lt;T,0,R,A&gt;&amp; BaseString&lt;T,0,R,A&gt;::operator=(BaseString c
         Parent::operator=(obj);</span>
     }
 <span style = "background-color:#dfd">    return *this;
-}    </span>
+}</span>
 
 #if EOOS_CPP_STANDARD &gt;= 2011
 
 template &lt;typename T, class R, class A&gt;
-BaseString&lt;T,0,R,A&gt;::BaseString(BaseString&amp;&amp; obj) noexcept 
+BaseString&lt;T,0,R,A&gt;::BaseString(BaseString&amp;&amp; obj) noexcept
 <span style = "background-color:#dfd">    : AbstractBaseString&lt;T,R,A&gt;( move(obj) )
     , len_(obj.len_)
     , str_(obj.str_){
@@ -652,10 +652,10 @@ BaseString&lt;T,0,R,A&gt;&amp; BaseString&lt;T,0,R,A&gt;::operator=(BaseString&a
         len_ = obj.len_;
         str_ = obj.str_;
         obj.clean();
-        Parent::operator=( move(obj) );            </span>
+        Parent::operator=( move(obj) );</span>
     }
 <span style = "background-color:#dfd">    return *this;
-}        </span>
+}</span>
 
 #endif // EOOS_CPP_STANDARD &gt;= 2011
 
@@ -688,7 +688,7 @@ bool_t BaseString&lt;T,0,R,A&gt;::copyRaw(T const* const str)
     bool_t res( false );
     if( isConstructed() &amp;&amp; (str != NULLPTR) )</span>
     {
-<span style = "background-color:#dfd">        size_t const length( getLengthRaw(str) );            
+<span style = "background-color:#dfd">        size_t const length( getLengthRaw(str) );
         bool_t isPrepared( prepareCopy(length) );
         if( isPrepared )</span>
         {
@@ -767,7 +767,7 @@ bool_t BaseString&lt;T,0,R,A&gt;::prepareConcatenate(size_t length)
     {
         // @todo Refactor this implementation to make it be more clear.
 <span style = "background-color:#dfd">        T* const str( str_ );
-        size_t const len( len_ );            
+        size_t const len( len_ );
         clean();
         res = allocate(length);
         if( res )</span>
@@ -791,12 +791,12 @@ bool_t BaseString&lt;T,0,R,A&gt;::allocate(size_t const length)
         {
 <span style = "background-color:#dfd">            str_ = string;
             len_ = length;
-            str_[0] = R::getTerminator();                
+            str_[0] = R::getTerminator();
             res = true;</span>
         }
     }
 <span style = "background-color:#dfd">    return res;
-} </span>
+}</span>
 
 template &lt;typename T, class R, class A&gt;
 void BaseString&lt;T,0,R,A&gt;::free()

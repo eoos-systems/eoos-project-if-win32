@@ -24,7 +24,7 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class Object&lt;A&gt;
  * @brief Root class of the class hierarchy.
@@ -46,20 +46,20 @@ public:
      * @brief Destructor.
      */
     virtual ~Object();
-    
+
     /**
      * @brief Copy constructor.
      *
      * @param obj Reference to a source object.
      */
     Object(Object const&amp; obj);
-    
+
     /**
      * @brief Copy assignment operator.
      *
      * @param obj Reference to a source object.
      * @return Reference to this object.
-     */       
+     */
     Object&amp; operator=(Object const&amp; obj);
 
     #if EOOS_CPP_STANDARD &gt;= 2011
@@ -68,9 +68,9 @@ public:
      * @brief Move constructor.
      *
      * @param obj Right reference to a source object.
-     */       
+     */
     Object(Object&amp;&amp; obj) noexcept;
-    
+
     /**
      * @brief Move assignment operator.
      *
@@ -78,14 +78,14 @@ public:
      * @return Reference to this object.
      */
     Object&amp; operator=(Object&amp;&amp; obj) &amp; noexcept;
-    
+
     #endif // EOOS_CPP_STANDARD &gt;= 2011
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
      */
     virtual bool_t isConstructed() const;
-    
+
     /**
      * @brief Tests if an object has been constructed.
      *
@@ -136,7 +136,7 @@ Object&lt;A&gt;&amp; Object&lt;A&gt;::operator=(Object const&amp; obj)
 <span style = "background-color:#dfd">        isConstructed_ = obj.isConstructed_;</span>
     }
 <span style = "background-color:#dfd">    return *this;
-}    </span>
+}</span>
 
 #if EOOS_CPP_STANDARD &gt;= 2011
 
@@ -144,7 +144,7 @@ template &lt;class A&gt;
 Object&lt;A&gt;::Object(Object&amp;&amp; obj) noexcept :
 <span style = "background-color:#dfd">    isConstructed_(obj.isConstructed_){
     obj.setConstructed(false);
-}   </span>
+}</span>
 
 template &lt;class A&gt;
 Object&lt;A&gt;&amp; Object&lt;A&gt;::operator=(Object&amp;&amp; obj) &amp; noexcept
@@ -155,7 +155,7 @@ Object&lt;A&gt;&amp; Object&lt;A&gt;::operator=(Object&amp;&amp; obj) &amp; noex
         obj.setConstructed(false);</span>
     }
 <span style = "background-color:#dfd">    return *this;
-}        </span>
+}</span>
 
 #endif // EOOS_CPP_STANDARD &gt;= 2011
 
@@ -184,7 +184,7 @@ void Object&lt;A&gt;::setConstructed(bool_t const flag)
 <span style = "background-color:#dfd">        isConstructed_ = flag;</span>
     }
 <span style = "background-color:#dfd">}</span>
-  
+
 } // namespace lib
 } // namespace eoos
 

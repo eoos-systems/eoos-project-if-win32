@@ -28,7 +28,7 @@ namespace lib
  * @class NonCopyable&lt;A&gt;
  * @brief Next to root class of the operating system for objects which cannot be copied or moved.
  *
- * @tparam A Heap memory allocator class. 
+ * @tparam A Heap memory allocator class.
  */
 template &lt;class A = Allocator&gt;
 class NonCopyable : public Object&lt;A&gt;
@@ -45,26 +45,26 @@ public:
      * @brief Destructor.
      */
     virtual ~NonCopyable();
-    
+
 private:
-    
+
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
      */
     NonCopyable(NonCopyable const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
-    
+
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
-     */       
+     */
     NonCopyable&amp; operator=(NonCopyable const&amp;); ///&lt; SCA MISRA-C++:2008 Justified Rule 3-2-2 and Rule 3-2-4
 
     #if EOOS_CPP_STANDARD &gt;= 2011
-    
+
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
-     */       
+     */
     NonCopyable(NonCopyable&amp;&amp;) noexcept = delete;
-    
+
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */

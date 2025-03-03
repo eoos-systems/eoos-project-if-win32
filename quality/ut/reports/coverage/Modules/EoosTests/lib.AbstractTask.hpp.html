@@ -29,7 +29,7 @@ namespace lib
  * @class AbstractTask&lt;A&gt;
  * @brief Abstract task for the thread class.
  *
- * @tparam A Heap memory allocator class. 
+ * @tparam A Heap memory allocator class.
  */
 template &lt;class A = Allocator&gt;
 class AbstractTask : public NonCopyable&lt;A&gt;, public api::Task
@@ -50,7 +50,7 @@ public:
 
     /**
      * @copydoc eoos::api::Task::start()
-     */        
+     */
     virtual void start() = 0;
 
     /**
@@ -66,13 +66,13 @@ public:
 };
 
 template &lt;class A&gt;
-AbstractTask&lt;A&gt;::AbstractTask() 
+AbstractTask&lt;A&gt;::AbstractTask()
 <span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
     , api::Task() {
 }</span>
 
 template &lt;class A&gt;
-AbstractTask&lt;A&gt;::~AbstractTask() 
+AbstractTask&lt;A&gt;::~AbstractTask()
 <span style = "background-color:#dfd">{
 }</span>
 

@@ -23,11 +23,11 @@ namespace eoos
 {
 namespace lib
 {
-    
+
 /**
  * @class Align&lt;T,S,A&gt;
  * @brief Alignment of fundamental types to byte boundary of memory.
- * 
+ *
  * MISRA C++ NOTE: Any signed underlying types shall not be used
  * for not violating the 5-0-21 MISRA C++:2008 Rule.
  *
@@ -62,7 +62,7 @@ public:
      * @param obj A source object.
      */
     Align(Align const&amp; obj);
-    
+
     /**
      * @brief Destructor.
      */
@@ -167,7 +167,7 @@ private:
      * @brief Array of data bytes.
      */
     ucell_t val_[S];
-    
+
     template &lt;typename T0, size_t S0, class A0&gt; friend bool_t operator==(Align&lt;T0,S0,A0&gt; const&amp;, Align&lt;T0,S0,A0&gt; const&amp;);
     template &lt;typename T0, size_t S0, class A0&gt; friend bool_t operator!=(Align&lt;T0,S0,A0&gt; const&amp;, Align&lt;T0,S0,A0&gt; const&amp;);
 
@@ -179,7 +179,7 @@ private:
  * @param obj1 Reference to object.
  * @param obj2 Reference to object.
  * @return True if objects are equal.
- */ 
+ */
 template &lt;typename T, size_t S, class A&gt;
 inline bool_t operator==(Align&lt;T,S,A&gt; const&amp; obj1, Align&lt;T,S,A&gt; const&amp; obj2)
 <span style = "background-color:#dfd">{
@@ -193,7 +193,7 @@ inline bool_t operator==(Align&lt;T,S,A&gt; const&amp; obj1, Align&lt;T,S,A&gt; 
  * @param obj1 Reference to object.
  * @param obj2 Reference to object.
  * @return True if objects are not equal.
- */    
+ */
 template &lt;typename T, size_t S, class A&gt;
 inline bool_t operator!=(Align&lt;T,S,A&gt; const&amp; obj1, Align&lt;T,S,A&gt; const&amp; obj2)
 <span style = "background-color:#dfd">{
@@ -202,12 +202,12 @@ inline bool_t operator!=(Align&lt;T,S,A&gt; const&amp; obj1, Align&lt;T,S,A&gt; 
 }</span>
 
 template &lt;typename T, size_t S, class A&gt;
-Align&lt;T,S,A&gt;::Align() 
+Align&lt;T,S,A&gt;::Align()
 <span style = "background-color:#dfd">    : ObjectAllocator&lt;A&gt;() {
 }</span>
 
 template &lt;typename T, size_t S, class A&gt;
-Align&lt;T,S,A&gt;::Align(T const&amp; value) 
+Align&lt;T,S,A&gt;::Align(T const&amp; value)
 <span style = "background-color:#dfd">    : ObjectAllocator&lt;A&gt;() {
     assignment(value);
 }</span>
@@ -221,7 +221,7 @@ Align&lt;T,S,A&gt;::Align(Align const&amp; obj) ///&lt; SCA MISRA-C++:2008 Justi
 template &lt;typename T, size_t S, class A&gt;
 Align&lt;T,S,A&gt;::~Align()
 <span style = "background-color:#dfd">{
-}    </span>
+}</span>
 
 template &lt;typename T, size_t S, class A&gt;
 Align&lt;T,S,A&gt;&amp; Align&lt;T,S,A&gt;::operator=(T const&amp; value)
