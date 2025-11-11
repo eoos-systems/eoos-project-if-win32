@@ -1,10 +1,10 @@
 # EOOS WIN32.
 #
 # @author    Sergey Baigudin, sergey@baigudin.software
-# @copyright 2019-2022, Sergey Baigudin, Baigudin Software
+# @copyright 2019-2025, Sergey Baigudin, Baigudin Software
 
 cmake_minimum_required(VERSION 3.20)
-project(eoos-if-win32 VERSION 0.13.0 LANGUAGES CXX)
+project(eoos-if-win32 VERSION 0.14.0 LANGUAGES CXX)
 
 include(cmake/EOOS.cmake)
 message(STATUS "EOOS option EOOS_CMAKE_ENABLE_TESTS=" ${EOOS_CMAKE_ENABLE_TESTS})
