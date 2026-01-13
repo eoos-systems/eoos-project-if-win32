@@ -7,7 +7,6 @@ add_library(target-eoos STATIC
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Allocator.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Call.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Heap.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Main.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.MutexManager.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.OutStream.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/system/source/sys.Scheduler.cpp"
@@ -33,11 +32,6 @@ if(EOOS_GLOBAL_ENABLE_NO_HEAP)
 endif()
 
 if(EOOS_CMAKE_ENABLE_TESTS)
-    target_include_directories(target-eoos
-    PUBLIC
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/system/include/private>"
-    )
-    
     add_subdirectory(tests)
 endif()
 
