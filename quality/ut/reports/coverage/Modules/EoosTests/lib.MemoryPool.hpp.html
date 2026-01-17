@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <meta charset="utf-8"/>
-	    <title>lib.ResourceMemory.hpp</title>
+	    <title>lib.MemoryPool.hpp</title>
 	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
 	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
 	</head>
@@ -10,16 +10,17 @@
         <h4></h4>
         <pre class="prettyprint lang-cpp linenums">
 /**
- * @file      lib.ResourceMemory.hpp
+ * @file      lib.MemoryPool.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2023-2024, Sergey Baigudin, Baigudin Software
+ * @copyright 2023-2025, Sergey Baigudin, Baigudin Software
  */
-#ifndef LIB_RESOURCEMEMORY_HPP_
-#define LIB_RESOURCEMEMORY_HPP_
+#ifndef LIB_MEMORYPOOL_HPP_
+#define LIB_MEMORYPOOL_HPP_
 
 #include "lib.NonCopyable.hpp"
 #include "api.Heap.hpp"
 #include "lib.NoAllocator.hpp"
+#include "lib.NullMutex.hpp"
 #include "lib.Guard.hpp"
 
 namespace eoos
@@ -28,32 +29,38 @@ namespace lib
 {
 
 /**
- * @class ResourceMemory&lt;T,N&gt;
- * @brief Pool resource memory allocator.
+ * @class MemoryPool&lt;T,L,A&gt;
+ * @brief Allocator of fix size memory block from pool.
  *
  * Primary template implements the pool allocation of resource.
  *
- * @tparam T Resource type
- * @tparam N Number of resources
+ * @tparam T Element type allocating from pool
+ * @tparam L Maximum number of pool elements, or 0 for dynamic allocation.
+ * @tparam A Heap memory allocator class.
  */
-template &lt;typename T, int32_t N&gt;
-class ResourceMemory : public NonCopyable&lt;NoAllocator&gt;, public api::Heap
+template &lt;typename T, int32_t L, class A = Allocator&gt;
+class MemoryPool : public NonCopyable&lt;A&gt;, public api::Heap
 {
-    typedef NonCopyable&lt;NoAllocator&gt; Parent;
+    typedef NonCopyable&lt;A&gt; Parent;
 
 public:
+
+    /**
+     * @brief Constructor.
+     */
+    MemoryPool();
 
     /**
      * @brief Constructor.
      *
      * @param guard Atomic access to any resources.
      */
-    ResourceMemory(api::Guard&amp; guard);
+    MemoryPool(api::Guard&amp; guard);
 
     /**
      * @brief Destructor.
      */
-    virtual ~ResourceMemory();
+    virtual ~MemoryPool();
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
@@ -88,12 +95,17 @@ private:
      *
      * @note Memory is double array of uint64_t type to be align 8.
      */
-    uint64_t memory_[N][(sizeof(T) &gt;&gt; 3) + 1];
+    uint64_t memory_[L][(sizeof(T) &gt;&gt; 3) + 1];
 
     /**
      * @brief Resource memory pool.
      */
-    bool_t isAllocated_[N];
+    bool_t isAllocated_[L];
+
+    /**
+     * @brief Empty mutex.
+     */
+    NullMutex&lt;&gt; mutex_;
 
     /**
      * @brief Resource allocation guard.
@@ -103,31 +115,37 @@ private:
 };
 
 /**
- * @class ResourceMemory&lt;T,0&gt;
- * @brief Heap resource memory allocator.
+ * @class MemoryPool&lt;T,0,A&gt;
+ * @brief Allocator of fix size memory block from heap
  *
  * Partial specialization of the template implements the heap allocation of resource.
  *
- * @tparam T Resource type
+ * @tparam T Element type allocating from pool
+ * @tparam A Heap memory allocator class for this class and element allocation.
  */
-template &lt;typename T&gt;
-class ResourceMemory&lt;T,0&gt; : public NonCopyable&lt;Allocator&gt;, public api::Heap
+template &lt;typename T, class A&gt;
+class MemoryPool&lt;T,0,A&gt; : public NonCopyable&lt;A&gt;, public api::Heap
 {
-    typedef NonCopyable&lt;Allocator&gt; Parent;
+    typedef NonCopyable&lt;A&gt; Parent;
 
 public:
+
+    /**
+     * @brief Constructor.
+     */
+    MemoryPool();
 
     /**
      * @brief Constructor.
      *
      * @param guard Atomic access to any resources.
      */
-    ResourceMemory(api::Guard&amp; guard);
+    MemoryPool(api::Guard&amp; guard);
 
     /**
      * @brief Destructor.
      */
-    virtual ~ResourceMemory();
+    virtual ~MemoryPool();
 
     /**
      * @copydoc eoos::api::Object::isConstructed()
@@ -150,37 +168,49 @@ protected:
 
 };
 
-template &lt;typename T, int32_t N&gt;
-ResourceMemory&lt;T,N&gt;::ResourceMemory(api::Guard&amp; guard)
-<span style = "background-color:#dfd">    : NonCopyable&lt;NoAllocator&gt;()
+template &lt;typename T, int32_t L, class A&gt;
+MemoryPool&lt;T,L,A&gt;::MemoryPool()
+    : NonCopyable&lt;A&gt;()
     , api::Heap()
-    , guard_ (guard) {
+    , mutex_()
+    , guard_(mutex_) {
+    bool_t const isConstructed( construct() );
+    setConstructed( isConstructed );
+}
+
+template &lt;typename T, int32_t L, class A&gt;
+MemoryPool&lt;T,L,A&gt;::MemoryPool(api::Guard&amp; guard)
+<span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
+    , api::Heap()
+    , mutex_()
+    , guard_(guard) {
     bool_t const isConstructed( construct() );
     setConstructed( isConstructed );
 }</span>
 
-template &lt;typename T, int32_t N&gt;
-ResourceMemory&lt;T,N&gt;::~ResourceMemory()
+template &lt;typename T, int32_t L, class A&gt;
+MemoryPool&lt;T,L,A&gt;::~MemoryPool()
 <span style = "background-color:#dfd">{
 }</span>
 
-template &lt;typename T, int32_t N&gt;
-bool_t ResourceMemory&lt;T,N&gt;::isConstructed() const
+template &lt;typename T, int32_t L, class A&gt;
+bool_t MemoryPool&lt;T,L,A&gt;::isConstructed() const
 <span style = "background-color:#dfd">{
     return Parent::isConstructed();
 }</span>
 
-template &lt;typename T, int32_t N&gt;
-void* ResourceMemory&lt;T,N&gt;::allocate(size_t size, void* ptr)
+template &lt;typename T, int32_t L, class A&gt;
+void* MemoryPool&lt;T,L,A&gt;::allocate(size_t size, void* ptr)
 <span style = "background-color:#dfd">{</span>
     static_cast&lt;void&gt;(ptr); // Avoid MISRA-C++:2008 Rule 0â1â3 and AUTOSAR C++14 Rule A0-1-4
 <span style = "background-color:#dfd">    void* addr( NULLPTR );
     if( isConstructed() )</span>
     {
-<span style = "background-color:#dfd">        lib::Guard&lt;NoAllocator&gt; const guard( guard_ );
+<span style = "background-color:#dfd">        lib::Guard&lt;A&gt; const guard( guard_ );
         if( size == sizeof(T) )</span>
         {
-<span style = "background-color:#dfd">            for(int32_t i(0); i&lt;N; i++)</span>
+            // @todo Declare 'i' as class variable to point to the first empty element.
+<span style = "background-color:#dfd">            for(int32_t i(0); i&lt;L; i++)</span>
             {
 <span style = "background-color:#dfd">                if( isAllocated_[i] == false )</span>
                 {
@@ -199,13 +229,13 @@ void* ResourceMemory&lt;T,N&gt;::allocate(size_t size, void* ptr)
     return addr;
 }</span>
 
-template &lt;typename T, int32_t N&gt;
-void ResourceMemory&lt;T,N&gt;::free(void* ptr)
+template &lt;typename T, int32_t L, class A&gt;
+void MemoryPool&lt;T,L,A&gt;::free(void* ptr)
 <span style = "background-color:#dfd">{
     if( isConstructed() &amp;&amp; (ptr != NULLPTR) )</span>
     {
-<span style = "background-color:#dfd">        lib::Guard&lt;NoAllocator&gt; const guard( guard_ );
-        for(int32_t i(0); i&lt;N; i++)</span>
+<span style = "background-color:#dfd">        lib::Guard&lt;A&gt; const guard( guard_ );
+        for(int32_t i(0); i&lt;L; i++)</span>
         {
 <span style = "background-color:#dfd">            if( (memory_[i] == ptr) &amp;&amp; (isAllocated_[i] == true) )</span>
             {
@@ -216,14 +246,14 @@ void ResourceMemory&lt;T,N&gt;::free(void* ptr)
     }
 }</span>
 
-template &lt;typename T, int32_t N&gt;
-bool_t ResourceMemory&lt;T,N&gt;::construct()
+template &lt;typename T, int32_t L, class A&gt;
+bool_t MemoryPool&lt;T,L,A&gt;::construct()
 <span style = "background-color:#dfd">{
     bool_t res( false );</span>
     if( ( isConstructed() )
 <span style = "background-color:#dfd">     &amp;&amp; ( guard_.isConstructed() ) )</span>
     {
-<span style = "background-color:#dfd">        for(int32_t i(0); i&lt;N; i++)</span>
+<span style = "background-color:#dfd">        for(int32_t i(0); i&lt;L; i++)</span>
         {
 <span style = "background-color:#dfd">            isAllocated_[i] = false;
         }
@@ -232,38 +262,44 @@ bool_t ResourceMemory&lt;T,N&gt;::construct()
 <span style = "background-color:#dfd">    return res;
 }</span>
 
-template &lt;typename T&gt;
-ResourceMemory&lt;T,0&gt;::ResourceMemory(api::Guard&amp;)
-    : NonCopyable&lt;Allocator&gt;()
+template &lt;typename T, class A&gt;
+MemoryPool&lt;T,0,A&gt;::MemoryPool()
+    : NonCopyable&lt;A&gt;()
     , api::Heap() {
 }
 
-template &lt;typename T&gt;
-ResourceMemory&lt;T,0&gt;::~ResourceMemory()
+template &lt;typename T, class A&gt;
+MemoryPool&lt;T,0,A&gt;::MemoryPool(api::Guard&amp;)
+    : NonCopyable&lt;A&gt;()
+    , api::Heap() {
+}
+
+template &lt;typename T, class A&gt;
+MemoryPool&lt;T,0,A&gt;::~MemoryPool()
 {
 }
 
-template &lt;typename T&gt;
-bool_t ResourceMemory&lt;T,0&gt;::isConstructed() const
+template &lt;typename T, class A&gt;
+bool_t MemoryPool&lt;T,0,A&gt;::isConstructed() const
 {
     return Parent::isConstructed();
 }
 
-template &lt;typename T&gt;
-void* ResourceMemory&lt;T,0&gt;::allocate(size_t size, void* ptr)
+template &lt;typename T, class A&gt;
+void* MemoryPool&lt;T,0,A&gt;::allocate(size_t size, void* ptr)
 {
-    return Allocator::allocate(size);
+    return A::allocate(size);
 }
 
-template &lt;typename T&gt;
-void ResourceMemory&lt;T,0&gt;::free(void* ptr)
+template &lt;typename T, class A&gt;
+void MemoryPool&lt;T,0,A&gt;::free(void* ptr)
 {
-    return Allocator::free(ptr);
+    return A::free(ptr);
 }
 
 } // namespace lib
 } // namespace eoos
-#endif // LIB_RESOURCEMEMORY_HPP_</pre>
+#endif // LIB_MEMORYPOOL_HPP_</pre>
         <hr />
         <table width="100%">
             <thead>

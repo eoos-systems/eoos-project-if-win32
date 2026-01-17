@@ -12,17 +12,15 @@
 /**
  * @file      sys.System.cpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2023, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2026, Sergey Baigudin, Baigudin Software
  */
 #include "sys.System.hpp"
-#include "Program.hpp"
-#include "lib.LinkedList.hpp"
 
 namespace eoos
 {
 namespace sys
 {
-        
+
 <span style = "background-color:#dfd">api::System* System::eoos_{ NULLPTR };</span>
 
 System::System() noexcept
@@ -64,19 +62,26 @@ api::SemaphoreManager&amp; System::getSemaphoreManager() noexcept
 
 api::StreamManager&amp; System::getStreamManager() noexcept
 <span style = "background-color:#dfd">{
-    return streamManager_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1    
+    return streamManager_; ///&lt; SCA AUTOSAR-C++14 Justified Rule A9-3-1
 }</span>
 
-int32_t System::execute(int32_t argc, char_t* argv[]) const noexcept ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
+int32_t System::run(api::Task&amp; task) noexcept
 <span style = "background-color:#dfd">{
-    return Program::start(argc, argv);
+    int32_t error{ -1 };
+    System eoos;
+    if( eoos.isConstructed() )</span>
+    {
+<span style = "background-color:#dfd">        task.start();
+        error = 0;</span>
+    }
+<span style = "background-color:#dfd">    return error;
 }</span>
 
 api::System&amp; System::getSystem() noexcept
 <span style = "background-color:#dfd">{
     if(eoos_ == NULLPTR)</span>
     {   ///&lt; UT Justified Branch: Startup dependency
-<span style = "background-color:#fdd">        ::ExitProcess(static_cast&lt; ::UINT &gt;(Error::SYSCALL_CALLED));</span>
+<span style = "background-color:#fdd">        ::ExitProcess(-1);</span>
     }
 <span style = "background-color:#dfd">    return *eoos_;
 }</span>
@@ -90,8 +95,8 @@ bool_t System::construct() noexcept
      &amp;&amp; ( scheduler_.isConstructed() )
      &amp;&amp; ( mutexManager_.isConstructed() )
      &amp;&amp; ( semaphoreManager_.isConstructed() )
-<span style = "background-color:#dfd">     &amp;&amp; ( streamManager_.isConstructed() ) ) </span>
-    {                
+<span style = "background-color:#dfd">     &amp;&amp; ( streamManager_.isConstructed() ) )</span>
+    {
 <span style = "background-color:#dfd">        eoos_ = this;
         res = true;</span>
     }

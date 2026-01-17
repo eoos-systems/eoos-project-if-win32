@@ -12,7 +12,7 @@
 /**
  * @file      sys.Call.cpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2022, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2026, Sergey Baigudin, Baigudin Software
  */
 #include "sys.Call.hpp"
 #include "sys.System.hpp"
@@ -25,6 +25,11 @@ namespace sys
 api::System&amp; Call::get() noexcept
 <span style = "background-color:#dfd">{
     return System::getSystem();
+}</span>
+
+int32_t Call::run(api::Task&amp; task) noexcept
+<span style = "background-color:#dfd">{
+    return System::run(task);
 }</span>
 
 } // namespace sys

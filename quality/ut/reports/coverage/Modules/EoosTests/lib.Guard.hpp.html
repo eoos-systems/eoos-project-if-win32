@@ -70,12 +70,18 @@ private:
      */
     api::Guard&amp; guard_;
 
+    /**
+     * @brief Guard resource identifier.
+     */
+    bool_t isLocked_;
+
 };
 
 template &lt;class A&gt;
 Guard&lt;A&gt;::Guard(api::Guard&amp; guard)
 <span style = "background-color:#dfd">    : NonCopyable&lt;A&gt;()
-    , guard_( guard ){
+    , guard_( guard )
+    , isLocked_( false ){
     bool_t const isConstructed( construct() );
     setConstructed( isConstructed );
 }</span>
@@ -83,7 +89,7 @@ Guard&lt;A&gt;::Guard(api::Guard&amp; guard)
 template &lt;class A&gt;
 Guard&lt;A&gt;::~Guard()
 <span style = "background-color:#dfd">{
-    if( isConstructed() )</span>
+    if( isLocked_ )</span>
     {
 <span style = "background-color:#dfd">        static_cast&lt;void&gt;( guard_.unlock() );</span>
     }
@@ -92,12 +98,11 @@ Guard&lt;A&gt;::~Guard()
 template &lt;class A&gt;
 bool_t Guard&lt;A&gt;::construct()
 <span style = "background-color:#dfd">{
-    bool_t res( false );
     if( isConstructed() )</span>
     {
-<span style = "background-color:#dfd">        res = guard_.lock();</span>
+<span style = "background-color:#dfd">        isLocked_ = guard_.lock();</span>
     }
-<span style = "background-color:#dfd">    return res;
+<span style = "background-color:#dfd">    return isLocked_;
 }</span>
 
 } // namespace lib

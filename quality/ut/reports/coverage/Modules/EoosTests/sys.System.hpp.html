@@ -12,7 +12,7 @@
 /**
  * @file      sys.System.hpp
  * @author    Sergey Baigudin, sergey@baigudin.software
- * @copyright 2014-2023, Sergey Baigudin, Baigudin Software
+ * @copyright 2014-2026, Sergey Baigudin, Baigudin Software
  */
 #ifndef SYS_SYSTEM_HPP_
 #define SYS_SYSTEM_HPP_
@@ -24,13 +24,12 @@
 #include "sys.SemaphoreManager.hpp"
 #include "sys.StreamManager.hpp"
 #include "sys.Heap.hpp"
-#include "sys.Error.hpp"
 
 namespace eoos
 {
 namespace sys
 {
-    
+
 /**
  * @class System
  * @brief The operating system.
@@ -40,6 +39,53 @@ class System : public NonCopyable&lt;NoAllocator&gt;, public api::System
     using Parent = NonCopyable&lt;NoAllocator&gt;;
 
 public:
+
+    /**
+     * @copydoc eoos::api::Object::isConstructed()
+     */
+    bool_t isConstructed() const noexcept override; ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
+
+    /**
+     * @copydoc eoos::api::System::getHeap()
+     */
+    api::Heap&amp; getHeap() noexcept override;
+
+    /**
+     * @copydoc eoos::api::System::getScheduler()
+     */
+    api::Scheduler&amp; getScheduler() noexcept override;
+
+    /**
+     * @copydoc eoos::api::System::getMutexManager()
+     */
+    api::MutexManager&amp; getMutexManager() noexcept override;
+
+    /**
+     * @copydoc eoos::api::System::getSemaphoreManager()
+     */
+    api::SemaphoreManager&amp; getSemaphoreManager() noexcept override;
+
+    /**
+     * @copydoc eoos::api::System::getStreamManager()
+     */
+    api::StreamManager&amp; getStreamManager() noexcept override;
+
+    /**
+     * @brief Runs the EOOS system.
+     *
+     * @param task The first task run by the system.
+     * @return error code or zero.
+     */
+    static int32_t run(api::Task&amp; task) noexcept;
+
+    /**
+     * @brief Returns an only one created instance of the EOOS system.
+     *
+     * @return The EOOS system instance.
+     */
+    static api::System&amp; getSystem() noexcept;
+
+private:
 
     /**
      * @brief Constructor.
@@ -52,79 +98,31 @@ public:
     ~System() noexcept override;
 
     /**
-     * @copydoc eoos::api::Object::isConstructed()
-     */
-    bool_t isConstructed() const noexcept override; ///&lt; SCA AUTOSAR-C++14 Defected Rule A10-2-1
-    
-    /**
-     * @copydoc eoos::api::System::getHeap()
-     */
-    api::Heap&amp; getHeap() noexcept override;
-
-    /**
-     * @copydoc eoos::api::System::getScheduler()
-     */
-    api::Scheduler&amp; getScheduler() noexcept override;    
-    
-    /**
-     * @copydoc eoos::api::System::getMutexManager()
-     */
-    api::MutexManager&amp; getMutexManager() noexcept override;
-
-    /**
-     * @copydoc eoos::api::System::getSemaphoreManager()
-     */
-    api::SemaphoreManager&amp; getSemaphoreManager() noexcept override;
-    
-    /**
-     * @copydoc eoos::api::System::getStreamManager()
-     */
-    api::StreamManager&amp; getStreamManager() noexcept override;
-
-    /**
-     * @brief Executes the operating system.
-     *
-     * @param argc The number of arguments passed to the program.
-     * @param argv An array of c-string of arguments where the last one - argc + 1 is null.  
-     * @return Zero, or error code if the execution has been terminated.
-     */
-    int32_t execute(int32_t argc, char_t* argv[]) const noexcept; ///&lt; SCA AUTOSAR-C++14 Justified Rule A8-4-8
-    
-    /**
-     * @brief Returns an only one created instance of the EOOS system.
-     *
-     * @return The EOOS system instance.
-     */
-    static api::System&amp; getSystem() noexcept;
-
-private:
-
-    /**
      * @brief Constructs this object.
      *
      * @return True if object has been constructed successfully.
      */
     bool_t construct() noexcept;
-    
+
     /**
      * @copydoc eoos::Object::Object(Object const&amp;)
      */
     System(System const&amp;) noexcept = delete;
-    
+
     /**
      * @copydoc eoos::Object::operator=(Object const&amp;)
-     */       
-    System&amp; operator=(System const&amp;) noexcept = delete;   
+     */
+    System&amp; operator=(System const&amp;) noexcept = delete;
 
     /**
      * @copydoc eoos::Object::Object(Object&amp;&amp;)
-     */       
+     */
     System(System&amp;&amp;) noexcept = delete;
-    
+
     /**
      * @copydoc eoos::Object::operator=(Object&amp;&amp;)
      */
-    System&amp; operator=(System&amp;&amp;) &amp; noexcept = delete;    
+    System&amp; operator=(System&amp;&amp;) &amp; noexcept = delete;
 
     /**
      * @brief The operating system.
@@ -134,7 +132,7 @@ private:
     /**
      * @brief The system heap.
      */
-<span style = "background-color:#dfd">    Heap heap_{};    </span>
+<span style = "background-color:#dfd">    Heap heap_{};</span>
 
     /**
      * @brief The operating system scheduler.
@@ -150,7 +148,7 @@ private:
      * @brief The semaphore sub-system manager.
      */
 <span style = "background-color:#dfd">    SemaphoreManager semaphoreManager_{};</span>
-    
+
     /**
      * @brief The stream sub-system manager.
      */

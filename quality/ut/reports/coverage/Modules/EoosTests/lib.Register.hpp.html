@@ -30,30 +30,30 @@ namespace lib
  *
  * @tparam R User-defined union type of register.
  *
- * @note There is R type declaration requarements:
+ * @note There is R type declaration requirements:
  * ```
  * union YourRegister
  * {
- *     typedef uint32_t Value;
+ *     typedef uint32_t reg_t;
  *     YourRegister(){}
- *     YourRegister(Value v){value = v;}
+ *     YourRegister(reg_t v){value = v;}
  *    ~YourRegister(){}
  *
- *     Value value;
- *     struct Bit
+ *     reg_t value;
+ *     struct bit_t
  *     {
- *         Value inrq  : 1;
- *         Value sleep : 1;
- *         Value txfp  : 1;
- *         Value rflm  : 1;
- *         Value nart  : 1;
- *         Value awum  : 1;
- *         Value abom  : 1;
- *         Value ttcm  : 1;
- *         Value       : 7;
- *         Value reset : 1;
- *         Value       : 15;
- *         Value dbf   : 1;
+ *         reg_t inrq  : 1;
+ *         reg_t sleep : 1;
+ *         reg_t txfp  : 1;
+ *         reg_t rflm  : 1;
+ *         reg_t nart  : 1;
+ *         reg_t awum  : 1;
+ *         reg_t abom  : 1;
+ *         reg_t ttcm  : 1;
+ *         reg_t       : 7;
+ *         reg_t reset : 1;
+ *         reg_t       : 15;
+ *         reg_t dbf   : 1;
  *     } bit;
  * };
  * ```
@@ -70,7 +70,7 @@ public:
     Register(R&amp; reg);
 
     /**
-     * @brief Register.
+     * @brief Desctructor.
      */
     ~Register();
 
@@ -79,47 +79,91 @@ public:
      *
      * @return Bit-field structure of the register.
      */
-    typename R::Bit&amp; bit();
+    typename R::bit_t&amp; bit();
 
     /**
      * @brief Returns bit-field of the register.
      *
      * @return Bit-field structure of the register.
      */
-    const typename R::Bit&amp; bit() const;
+    const typename R::bit_t&amp; bit() const;
 
     /**
      * @brief Returns value of the register.
      *
      * @return Value of the register.
      */
-    typename R::Value&amp; value();
+    typename R::reg_t&amp; value();
 
     /**
      * @brief Returns value of the register.
      *
      * @return Value of the register.
      */
-    const typename R::Value&amp; value() const;
+    const typename R::reg_t&amp; value() const;
 
     /**
      * @brief Sets a bit value.
      *
      * @param digit Digit of a setting bit.
+     * @return This register object.
      */
-    void setBit(uint32_t digit);
+    Register&lt;R&gt;&amp; setBit(typename R::reg_t digit);
 
     /**
      * @brief Cleans a bit value.
      *
      * @param digit Digit of a cleaning bit.
+     * @return This register object.
      */
-    void clearBit(uint32_t digit);
+    Register&lt;R&gt;&amp; clearBit(typename R::reg_t digit);
+
+    /**
+     * @brief Returns a bit value.
+     *
+     * @param digit Digit of a getting bit.
+     * @return Value of the bit.
+     *
+     * @todo Implement const function.
+     */
+    typename R::reg_t getBit(typename R::reg_t digit);
+
+    /**
+     * @brief Sets a bit field value.
+     *
+     * @param value A value to set started from LSB.
+     * @param mask  A mask of the value significat bits.
+     * @param shift Shift bits for the value to set.
+     * @return This register object.
+     */
+    Register&lt;R&gt;&amp; setBitField(typename R::reg_t value, typename R::reg_t mask, typename R::reg_t shift);
+
+    /**
+     * @brief Returns a bit field value.
+     *
+     * @param mask  A mask of a value significat bits.
+     * @param shift Shift bits for the value to get.
+     * @return A value shifted to LSB.
+     *
+     * @todo Implement const funstion.
+     */
+    typename R::reg_t getBitField(typename R::reg_t mask, typename R::reg_t shift);
+
+    /**
+     * @brief Returns a bit field value.
+     *
+     * @param mask  A mask of a value significat bits.
+     * @param shift Shift bits for the value to clear.
+     * @return This register object.
+     */
+    Register&lt;R&gt;&amp; clearBitField(typename R::reg_t mask, typename R::reg_t shift);
 
     /**
      * @brief Saves the work copy to the register.
+     *
+     * @return This register object.
      */
-    void commit();
+    Register&lt;R&gt;&amp; commit();
 
     /**
      * @brief Saves the register to the work copy.
@@ -154,47 +198,77 @@ Register&lt;R&gt;::~Register()
 }</span>
 
 template &lt;class R&gt;
-typename R::Bit&amp; Register&lt;R&gt;::bit()
+typename R::bit_t&amp; Register&lt;R&gt;::bit()
 <span style = "background-color:#dfd">{
    return copy_.bit;
 }</span>
 
 template &lt;class R&gt;
-const typename R::Bit&amp; Register&lt;R&gt;::bit() const
+const typename R::bit_t&amp; Register&lt;R&gt;::bit() const
 <span style = "background-color:#dfd">{
    return copy_.bit;
 }</span>
 
 template &lt;class R&gt;
-typename R::Value&amp; Register&lt;R&gt;::value()
+typename R::reg_t&amp; Register&lt;R&gt;::value()
 <span style = "background-color:#dfd">{
    return copy_.value;
 }</span>
 
 template &lt;class R&gt;
-const typename R::Value&amp; Register&lt;R&gt;::value() const
+const typename R::reg_t&amp; Register&lt;R&gt;::value() const
 <span style = "background-color:#dfd">{
    return copy_.value;
 }</span>
 
 template &lt;class R&gt;
-void Register&lt;R&gt;::setBit(uint32_t digit)
+Register&lt;R&gt;&amp; Register&lt;R&gt;::setBit(typename R::reg_t digit)
 <span style = "background-color:#dfd">{
-    typename R::Value mask( 0x00000001 &lt;&lt; digit );
-    copy_.value |= mask;
+    typename R::reg_t bitmask( 0x00000001 &lt;&lt; digit );
+    copy_.value |= bitmask;
+    return *this;
 }</span>
 
 template &lt;class R&gt;
-void Register&lt;R&gt;::clearBit(uint32_t digit)
+Register&lt;R&gt;&amp; Register&lt;R&gt;::clearBit(typename R::reg_t digit)
 <span style = "background-color:#dfd">{
-    typename R::Value mask( 0x00000001 &lt;&lt; digit );
-    copy_.value &amp;= ~mask;
+    typename R::reg_t bitmask( 0x00000001 &lt;&lt; digit );
+    copy_.value &amp;= ~bitmask;
+    return *this;
 }</span>
 
 template &lt;class R&gt;
-void Register&lt;R&gt;::commit()
+typename R::reg_t Register&lt;R&gt;::getBit(typename R::reg_t digit)
+{
+    return (copy_.value &gt;&gt; digit) &amp; 0x1;
+}
+
+template &lt;class R&gt;
+Register&lt;R&gt;&amp; Register&lt;R&gt;::setBitField(typename R::reg_t value, typename R::reg_t mask, typename R::reg_t shift)
+{
+    copy_.value &amp;= ~( mask &lt;&lt; shift);
+    copy_.value |= value &lt;&lt; shift;
+    return *this;
+}
+
+template &lt;class R&gt;
+typename R::reg_t Register&lt;R&gt;::getBitField(typename R::reg_t mask, typename R::reg_t shift)
+{
+    return (copy_.value &gt;&gt; shift) &amp; mask;
+}
+
+template &lt;class R&gt;
+Register&lt;R&gt;&amp; Register&lt;R&gt;::clearBitField(typename R::reg_t mask, typename R::reg_t shift)
+{
+    copy_.value &amp;= ~( mask &lt;&lt; shift);
+    return *this;
+}
+
+template &lt;class R&gt;
+Register&lt;R&gt;&amp; Register&lt;R&gt;::commit()
 <span style = "background-color:#dfd">{
     origin_.value = copy_.value;
+    return *this;
 }</span>
 
 template &lt;class R&gt;
